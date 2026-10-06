@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B 미션 앱 요구사항</title>
+<style>
+:root{--paper:#EEF2EC;--surface:#FFFFFF;--ink:#16221C;--muted:#55655C;--line:#D3DCD5;--track:#E1E8E2;--forest:#2D6A4E;--on-forest:#FFFFFF;--mint:#DCEDE2;--marigold:#F2B33A;--on-marigold:#3B2905;--a:#2D6A4E;--b:#B7791F;--m:#4A5A8A;
+--serif:"Hahmlet","AppleMyungjo","Nanum Myeongjo","Batang",serif;--sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:880px;margin-inline:auto;padding:clamp(32px,6vw,64px) 16px 64px}
+.kicker{margin:0 0 8px;color:var(--muted);font-size:.92rem;font-weight:500}
+h1{margin:0;font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,5.5vw,2.7rem);line-height:1.18;letter-spacing:-.02em}
+.sub-title{margin:10px 0 0;font-size:1.05rem}
+h2{margin:44px 0 12px;font-family:var(--serif);font-size:1.35rem;line-height:1.35}
+h2 .no{color:var(--muted);font-weight:500;margin-right:.35em}
+h3{margin:22px 0 8px;font-size:1.02rem}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin-top:20px;font-size:.92rem}
+.meta dt{color:var(--muted)}.meta dd{margin:0}
+.tbl{width:100%;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line)}
+thead th{border-top:0;background:var(--mint);font-weight:600;white-space:nowrap}
+td.id{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.pri{display:inline-block;border-radius:999px;padding:0 9px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.P0{background:var(--forest);color:var(--on-forest)}.P1{background:var(--marigold);color:var(--on-marigold)}.P2{background:var(--track);color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86em;background:var(--mint);border-radius:5px;padding:1px 5px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0}
+ul,ol{margin:0 0 10px;padding-left:20px}li{margin:3px 0}
+.note{background:var(--mint);border-radius:14px;padding:14px 18px;font-size:.93rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.app{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:16px;padding:16px 18px}
+.app h3{margin:0 0 4px}.app .who{color:var(--muted);font-size:.88rem;margin-bottom:8px}
+.app ul{font-size:.9rem}
+.arrow{text-align:center;color:var(--muted);font-size:.9rem;margin:10px 0}
+/* checklist */
+.progress{position:sticky;top:0;z-index:2;margin:28px -16px 0;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{height:10px;border-radius:999px;background:var(--track);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--forest);transition:width .3s}
+.ptext{display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ptext button{border:0;background:none;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+ul.tasks{list-style:none;margin:0;padding:0}
+ul.tasks>li{border-top:1px solid var(--line);margin:0}ul.tasks>li:first-child{border-top:0}
+label.task{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;padding:12px 0;cursor:pointer}
+label.task input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:2px 0 0;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+label.task input:checked{background:var(--forest);border-color:var(--forest)}
+label.task input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-forest);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+label.task input:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+label.task:has(input:checked) .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.tag{display:inline-block;margin-left:6px;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.75rem;color:var(--muted);font-weight:600;vertical-align:1px}
+ul.subs{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.done{background:var(--mint);border-color:transparent}
+.done strong{display:block;margin-bottom:4px;font-size:.85rem;color:var(--forest)}
+footer{margin-top:40px;font-size:.8rem;color:var(--muted)}
+@media print{.progress{position:static}.ptext button{display:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<p class="kicker">핏로그 (FitLog AI) · 요구사항 정의서 · v1.0</p>
+<h1>B 미션 앱</h1>
+<p class="sub-title">기록으로 오늘의 미션 성공을 판정하고, 축하 연출·리워드 달력·연속 달성을 보여 주는 앱</p>
+<dl class="meta">
+<dt>앱(폴더)</dt><dd><code>fitlog-mission</code></dd>
+<dt>담당</dt><dd>이미경 (개발자 B)</dd>
+<dt>검토·통합</dt><dd>멘토</dd>
+<dt>작성일</dt><dd>2026-10-06</dd>
+<dt>관련 문서</dt><dd>기획안, 전체 구성, 체크리스트 - 이미경</dd>
+</dl>
+
+<h2><span class="no">1</span>개요</h2>
+<div class="card"><p>기획안의 핵심 가치인 <b>“성취감은 극대화”</b>를 맡습니다. 기록이 쌓이면 미션이 자동으로 성공하고, 달력이 채워지며 연속 달성이 늘어납니다.</p>
+<p><b>시연에서 맡는 장면(1:30~2:30):</b> 물·스쿼트 미션이 이미 성공한 2/3 상태에서, 점심 기록이 들어오면 ‘단백질 채우기’ 카드가 성공으로 바뀌며 폭죽이 한 번 터지고, 오늘 달력 칸에 완수 스탬프가 찍히며 연속 달성이 10일에서 11일로 늘어납니다.</p></div>
+
+<h2><span class="no">2</span>범위</h2>
+<div class="tbl"><table><thead><tr><th>구분</th><th>내용</th></tr></thead><tbody><tr><td>포함</td><td>미션 카탈로그(도달형 4종)와 판정 함수, 오늘의 미션 배정, 이벤트 구독 재판정, 미션 카드, 성공 연출, 리워드 달력, 스트릭, 로컬 JSON 저장, 개발 도구(시연 시드·목업 기록)</td></tr><tr><td>여유 시(P1)</td><td>AI 1줄 코칭, 배지</td></tr><tr><td>제외</td><td>기록 입력(A 담당), 로그인, 서버 DB(Supabase)·GitHub 연동(통합 때 멘토 담당), 회피형·구간형 미션(P2)</td></tr></tbody></table></div>
+
+<h2><span class="no">3</span>개발 환경과 제약</h2>
+<div class="tbl"><table><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody><tr><td>프레임워크</td><td>Expo SDK 57 (React Native, TypeScript), Expo Router</td></tr><tr><td>실행 환경</td><td>휴대폰 Expo Go(필수), 웹 미리보기(보조)</td></tr><tr><td>저장</td><td>AsyncStorage에 JSON 배열(로컬). 서버·DB 연동 없음</td></tr><tr><td>AI</td><td>Google Gemini(<code>src/shared/gemini.ts</code>의 <code>generateJson</code>만 사용)</td></tr><tr><td>테스트</td><td>node:test(<code>npm test</code>), 린트(<code>npm run lint</code>), 타입 검사(<code>npm run typecheck</code>)</td></tr><tr><td>AI 코딩 도구</td><td>Claude Code 권장. 프로젝트 루트의 <code>CLAUDE.md</code> 규칙을 따름</td></tr><tr><td>작업 폴더</td><td><code>src/features/mission/</code>, <code>src/features/reward/</code>, <code>src/data/index.ts</code>(recordsRepo, missionsRepo)</td></tr></tbody></table></div>
+
+<h2><span class="no">4</span>화면 구성 (테스트용 <code>src/app</code>)</h2>
+<p class="muted">아래 화면은 이 앱에서 확인하기 위한 것입니다. 통합 앱에서는 멘토가 컴포넌트를 가져가 배치합니다.</p>
+<div class="tbl"><table><thead><tr><th>화면</th><th>경로</th><th>내용</th></tr></thead><tbody><tr><td>홈</td><td><code>src/app/index.tsx</code></td><td><code>MissionCards</code>(오늘)</td></tr><tr><td>리워드 달력</td><td><code>src/app/calendar.tsx</code></td><td><code>RewardCalendar</code></td></tr><tr><td>설정</td><td><code>src/app/settings.tsx</code></td><td>Gemini API 키 입력(P1 코칭용, 이미 만들어져 있음)</td></tr><tr><td>개발 도구</td><td><code>src/app/dev.tsx</code>(새로 만듦)</td><td>시연 시드 넣기, 아침·점심 목업 기록 넣기(+이벤트), 전체 초기화, 저장된 JSON 보기</td></tr></tbody></table></div>
+
+<h2><span class="no">5</span>기능 요구사항</h2>
+<p class="muted">P0 = 시연 필수, P1 = 여유 시, P2 = 발표 이후. 10일차 최종 제출 때 P0은 모두 완료되어야 합니다.</p>
+<div class="tbl"><table><thead><tr><th>ID</th><th>기능</th><th>요구사항</th><th>우선순위</th><th>완료 기준</th></tr></thead><tbody><tr><td class="id">B-F01</td><td>미션 카탈로그</td><td>도달형 4종: <code>protein_min</code>(단백질 {target_g}g), <code>water_min</code>(물 {target_ml}ml), <code>squat_min</code>(스쿼트 {target}개), <code>steps_min</code>({target}보). 코드·이름·슬롯·판정 규칙을 한 곳에 정의.</td><td><span class="pri P0">P0</span></td><td>카탈로그 밖 코드는 쓰지 않음</td></tr><tr><td class="id">B-F02</td><td>판정 함수</td><td>순수 함수 <code>evaluateMissions(missions, records, now)</code> → 미션별 상태(in_progress/success)와 진행값(예: 32/60g). 매번 그날 기록 전체로 처음부터 계산.</td><td><span class="pri P0">P0</span></td><td>테스트 통과: 아침만 → 진행 중, 점심 추가 → 성공, 기록 삭제 → 다시 진행 중, 물·스쿼트·걸음 수 미달/도달</td></tr><tr><td class="id">B-F03</td><td>오늘의 미션 배정</td><td>고정 세트(식단: 단백질 30g, 생활: 물 1,500ml, 운동: 스쿼트 30개). <code>missionsRepo.assignIfEmpty</code>로 그날 미션이 없을 때만 만듦.</td><td><span class="pri P0">P0</span></td><td>앱을 여러 번 열어도 미션이 중복되지 않음</td></tr><tr><td class="id">B-F04</td><td>로컬 저장소</td><td><code>src/data/index.ts</code>의 <code>recordsRepo</code>, <code>missionsRepo</code>를 AsyncStorage(JSON 배열)로 구현(6장 참고).</td><td><span class="pri P0">P0</span></td><td>앱을 껐다 켜도 미션 상태·달력이 유지됨. 저장소 테스트 통과</td></tr><tr><td class="id">B-F05</td><td>이벤트 구독 재판정</td><td><code>onRecordsChanged</code>를 구독해 이벤트가 오면 그날 기록 전체로 재판정하고, 바뀐 미션만 <code>missionsRepo.update</code>.</td><td><span class="pri P0">P0</span></td><td>목업 점심 기록 이벤트 후 1초 안에 카드 상태가 바뀜</td></tr><tr><td class="id">B-F06</td><td>미션 카드</td><td><code>MissionCards</code>: 식단·생활·운동 카드 3개, 진행률 막대와 숫자, 성공 표시, 상단에 “미션 n/3 완료”.</td><td><span class="pri P0">P0</span></td><td>로딩·빈 상태 처리 포함</td></tr><tr><td class="id">B-F07</td><td>성공 연출</td><td>in_progress → success로 바뀌는 순간에만 폭죽 애니메이션 1회. 이미 연출한 미션 id를 기억해 재진입·재판정 때 반복하지 않음.</td><td><span class="pri P0">P0</span></td><td>같은 미션으로 폭죽이 두 번 나오지 않음</td></tr><tr><td class="id">B-F08</td><td>리워드 달력</td><td><code>RewardCalendar</code>: 월간 달력, 날짜별 성공 수(0~3)를 링으로, 3이면 완수 스탬프. <code>listDayStatus</code> 사용.</td><td><span class="pri P0">P0</span></td><td>0/1/2/3 상태가 구분되고 3이면 스탬프. 오늘 칸이 3이 되는 순간 스탬프 연출</td></tr><tr><td class="id">B-F09</td><td>스트릭</td><td>3개 모두 완수한 날이 끊김 없이 이어진 일수. 오늘이 아직 완수 전이면 어제부터 셈. 순수 함수 + 테스트, 달력 상단에 “연속 n일” 표시.</td><td><span class="pri P0">P0</span></td><td>테스트 통과: 오늘 미완료, 중간 하루 끊김, 오늘 완수</td></tr><tr><td class="id">B-F10</td><td>개발 도구 화면</td><td>① 시연 시드: 어제까지 10일 연속 완수 + 오늘 물·스쿼트 성공·단백질 진행 중 + 아침 기록 ② 목업 점심 기록 넣기(+이벤트) ③ 전체 초기화 ④ JSON 보기.</td><td><span class="pri P0">P0</span></td><td>시드 → 점심 기록 버튼 한 번으로 2/3 → 3/3, 폭죽, 스탬프, 연속 11일</td></tr><tr><td class="id">B-F11</td><td>AI 1줄 코칭</td><td>하루 기록과 미션 결과로 Gemini가 친근한 1문장 생성.</td><td><span class="pri P1">P1</span></td><td>버튼 또는 3/3 완수 시 1문장 표시</td></tr><tr><td class="id">B-F12</td><td>배지</td><td>7일 연속 등 조건 달성 시 지급, 달력 화면에 배지 모음.</td><td><span class="pri P1">P1</span></td><td>조건 달성 시 1회 지급</td></tr><tr><td class="id">B-F13</td><td>회피형·구간형 미션</td><td>튀김·가당 음료 피하기, 12시간 공복. 하루 마감 시점 판정.</td><td><span class="pri P2">P2</span></td><td>마감 판정 테스트 통과</td></tr></tbody></table></div>
+
+<h2><span class="no">6</span>데이터 요구사항 (로컬 JSON)</h2>
+<p>저장 키 <code>fitlog:daily_missions</code>에 <code>DailyMission</code> 배열을, <code>fitlog:records</code>에 <code>HealthRecord</code> 배열을 JSON으로 저장합니다. 필드 이름은 contract와 똑같이 둡니다.</p>
+<pre><code>// AsyncStorage 키 "fitlog:daily_missions" 의 값 (JSON 배열)
+[
+  { "id": "a3e0…", "user_id": "local-user", "day_key": "2026-10-06",
+    "slot": "diet", "mission_code": "protein_min", "params": { "target_g": 30 },
+    "status": "in_progress", "achieved_at": null },
+  { "id": "b71d…", "user_id": "local-user", "day_key": "2026-10-06",
+    "slot": "life", "mission_code": "water_min", "params": { "target_ml": 1500 },
+    "status": "success", "achieved_at": "2026-10-06T01:00:00.000Z" }
+]
+// "fitlog:records" 는 입력 앱과 같은 모양(HealthRecord 배열). 이 앱에서는 개발 도구로만 채움.</code></pre>
+<h3>구현할 함수 (이름·모양 변경 금지)</h3>
+<div class="tbl"><table><thead><tr><th>함수</th><th>하는 일</th></tr></thead><tbody><tr><td><code>recordsRepo.*</code></td><td>입력 앱과 같은 4개 함수(listByDay, insertMany, update, remove). 개발 도구에서 목업 기록 저장에 사용</td></tr><tr><td><code>missionsRepo.listByDay(dayKey)</code></td><td>그날 미션 3개</td></tr><tr><td><code>missionsRepo.assignIfEmpty(dayKey, missions)</code></td><td>그날 미션이 없을 때만 만들고(id·user_id·status=in_progress 채움), 있으면 기존 것을 그대로 돌려줌</td></tr><tr><td><code>missionsRepo.update(id, {status, achieved_at})</code></td><td>판정 결과 저장</td></tr><tr><td><code>missionsRepo.listDayStatus(from, to)</code></td><td>기간 안 날짜별 성공 수 <code>{user_id, day_key, success_count}</code> 목록(달력·스트릭용)</td></tr></tbody></table></div>
+<p class="muted" style="margin-top:10px">기능 코드(카드, 달력)는 AsyncStorage를 직접 부르지 않고 이 함수들만 씁니다. 그래야 통합 때 이 파일만 바꿔 Supabase로 옮길 수 있습니다.</p>
+
+<h2><span class="no">7</span>외부 연동과 앱 내부 약속</h2>
+<div class="tbl"><table><thead><tr><th>대상</th><th>내용</th></tr></thead><tbody><tr><td>기록 변경 이벤트(받음)</td><td><code>onRecordsChanged(listener)</code>. 반환값(구독 해제 함수)을 useEffect cleanup으로 돌려줌. 통합 후에는 입력 앱이 보냄</td></tr><tr><td>목업 데이터</td><td><code>src/shared/mocks/demo.ts</code>의 morningRecord, lunchParsed, demoMissions</td></tr><tr><td>날짜</td><td><code>toDayKey()</code>, <code>addDays()</code>만 사용. 직접 계산 금지</td></tr><tr><td>Gemini(P1)</td><td><code>generateJson</code>으로 1줄 코칭</td></tr><tr><td>export 컴포넌트</td><td><code>MissionCards({dayKey})</code> — <code>src/features/mission/index.tsx</code>, <code>RewardCalendar()</code> — <code>src/features/reward/index.tsx</code></td></tr></tbody></table></div>
+
+<h2><span class="no">8</span>비기능 요구사항</h2>
+<div class="tbl"><table><thead><tr><th>ID</th><th>구분</th><th>요구사항</th></tr></thead><tbody><tr><td class="id">NFR-01</td><td>안정성</td><td>로딩·실패·빈 화면 상태가 모두 있고, 오류가 나도 앱이 멈추지 않음</td></tr><tr><td class="id">NFR-02</td><td>보안</td><td>API 키가 코드·파일에 없음. 키는 설정 화면 입력값만 사용</td></tr><tr><td class="id">NFR-03</td><td>호환성</td><td>Expo Go에서 동작. 개발 빌드가 필요한 패키지 사용 금지</td></tr><tr><td class="id">NFR-04</td><td>통합 가능성</td><td><code>src/shared</code> 무수정, 저장소 함수·컴포넌트 이름 약속 준수, 기능 코드는 자기 폴더에만</td></tr><tr><td class="id">NFR-05</td><td>품질</td><td><code>npm run lint</code>, <code>typecheck</code>, <code>test</code> 통과. 쓰지 않는 코드·로그·목업 잔여물 없음</td></tr><tr><td class="id">NFR-06</td><td>데이터 이식성</td><td>로컬 JSON 필드 이름이 contract(DB 열 이름)와 같음. 앱을 껐다 켜도 데이터 유지</td></tr><tr><td class="id">NFR-B1</td><td>성능</td><td>이벤트 수신 후 1초 안에 카드 상태 반영. 애니메이션은 Expo Go에서 끊김 없이 동작</td></tr></tbody></table></div>
+
+<h2><span class="no">9</span>제출물과 일정</h2>
+<div class="card">
+<h3 style="margin-top:0">제출물</h3>
+<ul><li><code>src/features/mission/</code>, <code>src/features/reward/</code> 전체</li><li><code>src/data/index.ts</code>(로컬 저장소 구현)</li><li><code>docs/추가 패키지.md</code></li><li><code>package.json</code></li><li>시연 장면 화면 녹화(시드 → 점심 기록 → 3/3 폭죽·스탬프·연속 11일)</li></ul>
+<h3>제출 방법</h3>
+<ol>
+<li>프로젝트 폴더에서 <b><code>src</code> 폴더, <code>docs</code> 폴더, <code>package.json</code></b> 세 가지만 선택합니다.</li>
+<li>마우스 오른쪽 버튼 → <b>압축(ZIP)</b>. 파일 이름은 <code>이름_중간</code> 또는 <code>이름_최종</code>(예: <code>홍현정_최종.zip</code>).</li>
+<li>시연 장면 화면 녹화 영상과 함께 멘토에게 전달합니다.</li>
+</ol>
+<p class="muted"><code>node_modules</code> 폴더는 넣지 않습니다(용량이 매우 크고, 멘토가 다시 설치합니다).</p>
+</div>
+<h3>일정</h3>
+<div class="tbl"><table><thead><tr><th>기간</th><th>단계</th><th>할 일</th></tr></thead><tbody><tr><td>1~2일차</td><td>준비</td><td>킷 설치·실행, 문서 읽기, Gemini 키 입력, 궁금한 점 질문</td></tr><tr><td>3~5일차</td><td>핵심 로직</td><td>P0 핵심 로직과 로컬 저장소</td></tr><tr><td>5일차 끝</td><td><b>중간 제출</b></td><td>src·docs·package.json 압축해 전달</td></tr><tr><td>6~9일차</td><td>화면과 연출</td><td>나머지 P0 기능, 개발 도구, 시연 장면 녹화</td></tr><tr><td>10일차 끝</td><td><b>최종 제출</b></td><td>제출 전 점검표 확인 후 압축해 전달</td></tr><tr><td>11~13일차</td><td>통합</td><td>멘토 요청 시 자기 앱에서 버그 수정 후 재제출</td></tr><tr><td>14~15일차</td><td>리허설</td><td>시연 리허설 참여</td></tr></tbody></table></div>
+
+<h2><span class="no">10</span>통합 때 바뀌는 것 / 바뀌지 않는 것</h2>
+<div class="tbl"><table><thead><tr><th>항목</th><th>통합 때</th></tr></thead><tbody><tr><td><code>src/features/mission/</code>, <code>reward/</code></td><td>그대로 사용(바뀌지 않음)</td></tr><tr><td><code>src/data/index.ts</code></td><td>멘토가 같은 함수 이름의 Supabase 버전으로 교체</td></tr><tr><td>개발 도구의 시연 시드</td><td>통합 앱에서는 멘토가 DB 초기화 SQL(reset-demo.sql)로 같은 상태를 만듦. 시드 내용(10일 연속, 오늘 2/3)을 맞춰 둘 것</td></tr><tr><td><code>src/app/</code> 테스트 화면</td><td>사용하지 않음. 멘토가 오늘·달력 화면에 컴포넌트 배치</td></tr></tbody></table></div>
+
+</main>
+
+</body>
+</html>

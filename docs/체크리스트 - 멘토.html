@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>멘토 체크리스트</title>
+<style>
+:root{--paper:#EEF2EC;--surface:#FFFFFF;--ink:#16221C;--muted:#55655C;--line:#D3DCD5;--track:#E1E8E2;--forest:#2D6A4E;--on-forest:#FFFFFF;--mint:#DCEDE2;--marigold:#F2B33A;--on-marigold:#3B2905;--a:#2D6A4E;--b:#B7791F;--m:#4A5A8A;
+--serif:"Hahmlet","AppleMyungjo","Nanum Myeongjo","Batang",serif;--sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:880px;margin-inline:auto;padding:clamp(32px,6vw,64px) 16px 64px}
+.kicker{margin:0 0 8px;color:var(--muted);font-size:.92rem;font-weight:500}
+h1{margin:0;font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,5.5vw,2.7rem);line-height:1.18;letter-spacing:-.02em}
+.sub-title{margin:10px 0 0;font-size:1.05rem}
+h2{margin:44px 0 12px;font-family:var(--serif);font-size:1.35rem;line-height:1.35}
+h2 .no{color:var(--muted);font-weight:500;margin-right:.35em}
+h3{margin:22px 0 8px;font-size:1.02rem}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin-top:20px;font-size:.92rem}
+.meta dt{color:var(--muted)}.meta dd{margin:0}
+.tbl{width:100%;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line)}
+thead th{border-top:0;background:var(--mint);font-weight:600;white-space:nowrap}
+td.id{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.pri{display:inline-block;border-radius:999px;padding:0 9px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.P0{background:var(--forest);color:var(--on-forest)}.P1{background:var(--marigold);color:var(--on-marigold)}.P2{background:var(--track);color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86em;background:var(--mint);border-radius:5px;padding:1px 5px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0}
+ul,ol{margin:0 0 10px;padding-left:20px}li{margin:3px 0}
+.note{background:var(--mint);border-radius:14px;padding:14px 18px;font-size:.93rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.app{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:16px;padding:16px 18px}
+.app h3{margin:0 0 4px}.app .who{color:var(--muted);font-size:.88rem;margin-bottom:8px}
+.app ul{font-size:.9rem}
+.arrow{text-align:center;color:var(--muted);font-size:.9rem;margin:10px 0}
+/* checklist */
+.progress{position:sticky;top:0;z-index:2;margin:28px -16px 0;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{height:10px;border-radius:999px;background:var(--track);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--forest);transition:width .3s}
+.ptext{display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ptext button{border:0;background:none;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+ul.tasks{list-style:none;margin:0;padding:0}
+ul.tasks>li{border-top:1px solid var(--line);margin:0}ul.tasks>li:first-child{border-top:0}
+label.task{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;padding:12px 0;cursor:pointer}
+label.task input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:2px 0 0;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+label.task input:checked{background:var(--forest);border-color:var(--forest)}
+label.task input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-forest);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+label.task input:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+label.task:has(input:checked) .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.tag{display:inline-block;margin-left:6px;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.75rem;color:var(--muted);font-weight:600;vertical-align:1px}
+ul.subs{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.done{background:var(--mint);border-color:transparent}
+.done strong{display:block;margin-bottom:4px;font-size:.85rem;color:var(--forest)}
+footer{margin-top:40px;font-size:.8rem;color:var(--muted)}
+@media print{.progress{position:static}.ptext button{display:none}}
+</style>
+</head>
+<body data-who="멘토">
+<main class="wrap">
+
+<p class="kicker">핏로그 (FitLog AI) · 체크리스트</p>
+<h1>멘토</h1>
+<p class="sub-title">통합 앱 · <code>team5</code></p>
+<div class="progress"><div class="bar"><span id="bar"></span></div><div class="ptext"><span id="count"></span><button type="button" id="reset">체크 초기화</button></div></div>
+<p class="muted" style="margin-top:20px">항목 옆 태그(A-F01 등)는 요구사항 정의서의 ID입니다. 자세한 완료 기준은 정의서를 보세요.</p>
+<h2>배포 전</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c1"><span><span class="t">스타터 킷 <code>fitlog-input.zip</code>(홍현정), <code>fitlog-mission.zip</code>(이미경) 전달</span></span></label></li><li><label class="task"><input type="checkbox" id="c2"><span><span class="t">문서 전달: 기획안, 전체 구성, 각자의 요구사항 정의서와 체크리스트</span></span></label></li><li><label class="task"><input type="checkbox" id="c3"><span><span class="t">결정하기: 시연 휴대폰(iPhone/Android), 시작일·발표일</span></span></label></li></ul></div><h2>1~2일차 · 준비</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c4"><span><span class="t">두 사람의 설치를 함께 진행(Node.js 24, VS Code, Claude Code, Expo Go)</span></span></label></li><li><label class="task"><input type="checkbox" id="c5"><span><span class="t">두 사람 모두 Expo Go에서 킷 홈 화면이 뜨는 것 확인</span></span></label></li><li><label class="task"><input type="checkbox" id="c6"><span><span class="t">요구사항 정의서를 함께 읽고 질문 받기, 2일차 끝에 범위 확정</span></span></label></li></ul></div><h2>5일차 · 중간 제출 받기</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c7"><span><span class="t">받은 ZIP의 <code>src/shared</code>가 원본과 같은지 확인(다르면 원인 확인 후 되돌리게 함)</span></span></label></li><li><label class="task"><input type="checkbox" id="c8"><span><span class="t"><code>src/features/*</code>를 통합 앱에 복사해 미리 띄워 보기</span><ul class="subs"><li>import 경로, 컴포넌트 이름, 저장소 함수 이름이 약속대로인지</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c9"><span><span class="t">홍현정님 단백질 5회 측정값으로 시연 목표값 확정 → 두 사람에게 공유</span></span></label></li><li><label class="task"><input type="checkbox" id="c10"><span><span class="t">피드백 전달(약속 위반, 일정 조정)</span></span></label></li></ul></div><h2>11~13일차 · 통합</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c11"><span><span class="t">두 사람의 <code>docs/추가 패키지.md</code>를 보고 통합 앱에 같은 패키지 설치(<code>npx expo install</code>)</span></span></label></li><li><label class="task"><input type="checkbox" id="c12"><span><span class="t"><code>src/features/input</code>, <code>mission</code>, <code>reward</code>를 통합 앱에 복사</span></span></label></li><li><label class="task"><input type="checkbox" id="c13"><span><span class="t"><code>src/data/index.ts</code>를 Supabase 버전으로 작성(RecordsRepo, MissionsRepo 같은 함수 이름)</span><ul class="subs"><li>records, daily_missions 테이블과 v_day_status 뷰 사용</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c14"><span><span class="t">오늘 화면에 InputPanel·MissionCards·Timeline, 달력 화면에 RewardCalendar 배치</span></span></label></li><li><label class="task"><input type="checkbox" id="c15"><span><span class="t">lint, typecheck, test 통과 확인</span></span></label></li><li><label class="task"><input type="checkbox" id="c16"><span><span class="t">reset-demo.sql의 시드를 미션 앱 개발 도구 시드와 맞추기(10일 연속, 오늘 2/3, 단백질 목표값)</span></span></label></li></ul></div><h2>14~15일차 · 리허설</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c17"><span><span class="t">시연 휴대폰에서 reset-demo.sql 실행 → 3분 시나리오 2회 연속 성공</span></span></label></li><li><label class="task"><input type="checkbox" id="c18"><span><span class="t">Gemini 키 입력 상태, 네트워크(핫스팟), 녹화 백업 영상 확인</span></span></label></li><li><label class="task"><input type="checkbox" id="c19"><span><span class="t">리허설 이후 코드 동결(버그 수정만)</span></span></label></li></ul></div>
+<h2>최종 완료 기준</h2>
+<div class="card done"><strong>이 상태면 완료</strong>통합 앱에서 음성 입력 → 타임라인 → 단백질 미션 성공 폭죽 → 달력 스탬프·연속 11일이 시연 휴대폰에서 2회 연속 성공</div>
+<footer>체크 표시는 이 브라우저에만 저장됩니다.</footer>
+
+</main>
+<script>
+(function(){
+  var key='fitlog-checklist:'+document.body.dataset.who, saved={};
+  try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]'));
+  function update(){
+    var n=boxes.filter(function(b){return b.checked}).length;
+    document.getElementById('bar').style.width=(n/boxes.length*100)+'%';
+    document.getElementById('count').textContent=n+' / '+boxes.length+' 완료';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!saved[b.id];
+    b.addEventListener('change',function(){saved[b.id]=b.checked;try{localStorage.setItem(key,JSON.stringify(saved))}catch(e){}update()});
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('체크 표시를 모두 지울까요?'))return;
+    boxes.forEach(function(b){b.checked=false});saved={};try{localStorage.removeItem(key)}catch(e){}update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>

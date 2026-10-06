@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이미경 체크리스트</title>
+<style>
+:root{--paper:#EEF2EC;--surface:#FFFFFF;--ink:#16221C;--muted:#55655C;--line:#D3DCD5;--track:#E1E8E2;--forest:#2D6A4E;--on-forest:#FFFFFF;--mint:#DCEDE2;--marigold:#F2B33A;--on-marigold:#3B2905;--a:#2D6A4E;--b:#B7791F;--m:#4A5A8A;
+--serif:"Hahmlet","AppleMyungjo","Nanum Myeongjo","Batang",serif;--sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:880px;margin-inline:auto;padding:clamp(32px,6vw,64px) 16px 64px}
+.kicker{margin:0 0 8px;color:var(--muted);font-size:.92rem;font-weight:500}
+h1{margin:0;font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,5.5vw,2.7rem);line-height:1.18;letter-spacing:-.02em}
+.sub-title{margin:10px 0 0;font-size:1.05rem}
+h2{margin:44px 0 12px;font-family:var(--serif);font-size:1.35rem;line-height:1.35}
+h2 .no{color:var(--muted);font-weight:500;margin-right:.35em}
+h3{margin:22px 0 8px;font-size:1.02rem}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin-top:20px;font-size:.92rem}
+.meta dt{color:var(--muted)}.meta dd{margin:0}
+.tbl{width:100%;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line)}
+thead th{border-top:0;background:var(--mint);font-weight:600;white-space:nowrap}
+td.id{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.pri{display:inline-block;border-radius:999px;padding:0 9px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.P0{background:var(--forest);color:var(--on-forest)}.P1{background:var(--marigold);color:var(--on-marigold)}.P2{background:var(--track);color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86em;background:var(--mint);border-radius:5px;padding:1px 5px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0}
+ul,ol{margin:0 0 10px;padding-left:20px}li{margin:3px 0}
+.note{background:var(--mint);border-radius:14px;padding:14px 18px;font-size:.93rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.app{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:16px;padding:16px 18px}
+.app h3{margin:0 0 4px}.app .who{color:var(--muted);font-size:.88rem;margin-bottom:8px}
+.app ul{font-size:.9rem}
+.arrow{text-align:center;color:var(--muted);font-size:.9rem;margin:10px 0}
+/* checklist */
+.progress{position:sticky;top:0;z-index:2;margin:28px -16px 0;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{height:10px;border-radius:999px;background:var(--track);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--forest);transition:width .3s}
+.ptext{display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ptext button{border:0;background:none;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+ul.tasks{list-style:none;margin:0;padding:0}
+ul.tasks>li{border-top:1px solid var(--line);margin:0}ul.tasks>li:first-child{border-top:0}
+label.task{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;padding:12px 0;cursor:pointer}
+label.task input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:2px 0 0;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+label.task input:checked{background:var(--forest);border-color:var(--forest)}
+label.task input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-forest);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+label.task input:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+label.task:has(input:checked) .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.tag{display:inline-block;margin-left:6px;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.75rem;color:var(--muted);font-weight:600;vertical-align:1px}
+ul.subs{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.done{background:var(--mint);border-color:transparent}
+.done strong{display:block;margin-bottom:4px;font-size:.85rem;color:var(--forest)}
+footer{margin-top:40px;font-size:.8rem;color:var(--muted)}
+@media print{.progress{position:static}.ptext button{display:none}}
+</style>
+</head>
+<body data-who="이미경">
+<main class="wrap">
+
+<p class="kicker">핏로그 (FitLog AI) · 체크리스트</p>
+<h1>이미경</h1>
+<p class="sub-title">B 미션 앱 · <code>fitlog-mission</code></p>
+<div class="progress"><div class="bar"><span id="bar"></span></div><div class="ptext"><span id="count"></span><button type="button" id="reset">체크 초기화</button></div></div>
+<p class="muted" style="margin-top:20px">항목 옆 태그(A-F01 등)는 요구사항 정의서의 ID입니다. 자세한 완료 기준은 정의서를 보세요.</p>
+<h2>1~2일차 · 준비</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c1"><span><span class="t">스타터 킷 압축 풀기 → <code>npm install</code> → <code>npx expo start</code> → Expo Go에서 홈 화면 확인</span></span></label></li><li><label class="task"><input type="checkbox" id="c2"><span><span class="t">기획안, 전체 구성, 요구사항 정의서(B) 읽기</span></span></label></li><li><label class="task"><input type="checkbox" id="c3"><span><span class="t"><code>CLAUDE.md</code>, <code>src/shared/README.md</code>, <code>contract.ts</code>, <code>mocks/demo.ts</code> 읽기</span><ul class="subs"><li>모르는 부분은 Claude Code에게 설명 요청</li></ul></span></label></li></ul></div><h2>3~5일차 · 핵심 로직</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c4"><span><span class="t">미션 카탈로그 4종 정의</span><span class="tag">B-F01</span></span></label></li><li><label class="task"><input type="checkbox" id="c5"><span><span class="t">판정 함수 <code>evaluateMissions</code> + 테스트</span><span class="tag">B-F02</span><ul class="subs"><li>아침만 → 진행 중, 점심 추가 → 성공</li><li>기록 삭제 → 다시 진행 중</li><li>물·스쿼트·걸음 수 미달/도달</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c6"><span><span class="t">스트릭 계산 함수 + 테스트</span><span class="tag">B-F09</span><ul class="subs"><li>오늘 미완료 → 어제까지</li><li>중간 하루 끊김</li><li>오늘 완수</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c7"><span><span class="t">로컬 저장소 <code>recordsRepo</code>, <code>missionsRepo</code> 구현 + 테스트</span><span class="tag">B-F04</span><ul class="subs"><li>assignIfEmpty가 중복을 만들지 않는지</li><li>listDayStatus가 날짜별 성공 수를 맞게 세는지</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c8"><span><span class="t">오늘의 미션 고정 세트 배정</span><span class="tag">B-F03</span></span></label></li><li><label class="task"><input type="checkbox" id="c9"><span><span class="t"><b>5일차 중간 제출</b>: src·docs·package.json 압축해 전달</span></span></label></li></ul></div><h2>6~9일차 · 화면과 연출</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c10"><span><span class="t">개발 도구 화면(시연 시드, 점심 기록+이벤트, 초기화, JSON 보기)</span><span class="tag">B-F10</span></span></label></li><li><label class="task"><input type="checkbox" id="c11"><span><span class="t"><code>MissionCards</code>: 카드 3개, 진행률, “n/3 완료”</span><span class="tag">B-F06</span></span></label></li><li><label class="task"><input type="checkbox" id="c12"><span><span class="t"><code>onRecordsChanged</code> 구독 → 재판정 → 1초 안에 카드 갱신</span><span class="tag">B-F05</span></span></label></li><li><label class="task"><input type="checkbox" id="c13"><span><span class="t">성공 연출(폭죽 1회, 반복 방지)</span><span class="tag">B-F07</span><ul class="subs"><li>애니메이션 라이브러리는 Expo Go 동작 여부를 멘토에게 먼저 확인</li></ul></span></label></li><li><label class="task"><input type="checkbox" id="c14"><span><span class="t"><code>RewardCalendar</code>: 링(0~3), 완수 스탬프, 연속 n일 표시</span><span class="tag">B-F08</span></span></label></li><li><label class="task"><input type="checkbox" id="c15"><span><span class="t">여유가 있으면: AI 1줄 코칭</span><span class="tag">B-F11</span></span></label></li><li><label class="task"><input type="checkbox" id="c16"><span><span class="t">여유가 있으면: 배지</span><span class="tag">B-F12</span></span></label></li></ul></div><h2>10일차 · 최종 제출 전 점검</h2><div class="card"><ul class="tasks"><li><label class="task"><input type="checkbox" id="c17"><span><span class="t"><code>src/shared</code>를 수정하지 않았다</span><span class="tag">NFR-04</span></span></label></li><li><label class="task"><input type="checkbox" id="c18"><span><span class="t">기능 코드는 <code>src/features/mission</code>, <code>reward</code>에만 있고, AsyncStorage는 <code>src/data</code>에서만 부른다</span><span class="tag">NFR-04</span></span></label></li><li><label class="task"><input type="checkbox" id="c19"><span><span class="t"><code>MissionCards</code>, <code>RewardCalendar</code> 이름·props가 약속과 같다</span><span class="tag">NFR-04</span></span></label></li><li><label class="task"><input type="checkbox" id="c20"><span><span class="t">추가한 패키지를 <code>docs/추가 패키지.md</code>에 모두 적었다</span></span></label></li><li><label class="task"><input type="checkbox" id="c21"><span><span class="t"><code>npm run lint</code>, <code>npm run typecheck</code>, <code>npm test</code> 모두 통과</span><span class="tag">NFR-05</span></span></label></li><li><label class="task"><input type="checkbox" id="c22"><span><span class="t">시연 장면 화면 녹화(시드 → 점심 기록 → 3/3 폭죽·스탬프·연속 11일)</span></span></label></li><li><label class="task"><input type="checkbox" id="c23"><span><span class="t"><b>최종 제출</b>: src·docs·package.json 압축 + 녹화 전달</span></span></label></li></ul></div>
+<h2>최종 완료 기준</h2>
+<div class="card done"><strong>이 상태면 완료</strong>개발 도구로 시드를 넣고 점심 기록 버튼을 누르면 2/3 → 3/3, 폭죽 1회, 오늘 칸 스탬프, 연속 11일이 이어지고, 판정·스트릭 테스트가 통과함</div>
+<footer>체크 표시는 이 브라우저에만 저장됩니다.</footer>
+
+</main>
+<script>
+(function(){
+  var key='fitlog-checklist:'+document.body.dataset.who, saved={};
+  try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]'));
+  function update(){
+    var n=boxes.filter(function(b){return b.checked}).length;
+    document.getElementById('bar').style.width=(n/boxes.length*100)+'%';
+    document.getElementById('count').textContent=n+' / '+boxes.length+' 완료';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!saved[b.id];
+    b.addEventListener('change',function(){saved[b.id]=b.checked;try{localStorage.setItem(key,JSON.stringify(saved))}catch(e){}update()});
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('체크 표시를 모두 지울까요?'))return;
+    boxes.forEach(function(b){b.checked=false});saved={};try{localStorage.removeItem(key)}catch(e){}update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>

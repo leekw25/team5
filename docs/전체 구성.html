@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>핏로그 전체 구성</title>
+<style>
+:root{--paper:#EEF2EC;--surface:#FFFFFF;--ink:#16221C;--muted:#55655C;--line:#D3DCD5;--track:#E1E8E2;--forest:#2D6A4E;--on-forest:#FFFFFF;--mint:#DCEDE2;--marigold:#F2B33A;--on-marigold:#3B2905;--a:#2D6A4E;--b:#B7791F;--m:#4A5A8A;
+--serif:"Hahmlet","AppleMyungjo","Nanum Myeongjo","Batang",serif;--sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;--forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;--a:#7CC9A0;--b:#E8B04F;--m:#9DB0E6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:880px;margin-inline:auto;padding:clamp(32px,6vw,64px) 16px 64px}
+.kicker{margin:0 0 8px;color:var(--muted);font-size:.92rem;font-weight:500}
+h1{margin:0;font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,5.5vw,2.7rem);line-height:1.18;letter-spacing:-.02em}
+.sub-title{margin:10px 0 0;font-size:1.05rem}
+h2{margin:44px 0 12px;font-family:var(--serif);font-size:1.35rem;line-height:1.35}
+h2 .no{color:var(--muted);font-weight:500;margin-right:.35em}
+h3{margin:22px 0 8px;font-size:1.02rem}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin-top:20px;font-size:.92rem}
+.meta dt{color:var(--muted)}.meta dd{margin:0}
+.tbl{width:100%;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line)}
+thead th{border-top:0;background:var(--mint);font-weight:600;white-space:nowrap}
+td.id{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.pri{display:inline-block;border-radius:999px;padding:0 9px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.P0{background:var(--forest);color:var(--on-forest)}.P1{background:var(--marigold);color:var(--on-marigold)}.P2{background:var(--track);color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86em;background:var(--mint);border-radius:5px;padding:1px 5px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.55}
+pre code{background:none;padding:0}
+ul,ol{margin:0 0 10px;padding-left:20px}li{margin:3px 0}
+.note{background:var(--mint);border-radius:14px;padding:14px 18px;font-size:.93rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.app{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:16px;padding:16px 18px}
+.app h3{margin:0 0 4px}.app .who{color:var(--muted);font-size:.88rem;margin-bottom:8px}
+.app ul{font-size:.9rem}
+.arrow{text-align:center;color:var(--muted);font-size:.9rem;margin:10px 0}
+/* checklist */
+.progress{position:sticky;top:0;z-index:2;margin:28px -16px 0;padding:12px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar{height:10px;border-radius:999px;background:var(--track);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--forest);transition:width .3s}
+.ptext{display:flex;justify-content:space-between;margin-top:6px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ptext button{border:0;background:none;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+ul.tasks{list-style:none;margin:0;padding:0}
+ul.tasks>li{border-top:1px solid var(--line);margin:0}ul.tasks>li:first-child{border-top:0}
+label.task{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;padding:12px 0;cursor:pointer}
+label.task input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:2px 0 0;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+label.task input:checked{background:var(--forest);border-color:var(--forest)}
+label.task input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-forest);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+label.task input:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+label.task:has(input:checked) .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.tag{display:inline-block;margin-left:6px;border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.75rem;color:var(--muted);font-weight:600;vertical-align:1px}
+ul.subs{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.done{background:var(--mint);border-color:transparent}
+.done strong{display:block;margin-bottom:4px;font-size:.85rem;color:var(--forest)}
+footer{margin-top:40px;font-size:.8rem;color:var(--muted)}
+@media print{.progress{position:static}.ptext button{display:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<p class="kicker">핏로그 (FitLog AI) · 개발 운영 문서 · 2026-10-06</p>
+<h1>전체 구성</h1>
+<p class="sub-title">두 개발자가 각자 별도 앱을 만들고, 멘토가 하나로 합칩니다.</p>
+
+<h2><span class="no">1</span>한눈에 보기</h2>
+<div class="apps">
+  <div class="app" style="--c:var(--a)"><h3>입력 앱 (A)</h3><div class="who">홍현정 · <code>fitlog-input</code></div>
+    <ul><li>말·글을 Gemini로 기록으로 바꿈</li><li>오늘 타임라인</li><li>로컬 JSON 저장</li></ul></div>
+  <div class="app" style="--c:var(--b)"><h3>미션 앱 (B)</h3><div class="who">이미경 · <code>fitlog-mission</code></div>
+    <ul><li>기록으로 미션 성공 판정</li><li>폭죽 연출, 리워드 달력, 스트릭</li><li>로컬 JSON 저장</li></ul></div>
+</div>
+<p class="arrow">↓ 10일차 최종 제출(ZIP) → 멘토가 합침</p>
+<div class="apps">
+  <div class="app" style="--c:var(--m)"><h3>통합 앱</h3><div class="who">멘토 · <code>team5</code></div>
+    <ul><li>두 앱의 기능 폴더를 그대로 가져옴</li><li>로컬 저장소 → Supabase로 교체</li><li>오늘·달력 화면 조립, 시연</li></ul></div>
+</div>
+
+<h2><span class="no">2</span>왜 합칠 수 있나: 세 가지 약속</h2>
+<div class="card">
+<ol>
+<li><b>같은 공유 폴더</b> — 두 앱의 <code>src/shared</code>는 글자 하나까지 똑같습니다(데이터 모양, 날짜 계산, 이벤트, Gemini 호출). 개발자는 이 폴더를 수정하지 않습니다.</li>
+<li><b>같은 저장소 함수</b> — 데이터는 <code>src/data</code>의 <code>recordsRepo</code>, <code>missionsRepo</code>로만 읽고 씁니다. 지금은 개발자가 휴대폰 로컬 저장소(JSON)로 구현하고, 통합 때 멘토가 이 파일만 Supabase 버전으로 바꿉니다. 기능 코드는 한 줄도 안 바뀝니다.</li>
+<li><b>정해진 폴더와 컴포넌트 이름</b> — 기능 코드는 자기 기능 폴더에만 두고, 약속된 컴포넌트(<code>InputPanel</code>, <code>Timeline</code>, <code>MissionCards</code>, <code>RewardCalendar</code>)를 export합니다. 멘토는 폴더를 복사해 화면에 배치하기만 하면 됩니다.</li>
+</ol>
+</div>
+
+<h2><span class="no">3</span>폴더 구조와 담당</h2>
+<div class="tbl"><table><thead><tr><th>경로</th><th>입력 앱 (A)</th><th>미션 앱 (B)</th><th>통합 때</th></tr></thead><tbody><tr><td><code>src/features/input/</code></td><td><b>홍현정 작성</b></td><td>—</td><td>그대로 복사</td></tr><tr><td><code>src/features/mission/</code>, <code>reward/</code></td><td>—</td><td><b>이미경 작성</b></td><td>그대로 복사</td></tr><tr><td><code>src/data/index.ts</code></td><td><b>홍현정 작성</b>(records)</td><td><b>이미경 작성</b>(records, missions)</td><td>멘토가 Supabase 버전으로 교체</td></tr><tr><td><code>src/shared/</code></td><td>수정 금지</td><td>수정 금지</td><td>통합 앱 것을 사용</td></tr><tr><td><code>src/app/</code></td><td>테스트 화면(자유)</td><td>테스트 화면(자유)</td><td>버림, 멘토 화면 사용</td></tr><tr><td><code>docs/추가 패키지.md</code></td><td>추가한 패키지 기록</td><td>추가한 패키지 기록</td><td>멘토가 같은 패키지 설치</td></tr></tbody></table></div>
+
+<h2><span class="no">4</span>데이터 흐름</h2>
+<div class="card">
+<p><b>통합 후:</b> 홍현정님 입력 → <code>recordsRepo.insertMany</code> → <code>emitRecordsChanged</code> 이벤트 → 이미경님 미션 카드가 이벤트를 받아 그날 기록 전체로 재판정 → <code>missionsRepo.update</code> → 폭죽·스탬프.</p>
+<p><b>개발 중(앱이 따로일 때):</b> 미션 앱에는 입력 기능이 없으므로, 이미경님은 개발 도구 버튼으로 목업 기록(<code>src/shared/mocks/demo.ts</code>)을 저장하고 이벤트를 직접 보내 같은 상황을 흉내 냅니다.</p>
+<p class="muted">로컬 저장 키: <code>fitlog:records</code>, <code>fitlog:daily_missions</code>. 값은 JSON 배열이고 필드 이름은 DB 열 이름과 같습니다.</p>
+</div>
+
+<h2><span class="no">5</span>일정 (15 작업일)</h2>
+<div class="tbl"><table><thead><tr><th>기간</th><th>단계</th><th>개발자</th><th>멘토</th></tr></thead><tbody><tr><td>1~2일차</td><td>준비</td><td>킷 설치·실행, 문서 읽기, Gemini 키 입력, 궁금한 점 질문</td><td>킷 배포, 설치 지원, 결정 사항 확정</td></tr><tr><td>3~5일차</td><td>핵심 로직</td><td>P0 핵심 로직과 로컬 저장소</td><td>매일 진행 확인, 막힌 곳 지원</td></tr><tr><td>5일차 끝</td><td><b>중간 제출</b></td><td>src·docs·package.json 압축해 전달</td><td>통합 앱에 미리 합쳐 보고 약속 위반 피드백</td></tr><tr><td>6~9일차</td><td>화면과 연출</td><td>나머지 P0 기능, 개발 도구, 시연 장면 녹화</td><td>중간 통합 결과 공유, 단백질 목표값 확정</td></tr><tr><td>10일차 끝</td><td><b>최종 제출</b></td><td>제출 전 점검표 확인 후 압축해 전달</td><td>통합 시작</td></tr><tr><td>11~13일차</td><td>통합</td><td>멘토 요청 시 자기 앱에서 버그 수정 후 재제출</td><td>폴더 합치기, Supabase 연동, 화면 조립</td></tr><tr><td>14~15일차</td><td>리허설</td><td>시연 리허설 참여</td><td>시연 데이터 초기화, 3분 시나리오 2회 연속 성공</td></tr></tbody></table></div>
+
+<h2><span class="no">6</span>제출 방법 (5일차 중간, 10일차 최종)</h2>
+<div class="card"><ol>
+<li>프로젝트 폴더에서 <b><code>src</code> 폴더, <code>docs</code> 폴더, <code>package.json</code></b> 세 가지만 선택합니다.</li>
+<li>마우스 오른쪽 버튼 → <b>압축(ZIP)</b>. 파일 이름은 <code>이름_중간</code> 또는 <code>이름_최종</code>(예: <code>홍현정_최종.zip</code>).</li>
+<li>시연 장면 화면 녹화 영상과 함께 멘토에게 전달합니다.</li>
+</ol>
+<p class="muted"><code>node_modules</code> 폴더는 넣지 않습니다(용량이 매우 크고, 멘토가 다시 설치합니다).</p></div>
+
+<h2><span class="no">7</span>공통 규칙</h2>
+<div class="card"><ul>
+<li>Expo Go에서 동작하는 패키지만 씁니다. 추가는 <code>npx expo install</code>로 하고 <code>docs/추가 패키지.md</code>에 기록합니다.</li>
+<li>Gemini API 키는 코드·파일·메신저에 남기지 않고, 앱 설정 화면에만 입력합니다.</li>
+<li>판정·계산 로직은 화면과 분리한 순수 함수로 만들고 테스트를 함께 씁니다.</li>
+<li>매일 끝날 때 단톡방에 “오늘 한 것 / 막힌 것” 한 줄 공유. 30분 넘게 막히면 바로 멘토에게.</li>
+<li><code>src/shared</code>를 바꿔야 할 것 같으면 고치지 말고 멘토에게 먼저 말합니다. 멘토가 두 앱에 똑같이 반영해 다시 보냅니다.</li>
+</ul></div>
+
+<h2><span class="no">8</span>문서 목록</h2>
+<div class="tbl"><table><thead><tr><th>문서</th><th>대상</th></tr></thead><tbody><tr><td>핏로그 (FitLog AI) 기획안</td><td>전원</td></tr><tr><td>전체 구성(이 문서)</td><td>전원</td></tr><tr><td>요구사항 정의서 - A 입력 앱</td><td>홍현정, 멘토</td></tr><tr><td>요구사항 정의서 - B 미션 앱</td><td>이미경, 멘토</td></tr><tr><td>체크리스트 - 홍현정 / 이미경 / 멘토</td><td>각자</td></tr><tr><td>스타터 킷 <code>fitlog-input.zip</code> / <code>fitlog-mission.zip</code></td><td>각자</td></tr></tbody></table></div>
+
+</main>
+
+</body>
+</html>

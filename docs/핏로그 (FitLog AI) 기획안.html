@@ -327,7 +327,7 @@ td.rank{font-weight:600;font-variant-numeric:tabular-nums}
       <div>
         <h3>① 초간편 AI 기록</h3>
         <p><span class="inline-label">음성·텍스트 자유 입력</span>평소 말하듯 음성이나 텍스트로 입력하면 AI가 음식명, 칼로리, 영양소, 운동 부위, 소모 칼로리를 자동으로 파싱해 기록합니다.</p>
-        <p><span class="inline-label">사진 한 장 식단 분석</span>음식 사진을 찍으면 GPT-4o Vision이 메뉴를 인식하고 예상 영양 성분 비율(탄·단·지)을 자동 산출합니다.</p>
+        <p><span class="inline-label">사진 한 장 식단 분석</span>음식 사진을 찍으면 Gemini가 메뉴를 인식하고 예상 영양 성분 비율(탄·단·지)을 자동 산출합니다.</p>
       </div>
       <div class="parse" aria-label="음성 입력 파싱 예시">
         <span class="say">“점심에 제육볶음 반 공기랑 된장찌개 먹었어”</span>
@@ -378,7 +378,7 @@ td.rank{font-weight:600;font-variant-numeric:tabular-nums}
           <div class="phone"><div class="scr">
             <div class="p-head"><b>오늘</b><span>미션 1/3 완료</span></div>
             <ul class="p-missions">
-              <li class="done"><span class="pc">식단</span><span>탄산음료 안 마시기</span><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></li>
+              <li class="done"><span class="pc">식단</span><span>가당 음료 안 마시기</span><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></li>
               <li><span class="pc">생활</span><span>물 1.5L 마시기</span><span class="ck"></span></li>
               <li><span class="pc">운동</span><span>7,000보 걸어보기</span><span class="ck"></span></li>
             </ul>
@@ -466,18 +466,17 @@ td.rank{font-weight:600;font-variant-numeric:tabular-nums}
     <div class="stack">
       <div class="row">
         <h3>Frontend</h3>
-        <div><p class="pick">React Native (Expo) 또는 Flutter</p><p class="desc">빠른 UI 구성과 애니메이션 연동</p></div>
+        <div><p class="pick">React Native (Expo)</p><p class="desc">빠른 UI 구성과 애니메이션 연동</p></div>
       </div>
       <div class="row">
         <h3>Backend &amp; DB</h3>
-        <div><p class="pick">Supabase 또는 Firebase</p><p class="desc">소셜 로그인과 노코드에 가까운 데이터베이스 처리</p></div>
+        <div><p class="pick">Supabase</p><p class="desc">로그인과 노코드에 가까운 데이터베이스 처리, 행 단위 보안(RLS)</p></div>
       </div>
       <div class="row">
         <h3>AI API</h3>
         <dl class="api">
-          <dt>OpenAI API (GPT-4o / GPT-4o-mini)</dt><dd>자연어 텍스트와 음성 변환 텍스트 파싱, 오늘의 미션 생성, 1줄 피드백 작성</dd>
-          <dt>GPT-4o Vision</dt><dd>식단 이미지 분석</dd>
-          <dt>Whisper API</dt><dd>음성 입력을 텍스트로 실시간 변환</dd>
+          <dt>Google Gemini API (gemini-3.5-flash-lite)</dt><dd>음성·텍스트·사진을 한 번의 호출로 인식하고 구조화(JSON), 1줄 코칭 작성</dd>
+          <dt>API 키 직접 입력</dt><dd>키는 코드에 넣지 않고 앱 설정 화면에서 입력해 휴대폰에만 저장</dd>
         </dl>
       </div>
     </div>
@@ -485,9 +484,9 @@ td.rank{font-weight:600;font-variant-numeric:tabular-nums}
     <h3 class="sub">기록이 스탬프가 되기까지</h3>
     <ol class="flow">
       <li><b>입력</b><span>음성 또는 사진</span></li>
-      <li><b>인식</b><span>Whisper가 음성을 텍스트로, Vision이 사진을 메뉴로</span></li>
-      <li><b>파싱</b><span>GPT-4o가 음식·운동, 칼로리, 영양소로 구조화</span></li>
-      <li><b>저장</b><span>Supabase 또는 Firebase</span></li>
+      <li><b>인식</b><span>Gemini가 음성·사진을 바로 이해</span></li>
+      <li><b>파싱</b><span>같은 호출에서 음식·운동, 칼로리, 영양소로 구조화</span></li>
+      <li><b>저장</b><span>Supabase</span></li>
       <li><b>판정</b><span>오늘의 미션 성공 여부 자동 체크</span></li>
       <li><b>리워드</b><span>달력 스탬프와 1줄 코칭</span></li>
     </ol>
@@ -532,8 +531,8 @@ td.rank{font-weight:600;font-variant-numeric:tabular-nums}
         <div class="t">1:30–2:30</div>
         <div>
           <h3>시연 2. 미션 자동 성공과 달력 리워드</h3>
-          <p>음성 입력 결과에 따라 ‘오늘 탄산음료 안 마시기’ 또는 ‘칼로리 목표 달성’ 미션 카드가 성공으로 바뀌며 폭죽 애니메이션이 나옵니다.</p>
-          <p class="result"><strong>결과</strong>메인 화면의 오늘 날짜 달력 칸이 캐릭터 스탬프로 채워집니다.</p>
+          <p>물·스쿼트 미션은 이미 달성(2/3)한 상태입니다. 점심 입력으로 단백질이 채워지면 ‘단백질 채우기’ 미션 카드가 성공으로 바뀌며 폭죽 애니메이션이 나옵니다.</p>
+          <p class="result"><strong>결과</strong>3/3 완수로 오늘 날짜 달력 칸이 스탬프로 채워지고 연속 달성이 11일로 늘어납니다.</p>
         </div>
       </li>
       <li class="seg1">
