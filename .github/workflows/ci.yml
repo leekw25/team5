@@ -13,7 +13,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
+      # ponytail: Windows에서 만든 lock 파일은 Linux 전용 선택 패키지가 빠져 npm ci가 실패한다. 재현성이 꼭 필요해지면 lock을 Linux에서 다시 만든다.
+      - run: npm install --no-audit --no-fund
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
