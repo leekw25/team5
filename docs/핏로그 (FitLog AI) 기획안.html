@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>핏로그 (FitLog AI) 기획안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2EC;
+  --surface:#FFFFFF;
+  --ink:#16221C;
+  --muted:#55655C;
+  --line:#D3DCD5;
+  --track:#E1E8E2;
+  --forest:#2D6A4E;
+  --on-forest:#FFFFFF;
+  --mint:#DCEDE2;
+  --marigold:#F2B33A;
+  --on-marigold:#3B2905;
+  --carb:#F2B33A;
+  --protein:#2D6A4E;
+  --fat:#A9C3D3;
+  --bezel:#1B2621;
+  --serif:"Hahmlet","AppleMyungjo","Nanum Myeongjo","Batang",serif;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --gutter:clamp(20px,5vw,48px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;
+    --forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;
+    --carb:#F4C462;--protein:#7CC9A0;--fat:#6E95AB;--bezel:#34433B;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1713;--surface:#17211C;--ink:#E3ECE6;--muted:#9AADA2;--line:#2A3831;--track:#26332C;
+  --forest:#7CC9A0;--on-forest:#0C1A12;--mint:#1E3328;--marigold:#F4C462;--on-marigold:#2B1E04;
+  --carb:#F4C462;--protein:#7CC9A0;--fat:#6E95AB;--bezel:#34433B;color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:inherit}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:1rem;line-height:1.72;word-break:keep-all;overflow-wrap:break-word}
+img,svg{max-width:100%}
+.wrap{width:100%;max-width:1120px;margin-inline:auto;padding-inline:var(--gutter)}
+h1,h2,h3{margin:0}
+h3{font-size:1.08rem;line-height:1.4;font-weight:700;margin-bottom:8px}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center;padding-block:clamp(48px,8vw,104px) clamp(48px,7vw,88px)}
+.kicker{margin:0 0 20px;color:var(--muted);font-size:.95rem;font-weight:500}
+.title{font-family:var(--serif);font-weight:800;font-size:clamp(3.4rem,9.5vw,6.4rem);line-height:.98;letter-spacing:-.025em}
+.title small{display:block;margin-top:16px;font-family:var(--sans);font-weight:600;font-size:clamp(1rem,2vw,1.2rem);letter-spacing:.01em;color:var(--muted)}
+.tagline{margin:32px 0 0;max-width:20em;font-family:var(--serif);font-weight:500;font-size:clamp(1.3rem,2.7vw,1.7rem);line-height:1.45}
+.summary{margin:18px 0 0;max-width:34em;color:var(--muted)}
+.fusion{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:28px;font-size:.92rem}
+.fusion .tag{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 14px}
+.fusion .plus{color:var(--muted);font-weight:600}
+
+.board{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3vw,28px)}
+.board-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.board-head figcaption{font-family:var(--serif);font-weight:700;font-size:1.15rem}
+.streak{background:var(--marigold);color:var(--on-marigold);border-radius:999px;padding:3px 12px;font-size:.86rem;font-weight:600}
+.week,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(4px,1vw,8px)}
+.week{margin-bottom:6px;text-align:center;font-size:.76rem;color:var(--muted)}
+
+.day{--rw:4px;position:relative;display:grid;place-items:center;aspect-ratio:1;margin:0;padding:0;border:0;border-radius:50%;background:none;color:var(--muted);font:inherit}
+button.day{cursor:pointer}
+button.day:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+.day .ring{position:absolute;inset:6%;border-radius:50%;
+  background:conic-gradient(var(--forest) calc(var(--p,0) * 360deg),var(--track) 0deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw)),#000 calc(100% - var(--rw) + .5px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw)),#000 calc(100% - var(--rw) + .5px))}
+.day .num{position:relative;font-size:clamp(.78rem,1.5vw,.95rem);font-weight:600;font-variant-numeric:tabular-nums}
+.day[data-n="1"],.day[data-n="2"]{color:var(--ink)}
+.day[data-n="3"]{color:var(--on-marigold)}
+.day[data-n="3"] .ring{-webkit-mask:none;mask:none;background:var(--marigold);transform:rotate(var(--rot,0deg))}
+.day[data-n="3"] .ring::after{content:"";position:absolute;inset:12%;border-radius:50%;border:1.5px dashed currentColor;opacity:.45}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:.8rem;color:var(--muted)}
+.legend .k{display:inline-flex;align-items:center;gap:6px}
+.legend .day{width:20px;--rw:2.5px}
+.hint{margin:10px 0 0;font-size:.8rem;color:var(--muted)}
+
+@media (prefers-reduced-motion:no-preference){
+  .board.play .day[data-n="3"] .ring{animation:stamp .42s cubic-bezier(.2,.9,.3,1.35) both;animation-delay:calc(var(--i) * 55ms + 250ms)}
+  .board.play .day:not([data-n="3"]) .ring{animation:fade .4s ease both;animation-delay:calc(var(--i) * 55ms + 250ms)}
+  .day.just .ring{animation:stamp .42s cubic-bezier(.2,.9,.3,1.35) both}
+}
+@keyframes stamp{0%{opacity:0;transform:scale(1.6) rotate(calc(var(--rot,0deg) - 14deg))}55%{opacity:1}100%{opacity:1;transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* ---------- Sections ---------- */
+.block{border-top:1px solid var(--line);padding-block:clamp(56px,8vw,96px)}
+.block h2{font-family:var(--serif);font-weight:700;font-size:clamp(1.65rem,3.6vw,2.4rem);line-height:1.25;letter-spacing:-.015em;margin-bottom:14px}
+.block h2 .no{display:inline-block;min-width:1.3em;color:var(--muted);font-weight:500}
+.lead{max-width:62ch;margin:0 0 36px;color:var(--muted)}
+
+/* 1. 배경 */
+.bg-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(28px,5vw,64px);margin-top:28px}
+.pain dl{margin:0}
+.pain dt{margin-top:18px;font-weight:700}
+.pain dt:first-child{margin-top:4px}
+.pain dd{margin:4px 0 0;color:var(--muted);max-width:36ch}
+.loop{list-style:none;margin:0;padding:0;counter-reset:s}
+.loop li{position:relative;padding:0 0 24px 54px;counter-increment:s}
+.loop li::before{content:counter(s);position:absolute;left:0;top:0;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--forest);color:var(--on-forest);font-weight:700;font-size:.9rem}
+.loop li::after{content:"";position:absolute;left:16.5px;top:38px;bottom:4px;width:1.5px;background:var(--line)}
+.loop strong{display:block;font-size:1.05rem}
+.loop span{color:var(--muted)}
+.loop-back{position:relative;margin:0;padding-left:54px;font-size:.92rem;font-weight:600;color:var(--forest)}
+.loop-back::before{content:"↺";position:absolute;left:9px;top:-3px;font-size:1.25rem;font-weight:400}
+
+/* 2. 기능 */
+.feat{padding-block:30px;border-top:1px dashed var(--line)}
+.feat.first{border-top:0;padding-top:12px}
+.feat p{margin:0 0 10px;max-width:60ch}
+.feat-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+.inline-label{font-weight:700;margin-right:.45em}
+.parse{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 20px 4px}
+.say{display:inline-block;background:var(--mint);border-radius:16px 16px 16px 4px;padding:9px 14px;font-weight:500}
+.parsed{margin:10px 0 18px;font-size:.78rem;color:var(--muted)}
+.chips{list-style:none;display:inline-flex;flex-wrap:wrap;gap:6px;margin:0 0 0 8px;padding:0;vertical-align:middle}
+.chips li{border:1px solid var(--forest);color:var(--forest);border-radius:6px;padding:1px 8px;font-size:.8rem;font-weight:600}
+.missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 16px}
+.missions .m{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 8px}
+.cat{display:inline-block;margin-bottom:8px;border-radius:999px;background:var(--forest);color:var(--on-forest);padding:1px 10px;font-size:.78rem;font-weight:700}
+.missions .m p{margin:0;padding:8px 0;border-top:1px solid var(--line);font-size:.95rem}
+.missions .m p:first-of-type{border-top:0}
+.note{color:var(--muted)}
+.note .inline-label{color:var(--ink)}
+.feat-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);padding-top:30px;border-top:1px dashed var(--line)}
+.rw{margin:0}
+.rw dt{font-weight:700}
+.rw dd{margin:2px 0 12px;color:var(--muted)}
+.coach{margin:14px 0 0;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--marigold);border-radius:6px 14px 14px 6px;padding:14px 16px;font-weight:500}
+
+/* 3. 화면 */
+.screens-scroll{overflow-x:auto;margin-inline:calc(-1 * var(--gutter));padding:4px var(--gutter) 12px}
+.screens{display:grid;grid-template-columns:repeat(3,minmax(250px,1fr));gap:clamp(20px,3vw,36px)}
+.screen{margin:0}
+.phone{max-width:290px;margin-inline:auto;background:var(--bezel);border-radius:38px;padding:10px}
+.scr{height:490px;overflow:hidden;background:var(--paper);border-radius:29px;padding:22px 15px 16px;font-size:.82rem;line-height:1.5}
+.p-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.p-head b{font-family:var(--serif);font-size:1.12rem}
+.p-head span{color:var(--muted);font-size:.74rem}
+.p-label{margin:14px 0 6px;font-size:.72rem;font-weight:600;color:var(--muted)}
+.p-missions{list-style:none;margin:0;padding:0}
+.p-missions li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin-bottom:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 10px}
+.p-missions li.done{background:var(--mint);border-color:transparent}
+.pc{font-size:.66rem;font-weight:700;color:var(--forest)}
+.ck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center}
+.done .ck{background:var(--forest);border-color:var(--forest);color:var(--on-forest)}
+.p-input{display:flex;align-items:center;gap:8px;margin:14px 0 6px;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.ib{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);color:var(--ink)}
+.ib.mic{background:var(--forest);border-color:var(--forest);color:var(--on-forest)}
+.p-input span:last-child{color:var(--muted);font-size:.74rem}
+.p-timeline{list-style:none;margin:0;padding:0 0 0 12px;border-left:2px solid var(--line)}
+.p-timeline li{margin-bottom:10px}
+.p-timeline time{display:block;font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.grid.mini{gap:3px}
+.mini-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:3px;text-align:center;font-size:.62rem;color:var(--muted)}
+.grid.mini .day{--rw:2.5px}
+.grid.mini .day .num{font-size:.62rem}
+.p-streak{margin:14px 0 4px;background:var(--marigold);color:var(--on-marigold);border-radius:12px;padding:8px 12px}
+.p-streak b{font-size:1.1rem;margin-right:4px}
+.badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;font-size:.68rem}
+.badges span{display:grid;place-items:center;width:38px;height:38px;margin:0 auto 4px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:1.05rem}
+.bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;height:118px;align-items:end}
+.bar{display:flex;flex-direction:column-reverse;height:100%;border-radius:6px;overflow:hidden}
+.bar i{display:block}
+.bar .c{background:var(--carb)}.bar .p{background:var(--protein)}.bar .f{background:var(--fat)}
+.bar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:4px;text-align:center;font-size:.64rem;color:var(--muted)}
+.leg-mini{display:flex;gap:10px;margin-top:8px;font-size:.66rem;color:var(--muted)}
+.leg-mini i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+.p-coach{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--marigold);border-radius:4px 12px 12px 4px;padding:10px 11px}
+.p-chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.p-chips li{border:1px solid var(--forest);color:var(--forest);border-radius:999px;padding:2px 9px;font-size:.7rem;font-weight:600}
+.screen figcaption{max-width:290px;margin:20px auto 0}
+.screen figcaption ul{margin:0;padding-left:1.1em;color:var(--muted);font-size:.92rem}
+.screen figcaption li{margin-bottom:4px}
+
+/* 4. 구현 */
+.stack{border-top:1.5px solid var(--ink)}
+.stack .row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 0;border-bottom:1px solid var(--line)}
+.stack .row h3{margin:0;font-family:var(--serif)}
+.stack p{margin:0}
+.pick{font-weight:600}
+.desc{color:var(--muted)}
+.api{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px}
+.api dt{font-weight:600}
+.api dd{margin:0;color:var(--muted)}
+.sub{margin:52px 0 18px;font-family:var(--serif);font-size:1.25rem}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;counter-reset:f}
+.flow li{position:relative;counter-increment:f;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 12px}
+.flow li b{display:block;font-size:.95rem}
+.flow li b::before{content:counter(f) ". ";color:var(--muted);font-weight:500}
+.flow li span{display:block;margin-top:4px;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.flow li:not(:last-child)::after{content:"";position:absolute;right:-10px;top:50%;width:6px;height:6px;border-top:1.5px solid var(--muted);border-right:1.5px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+.flow li:last-child{background:var(--marigold);border-color:var(--marigold);color:var(--on-marigold)}
+.flow li:last-child b::before,.flow li:last-child span{color:var(--on-marigold)}
+
+/* 5. 시연 */
+.kick{margin:0 0 44px;max-width:44em;padding-left:20px;border-left:4px solid var(--marigold);font-family:var(--serif);font-weight:500;font-size:clamp(1.12rem,2.2vw,1.38rem);line-height:1.6}
+.kick p{margin:0}
+.kick footer{margin-top:10px;font-family:var(--sans);font-size:.85rem;color:var(--muted)}
+.timebar{display:flex;gap:4px;margin-bottom:8px}
+.timebar span{height:40px;display:flex;align-items:center;padding:0 12px;border-radius:8px;font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--c);color:var(--on-c)}
+.seg1{--c:var(--track);--on-c:var(--ink)}
+.seg2{--c:var(--forest);--on-c:var(--on-forest)}
+.seg3{--c:var(--marigold);--on-c:var(--on-marigold)}
+.timebar-scale{display:flex;justify-content:space-between;margin-bottom:24px;font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;padding:22px 0;border-top:1px solid var(--line)}
+.steps .t{display:flex;align-items:baseline;gap:8px;color:var(--muted);font-weight:600;font-size:.92rem;font-variant-numeric:tabular-nums}
+.steps .t::before{content:"";flex:none;width:10px;height:10px;border-radius:3px;background:var(--c);transform:translateY(1px)}
+.steps p{margin:0 0 8px;max-width:64ch}
+.steps .seg1 .t::before{box-shadow:inset 0 0 0 1px var(--muted)}
+.steps .result{color:var(--muted)}
+.steps .result strong{color:var(--forest);margin-right:.4em}
+
+/* 부록 */
+.table-scroll{overflow-x:auto}
+table{width:100%;min-width:660px;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:14px 12px;border-bottom:1px solid var(--line)}
+thead th{font-size:.82rem;font-weight:600;color:var(--muted);border-bottom:1.5px solid var(--ink)}
+tr.picked td{background:var(--mint)}
+.pk{display:inline-block;margin-left:8px;border-radius:999px;background:var(--forest);color:var(--on-forest);padding:0 8px;font-size:.72rem;font-weight:700;vertical-align:1px}
+td.rank{font-weight:600;font-variant-numeric:tabular-nums}
+
+.foot{border-top:1px solid var(--line);padding-block:28px 44px;font-size:.85rem;color:var(--muted)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .board{max-width:520px}
+  .bg-grid,.feat-split,.feat-pair{grid-template-columns:1fr}
+  .stack .row{grid-template-columns:1fr;gap:6px}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .flow li::after{display:none}
+  .steps li{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width:640px){
+  .missions{grid-template-columns:1fr}
+  .api{grid-template-columns:1fr;gap:2px}
+  .api dd{margin-bottom:10px}
+  .timebar span{font-size:0;padding:0}
+}
+@media print{
+  :root{padding:0}
+  .hint{display:none}
+  .screens-scroll,.table-scroll{overflow:visible}
+  .phone,.flow li,.steps li,tr,.feat{break-inside:avoid}
+  *{animation:none!important}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="wrap hero">
+  <div>
+    <p class="kicker">바이브코딩 프로젝트 기획안</p>
+    <h1 class="title">핏로그<small>FitLog AI</small></h1>
+    <p class="tagline">말 한마디, 사진 한 장으로 끝내는 미션 중심 AI 건강 다이어리</p>
+    <p class="summary">기록은 최소화하고 성취감은 극대화하는 헬스케어 앱입니다. AI의 멀티모달 분석(음성·사진 인식)과 게이미피케이션(달력 채우기 리워드)을 결합했습니다.</p>
+    <div class="fusion">
+      <span class="tag">② 오늘의 건강 미션</span>
+      <span class="plus" aria-hidden="true">+</span>
+      <span class="tag">④ 쉬운 입력 식단·운동 도우미</span>
+    </div>
+  </div>
+
+  <figure class="board" id="board">
+    <div class="board-head">
+      <figcaption>리워드 달력</figcaption>
+      <span class="streak" id="streak" aria-live="polite">연속 달성 11일</span>
+    </div>
+    <div class="week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="legend">
+      <span class="k" data-legend="0">미션 0/3</span>
+      <span class="k" data-legend="1">1/3</span>
+      <span class="k" data-legend="2">2/3</span>
+      <span class="k" data-legend="3">3/3 완수 스탬프</span>
+    </div>
+    <p class="hint">날짜를 누르면 그날 달성한 미션 수가 바뀝니다.</p>
+  </figure>
+</header>
+
+<section class="block" id="background">
+  <div class="wrap">
+    <h2><span class="no">1</span>기획 배경 및 핵심 컨셉</h2>
+    <div class="bg-grid">
+      <div class="pain">
+        <h3>지금의 문제</h3>
+        <dl>
+          <dt>기존 식단·운동 앱</dt>
+          <dd>칼로리와 무게를 일일이 검색해 입력해야 해서 3일을 넘기기 어렵습니다.</dd>
+          <dt>기존 미션 앱</dt>
+          <dd>단순 체크리스트에 그쳐 실제 영양·운동 분석이 부족합니다.</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>핏로그의 해결 방식</h3>
+        <ol class="loop">
+          <li><strong>쉬운 입력</strong><span>음성이나 사진 한 장으로 식단과 운동을 3초 만에 기록합니다.</span></li>
+          <li><strong>오늘의 미션</strong><span>AI 분석을 바탕으로 당일 수행 가능한 맞춤형 미션을 제안합니다.</span></li>
+          <li><strong>성취감 리워드</strong><span>미션을 완수하면 달력이 시각적으로 채워지며 습관 형성을 유도합니다.</span></li>
+        </ol>
+        <p class="loop-back">전날 기록은 다음 날 아침 미션 추천에 다시 반영됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="features">
+  <div class="wrap">
+    <h2><span class="no">2</span>핵심 기능</h2>
+
+    <div class="feat first feat-split">
+      <div>
+        <h3>① 초간편 AI 기록</h3>
+        <p><span class="inline-label">음성·텍스트 자유 입력</span>평소 말하듯 음성이나 텍스트로 입력하면 AI가 음식명, 칼로리, 영양소, 운동 부위, 소모 칼로리를 자동으로 파싱해 기록합니다.</p>
+        <p><span class="inline-label">사진 한 장 식단 분석</span>음식 사진을 찍으면 GPT-4o Vision이 메뉴를 인식하고 예상 영양 성분 비율(탄·단·지)을 자동 산출합니다.</p>
+      </div>
+      <div class="parse" aria-label="음성 입력 파싱 예시">
+        <span class="say">“점심에 제육볶음 반 공기랑 된장찌개 먹었어”</span>
+        <div class="parsed">AI 자동 파싱<ul class="chips"><li>음식명</li><li>칼로리</li><li>영양소</li></ul></div>
+        <span class="say">“스쿼트 15개 3세트 함”</span>
+        <div class="parsed">AI 자동 파싱<ul class="chips"><li>운동 부위</li><li>소모 칼로리</li></ul></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <h3>② AI 맞춤형 오늘의 미션 3종 세트</h3>
+      <p>매일 아침 사용자 상태와 전날 기록을 바탕으로 고를 수 있는 카드형 미션 3개를 제시합니다.</p>
+      <div class="missions">
+        <div class="m"><span class="cat">식단</span><p>오늘 저녁 튀김·음료수 건너뛰기</p><p>단백질 60g 채우기</p></div>
+        <div class="m"><span class="cat">생활</span><p>12시간 공복 유지하기</p><p>물 1.5L 마시기</p></div>
+        <div class="m"><span class="cat">운동</span><p>스쿼트 30개 하기</p><p>7,000보 걸어보기</p></div>
+      </div>
+      <p class="note"><span class="inline-label">미션 자동 달성 체크</span>식단과 운동을 기록하면 AI가 판단해 미션 성공 여부를 자동으로 체크합니다.</p>
+    </div>
+
+    <div class="feat-pair">
+      <div>
+        <h3>③ 리워드와 인터랙티브 달력</h3>
+        <dl class="rw">
+          <dt>달력 스탬프</dt>
+          <dd>미션을 완수하면 달력의 해당 날짜가 캐릭터 스탬프나 색상 오버레이로 채워집니다.</dd>
+          <dt>연속 달성 스트릭</dt>
+          <dd>연속으로 미션에 성공하면 애니메이션 효과와 함께 특별 리워드 배지를 지급합니다.</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>④ AI 1줄 코칭</h3>
+        <p>하루 기록과 미션 성공 여부를 바탕으로 AI가 친근한 톤으로 칭찬, 격려, 피드백을 담은 1줄 총평을 줍니다.</p>
+        <blockquote class="coach">오늘 단백질 목표를 달성하셨네요! 저녁 튀김 참기 미션까지 성공해서 완벽한 하루입니다. 🔥</blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="screens">
+  <div class="wrap">
+    <h2><span class="no">3</span>앱 화면 구성</h2>
+    <p class="lead">세 개의 화면이 기록, 보상, 분석을 하나씩 맡습니다. 아래 화면 속 수치와 문구는 예시입니다.</p>
+    <div class="screens-scroll">
+      <div class="screens">
+
+        <figure class="screen">
+          <div class="phone"><div class="scr">
+            <div class="p-head"><b>오늘</b><span>미션 1/3 완료</span></div>
+            <ul class="p-missions">
+              <li class="done"><span class="pc">식단</span><span>탄산음료 안 마시기</span><span class="ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></li>
+              <li><span class="pc">생활</span><span>물 1.5L 마시기</span><span class="ck"></span></li>
+              <li><span class="pc">운동</span><span>7,000보 걸어보기</span><span class="ck"></span></li>
+            </ul>
+            <div class="p-input">
+              <span class="ib mic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+              <span class="ib"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+              <span>말하거나 찍어서 기록</span>
+            </div>
+            <p class="p-label">오늘의 기록</p>
+            <ol class="p-timeline">
+              <li><time>08:10</time>사과 반 개, 계란 2개</li>
+              <li><time>12:40</time>싸이버거 세트, 제로콜라</li>
+            </ol>
+          </div></div>
+          <figcaption>
+            <h3>메인 홈 (Today)</h3>
+            <ul>
+              <li>상단: 오늘의 미션 카드 3개 (체크박스·스와이프 동작)</li>
+              <li>중앙: AI 원터치 입력 버튼 (마이크·카메라)</li>
+              <li>하단: 오늘 먹은 식단과 운동 타임라인 카드</li>
+            </ul>
+          </figcaption>
+        </figure>
+
+        <figure class="screen">
+          <div class="phone"><div class="scr">
+            <div class="p-head"><b>리워드 달력</b><span>최근 4주</span></div>
+            <div class="mini-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+            <div class="grid mini" id="mini" aria-hidden="true"></div>
+            <div class="p-streak"><b>11일</b>연속 달성 중</div>
+            <p class="p-label">배지 모음</p>
+            <ul class="badges">
+              <li><span>🌱</span>첫 미션</li>
+              <li><span>🔥</span>7일 연속</li>
+              <li><span>💧</span>물 마시기 10회</li>
+            </ul>
+          </div></div>
+          <figcaption>
+            <h3>리워드 달력 (Calendar)</h3>
+            <ul>
+              <li>월간 달력 뷰: 미션 완수율에 따라 날짜별 색상과 스탬프가 채워짐</li>
+              <li>주간·월간 스트릭 달성 현황과 배지 모음</li>
+            </ul>
+          </figcaption>
+        </figure>
+
+        <figure class="screen">
+          <div class="phone"><div class="scr">
+            <div class="p-head"><b>AI 리포트</b><span>이번 주</span></div>
+            <p class="p-label">영양 균형 (탄·단·지 비율)</p>
+            <div class="bars" aria-hidden="true">
+              <div class="bar"><i class="c" style="height:50%"></i><i class="p" style="height:26%"></i><i class="f" style="height:24%"></i></div>
+              <div class="bar"><i class="c" style="height:55%"></i><i class="p" style="height:23%"></i><i class="f" style="height:22%"></i></div>
+              <div class="bar"><i class="c" style="height:48%"></i><i class="p" style="height:29%"></i><i class="f" style="height:23%"></i></div>
+              <div class="bar"><i class="c" style="height:52%"></i><i class="p" style="height:27%"></i><i class="f" style="height:21%"></i></div>
+              <div class="bar"><i class="c" style="height:58%"></i><i class="p" style="height:22%"></i><i class="f" style="height:20%"></i></div>
+              <div class="bar"><i class="c" style="height:46%"></i><i class="p" style="height:31%"></i><i class="f" style="height:23%"></i></div>
+              <div class="bar"><i class="c" style="height:50%"></i><i class="p" style="height:28%"></i><i class="f" style="height:22%"></i></div>
+            </div>
+            <div class="bar-days" aria-hidden="true"><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span><span>일</span></div>
+            <div class="leg-mini"><span><i style="background:var(--carb)"></i>탄수화물</span><span><i style="background:var(--protein)"></i>단백질</span><span><i style="background:var(--fat)"></i>지방</span></div>
+            <p class="p-label">AI 주간 총평</p>
+            <div class="p-coach">단백질 비율이 한 주 내내 고르게 유지됐어요. 탄수화물이 많았던 금요일 다음 날엔 걷기 미션을 추천해요.</div>
+            <p class="p-label">다음 주 추천 미션</p>
+            <ul class="p-chips"><li>단백질 60g 채우기</li><li>7,000보 걸어보기</li></ul>
+          </div></div>
+          <figcaption>
+            <h3>AI 리포트 (Insight)</h3>
+            <ul>
+              <li>주간 영양 균형 그래프 (탄·단·지 비율)</li>
+              <li>AI 주간 총평과 다음 주 추천 미션</li>
+            </ul>
+          </figcaption>
+        </figure>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="build">
+  <div class="wrap">
+    <h2><span class="no">4</span>바이브코딩 구현 전략</h2>
+    <p class="lead">AI 코딩 툴(Cursor, Claude, Bolt.new 등)로 최단 시간에 완성할 수 있는 기술 스택과 구조입니다.</p>
+    <div class="stack">
+      <div class="row">
+        <h3>Frontend</h3>
+        <div><p class="pick">React Native (Expo) 또는 Flutter</p><p class="desc">빠른 UI 구성과 애니메이션 연동</p></div>
+      </div>
+      <div class="row">
+        <h3>Backend &amp; DB</h3>
+        <div><p class="pick">Supabase 또는 Firebase</p><p class="desc">소셜 로그인과 노코드에 가까운 데이터베이스 처리</p></div>
+      </div>
+      <div class="row">
+        <h3>AI API</h3>
+        <dl class="api">
+          <dt>OpenAI API (GPT-4o / GPT-4o-mini)</dt><dd>자연어 텍스트와 음성 변환 텍스트 파싱, 오늘의 미션 생성, 1줄 피드백 작성</dd>
+          <dt>GPT-4o Vision</dt><dd>식단 이미지 분석</dd>
+          <dt>Whisper API</dt><dd>음성 입력을 텍스트로 실시간 변환</dd>
+        </dl>
+      </div>
+    </div>
+
+    <h3 class="sub">기록이 스탬프가 되기까지</h3>
+    <ol class="flow">
+      <li><b>입력</b><span>음성 또는 사진</span></li>
+      <li><b>인식</b><span>Whisper가 음성을 텍스트로, Vision이 사진을 메뉴로</span></li>
+      <li><b>파싱</b><span>GPT-4o가 음식·운동, 칼로리, 영양소로 구조화</span></li>
+      <li><b>저장</b><span>Supabase 또는 Firebase</span></li>
+      <li><b>판정</b><span>오늘의 미션 성공 여부 자동 체크</span></li>
+      <li><b>리워드</b><span>달력 스탬프와 1줄 코칭</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="demo">
+  <div class="wrap">
+    <h2><span class="no">5</span>발표 시연 시나리오 (3분)</h2>
+    <p class="lead">발표 현장에서 청중의 호응을 이끌어내기 위한 3분 데모 흐름입니다.</p>
+
+    <blockquote class="kick">
+      <p>기존 앱은 사과 1개 칼로리를 찾아 입력하는 데 1분이 걸리지만, 핏로그는 사진을 찍거나 “아침에 사과 반 개랑 계란 2개 먹었어”라고 말하면 2초 만에 분석이 끝납니다.</p>
+      <footer>발표 킥 포인트</footer>
+    </blockquote>
+
+    <div class="timebar" aria-hidden="true">
+      <span class="seg1" style="flex:1">문제 제기</span>
+      <span class="seg2" style="flex:2">음성·사진 입력</span>
+      <span class="seg3" style="flex:2">미션 성공과 달력 리워드</span>
+      <span class="seg1" style="flex:1">마무리</span>
+    </div>
+    <div class="timebar-scale" aria-hidden="true"><span>0:00</span><span>1:00</span><span>2:00</span><span>3:00</span></div>
+
+    <ol class="steps">
+      <li class="seg1">
+        <div class="t">0:00–0:30</div>
+        <div>
+          <h3>문제 제기</h3>
+          <p>“기존 앱으로 칼로리 입력하다 지쳐서 다이어트 포기하신 적 있으시죠? 핏로그는 다릅니다.”</p>
+        </div>
+      </li>
+      <li class="seg2">
+        <div class="t">0:30–1:30</div>
+        <div>
+          <h3>시연 1. 음성·사진 입력</h3>
+          <p>발표자가 현장에서 마이크 버튼을 누르고 말합니다. “오늘 점심에 맘스터치 싸이버거 세트 먹고 콜라는 제로로 바꿨어.”</p>
+          <p class="result"><strong>결과</strong>AI가 2초 만에 싸이버거 1개, 감자튀김 1개, 제로콜라 1개로 자동 분류해 칼로리와 영양 성분을 타임라인에 등록합니다.</p>
+        </div>
+      </li>
+      <li class="seg3">
+        <div class="t">1:30–2:30</div>
+        <div>
+          <h3>시연 2. 미션 자동 성공과 달력 리워드</h3>
+          <p>음성 입력 결과에 따라 ‘오늘 탄산음료 안 마시기’ 또는 ‘칼로리 목표 달성’ 미션 카드가 성공으로 바뀌며 폭죽 애니메이션이 나옵니다.</p>
+          <p class="result"><strong>결과</strong>메인 화면의 오늘 날짜 달력 칸이 캐릭터 스탬프로 채워집니다.</p>
+        </div>
+      </li>
+      <li class="seg1">
+        <div class="t">2:30–3:00</div>
+        <div>
+          <h3>마무리</h3>
+          <p>바이브코딩으로 몇 시간 만에 실제로 동작하는 AI 멀티모달 서비스를 구축한 과정을 강조하며 마무리합니다.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="appendix">
+  <div class="wrap">
+    <h2>부록. 후보 아이디어 비교</h2>
+    <p class="lead">바이브코딩 기준으로 처음 검토한 네 가지 아이디어입니다. 핏로그는 2번과 4번을 결합했습니다.</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">아이디어</th><th scope="col">신선도</th><th scope="col">개발 난이도</th><th scope="col">발표 집중도</th><th scope="col">추천 순위</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1. 최저가 기록 및 그래프</td><td>낮음</td><td>매우 높음 (크롤링·서버 장벽)</td><td>보통</td><td class="rank">4위</td></tr>
+          <tr class="picked"><td>2. 오늘의 건강 미션<span class="pk">결합</span></td><td>보통</td><td>쉬움 (UI·애니메이션 위주)</td><td>높음</td><td class="rank">3위</td></tr>
+          <tr><td>3. 약 복용·부작용 도우미</td><td>높음</td><td>보통 (LLM·API 연동)</td><td>매우 높음</td><td class="rank">2위</td></tr>
+          <tr class="picked"><td>4. 쉬운 입력 식단·운동 도우미<span class="pk">결합</span></td><td>높음</td><td>보통 (Vision·음성 AI 활용)</td><td>매우 높음</td><td class="rank">1위</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="wrap foot">핏로그 (FitLog AI) 기획안</footer>
+
+<script>
+(function(){
+  var base=[3,2,0,3,3,1,2, 3,3,0,2,3,3,3, 2,3,1,3,3,3,3, 3,3,3,3,3,3,3];
+  function rot(i){return (((i*37)%13)-6)+'deg';}
+  function cell(tag,n,i,label){
+    var el=document.createElement(tag);
+    el.className='day';
+    el.dataset.n=n;
+    el.style.setProperty('--i',i);
+    el.style.setProperty('--p',n/3);
+    el.style.setProperty('--rot',rot(i));
+    el.innerHTML='<span class="ring" aria-hidden="true"></span>'+(label!==null?'<span class="num">'+label+'</span>':'');
+    return el;
+  }
+  function streakOf(arr){var s=0;for(var i=arr.length-1;i>=0&&arr[i]===3;i--)s++;return s;}
+
+  var data=base.slice();
+  var grid=document.getElementById('grid');
+  var streak=document.getElementById('streak');
+  var board=document.getElementById('board');
+  function setStreak(){var s=streakOf(data);streak.textContent=s>0?'연속 달성 '+s+'일':'연속 달성 0일';}
+
+  data.forEach(function(n,i){
+    var b=cell('button',n,i,i+1);
+    b.type='button';
+    function label(){b.setAttribute('aria-label',(i+1)+'일, 미션 3개 중 '+data[i]+'개 달성');}
+    label();
+    b.addEventListener('click',function(){
+      data[i]=(data[i]+1)%4;
+      b.dataset.n=data[i];
+      b.style.setProperty('--p',data[i]/3);
+      label();
+      b.classList.remove('just');
+      if(data[i]===3){void b.offsetWidth;b.classList.add('just');}
+      setStreak();
+    });
+    grid.appendChild(b);
+  });
+  setStreak();
+
+  var mini=document.getElementById('mini');
+  base.forEach(function(n,i){mini.appendChild(cell('span',n,i,i+1));});
+
+  document.querySelectorAll('[data-legend]').forEach(function(el){
+    el.insertBefore(cell('span',+el.dataset.legend,0,null),el.firstChild);
+  });
+
+  requestAnimationFrame(function(){
+    board.classList.add('play');
+    setTimeout(function(){board.classList.remove('play');},3200);
+  });
+})();
+</script>
+</body>
+</html>
