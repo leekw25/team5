@@ -43,3 +43,5 @@ yarn-error.*
 # env
 .env
 supabase/.temp/
+kits/
+dist/

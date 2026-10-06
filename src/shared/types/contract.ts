@@ -39,7 +39,7 @@ export interface ExerciseItem {
 export interface HealthRecord {
   id: string;
   user_id: string;
-  day_key: string; // 'YYYY-MM-DD', Asia/Seoul 기준. DB가 occurred_at으로 자동 계산한다(직접 넣지 않음)
+  day_key: string; // 'YYYY-MM-DD', Asia/Seoul 기준. 저장소가 occurred_at으로 채운다(로컬: toDayKey, Supabase: 자동 계산)
   occurred_at: string; // 먹거나 운동한 시각(ISO). 입력한 시각과 다를 수 있음
   kind: RecordKind;
   source: InputSource;
@@ -51,7 +51,7 @@ export interface HealthRecord {
   created_at: string;
 }
 
-// 저장할 때 쓰는 모양. id·user_id·day_key·created_at은 DB가 채운다.
+// 저장할 때 쓰는 모양. id·user_id·day_key·created_at은 저장소(src/data)가 채운다.
 export type NewHealthRecord = Omit<HealthRecord, 'id' | 'user_id' | 'day_key' | 'created_at'>;
 
 // A가 Gemini 파싱 후 돌려주는 결과
@@ -93,6 +93,31 @@ export interface DayStatus {
   day_key: string;
   success_count: number; // 0~3
 }
+
+// ── 데이터 저장소 약속 ──
+// 기능 코드는 저장소를 직접 만지지 않고 src/data 의 recordsRepo, missionsRepo 만 쓴다.
+// 개발 단계: 개발자가 휴대폰 로컬 저장소(AsyncStorage, JSON 배열)로 구현한다.
+// 통합 단계: 멘토가 같은 약속을 지키는 Supabase 구현으로 src/data 만 바꾼다(기능 코드는 그대로).
+export interface RecordsRepo {
+  listByDay(dayKey: string): Promise<HealthRecord[]>; // occurred_at 오름차순
+  insertMany(records: NewHealthRecord[]): Promise<HealthRecord[]>; // id·user_id·day_key·created_at을 채워 돌려줌
+  update(id: string, patch: Partial<NewHealthRecord>): Promise<HealthRecord>;
+  remove(id: string): Promise<void>;
+}
+
+export type NewDailyMission = Pick<DailyMission, 'slot' | 'mission_code' | 'params'>;
+
+export interface MissionsRepo {
+  listByDay(dayKey: string): Promise<DailyMission[]>;
+  // 그날 미션이 없을 때만 만들고, 있으면 기존 것을 그대로 돌려준다(시연 시드를 덮어쓰지 않기 위해)
+  assignIfEmpty(dayKey: string, missions: NewDailyMission[]): Promise<DailyMission[]>;
+  update(id: string, patch: Pick<DailyMission, 'status' | 'achieved_at'>): Promise<DailyMission>;
+  listDayStatus(fromDayKey: string, toDayKey: string): Promise<DayStatus[]>; // 양 끝 날짜 포함
+}
+
+// 로컬 저장 규칙. 값은 JSON 배열이고, 필드 이름은 DB 열 이름과 똑같이 둔다(통합 때 그대로 옮기기 위해).
+export const LOCAL_KEYS = { records: 'fitlog:records', daily_missions: 'fitlog:daily_missions' } as const;
+export const LOCAL_USER_ID = 'local-user';
 
 // ── 오늘 화면 조립용 컴포넌트 약속 ──
 // 멘토가 src/app/에서 아래 이름으로 import해 배치한다. 이름·props를 바꾸려면 계약 변경 절차를 따른다.
