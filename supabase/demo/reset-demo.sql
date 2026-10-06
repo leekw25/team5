@@ -6,7 +6,7 @@
 
 do $$
 declare
-  v_email text := 'demo@fitlog.app';  -- 시연 계정 이메일
+  v_email text := 'demo@fitlog.ap';  -- 시연 계정 이메일
   v_protein_target int := 30;          -- 단백질 목표(g)
   v_user uuid;
   v_today date := (now() at time zone 'Asia/Seoul')::date;
