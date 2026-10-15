@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>핏로그 프로토타입</title>
+<style>
+:root{--blue:#2F6BFF;--cream:#FFF9EE;--ink:#1B1F2A;--muted:#7A8194;--line:#E3E6EE;--yellow:#FFD43B;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--cream:#12161F;--ink:#E7EAF2;--muted:#9AA2B5;--line:#2A3040;--card:#1A1F2B}}
+:root[data-theme="dark"]{--cream:#12161F;--ink:#E7EAF2;--muted:#9AA2B5;--line:#2A3040;--card:#1A1F2B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:48px 16px 64px}
+.script{font-family:Caveat,cursive;color:var(--blue);font-size:1.3rem;margin:0}
+h1{margin:4px 0 8px;font-size:clamp(1.8rem,5vw,2.4rem)}
+h1 b{color:var(--blue)}
+.lead{color:var(--muted);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;color:inherit;text-decoration:none;transition:transform .2s cubic-bezier(.22,1,.36,1),border-color .2s}
+a.card:hover{transform:translateY(-3px);border-color:var(--blue)}
+a.card:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.no{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;padding:0 10px;font-size:.78rem;font-weight:700}
+.card h2{margin:8px 0 4px;font-size:1.05rem}
+.card p{margin:0;color:var(--muted);font-size:.88rem}
+h3{margin:36px 0 10px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;background:color-mix(in srgb,var(--blue) 10%,var(--card))}
+.tbl{overflow-x:auto}
+.tip{margin-top:20px;background:var(--card);border:1px dashed var(--blue);border-radius:14px;padding:12px 16px;font-size:.9rem}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="wrap">
+  <p class="script">Just say it, FitLog logs it!</p>
+  <h1>핏로그 <b>디자인 프로토타입</b></h1>
+  <p class="lead">Stitch로 만든 6개 화면에 스크롤·성공 모션을 입혔습니다. 휴대폰 크기(375px)로 보면 가장 정확합니다.</p>
+  <div class="grid">
+    <a class="card" href="01-onboarding.html"><span class="no">01</span><h2>온보딩 랜딩</h2><p>스크롤하면 섹션·카드가 차례로 올라옵니다</p></a>
+    <a class="card" href="02-home.html"><span class="no">02</span><h2>오늘 홈</h2><p>마이크를 누르면 시연 흐름: 듣는 중 → 단백질 채움 → 폭죽</p></a>
+    <a class="card" href="03-voice-result.html"><span class="no">03</span><h2>음성 기록 결과</h2><p>‘저장하기’ → 축하 화면</p></a>
+    <a class="card" href="04-celebrate.html"><span class="no">04</span><h2>미션 성공 축하</h2><p>열리자마자 파랑·노랑 폭죽, 일러스트 스탬프</p></a>
+    <a class="card" href="05-calendar.html"><span class="no">05</span><h2>리워드 달력</h2><p>진행 링 채움, 완수일 스탬프가 차례로 쿵</p></a>
+    <a class="card" href="06-settings.html"><span class="no">06</span><h2>설정</h2><p>Gemini API 키 입력</p></a>
+  </div>
+
+  <h3>적용한 모션 (awesome-ai-motion 카드 기본값)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>효과</th><th>어디에</th><th>값</th></tr></thead>
+    <tbody>
+      <tr><td>stagger 리빌</td><td>모든 화면의 카드·제목·문단·이미지</td><td>0.06s 간격, 0.55s, 24px 위로</td></tr>
+      <tr><td>bar-grow</td><td>미션 진행률 막대</td><td>1.05s, power2.out</td></tr>
+      <tr><td>count-up</td><td>g·ml·kcal·% 수치</td><td>1.0s 감속</td></tr>
+      <tr><td>underline-draw</td><td>헤드라인의 파란 강조 단어</td><td>1.35s, 0.3s 뒤 시작</td></tr>
+      <tr><td>ripple-rings</td><td>마이크 버튼</td><td>링 3개, 0.4s 간격 (듣는 중 1.6s 주기)</td></tr>
+      <tr><td>scale-pop</td><td>노란 성공 체크 배지</td><td>0.5s, back.out</td></tr>
+      <tr><td>particle-burst</td><td>미션 성공·축하 화면</td><td>80개, 1.2s, 중력 600px/s², 시드 고정</td></tr>
+      <tr><td>progress-ring · stamp-impact</td><td>리워드 달력</td><td>링 1.0s / 스탬프 180ms 낙하 + 2px 흔들림</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tip">‘동작 줄이기’(prefers-reduced-motion)를 켠 기기에서는 모든 모션이 꺼지고 완성 상태로 바로 보입니다. 앱(Expo)으로 옮길 때는 같은 값으로 react-native-reanimated를 쓰면 됩니다.</p>
+</main>
+</body>
+</html>

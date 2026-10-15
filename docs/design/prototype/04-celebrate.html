@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>FitLog AI - 미션 성공 축하</title>
+<!-- Google Fonts: Plus Jakarta Sans & Caveat -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "cream": "#FFF9EE",
+            "on-surface-variant": "#434655",
+            "surface-container": "#ededf9",
+            "on-tertiary-fixed": "#360f00",
+            "surface": "#FFFFFF",
+            "on-background": "#191b24",
+            "on-tertiary": "#ffffff",
+            "surface-tint": "#0051e0",
+            "error-container": "#ffdad6",
+            "background": "#faf8ff",
+            "primary-fixed-dim": "#b5c4ff",
+            "tertiary-fixed-dim": "#ffb596",
+            "primary-soft": "#E8EFFF",
+            "tertiary": "#a33e00",
+            "on-secondary-container": "#fffbff",
+            "muted": "#7A8194",
+            "error": "#ba1a1a",
+            "ink": "#1B1F2A",
+            "surface-container-lowest": "#ffffff",
+            "line": "#E3E6EE",
+            "primary-container": "#2f6bff",
+            "on-surface": "#191b24",
+            "surface-container-highest": "#e1e1ee",
+            "on-error-container": "#93000a",
+            "secondary": "#1e4ed7",
+            "secondary-fixed-dim": "#b7c4ff",
+            "on-tertiary-fixed-variant": "#7c2d00",
+            "surface-container-low": "#f3f3ff",
+            "on-error": "#ffffff",
+            "danger": "#F05252",
+            "on-secondary-fixed-variant": "#0039b5",
+            "surface-variant": "#e1e1ee",
+            "outline-variant": "#c3c5d8",
+            "on-secondary": "#ffffff",
+            "surface-bright": "#faf8ff",
+            "on-primary-container": "#000318",
+            "tertiary-fixed": "#ffdbcd",
+            "on-secondary-fixed": "#001551",
+            "outline": "#737687",
+            "on-tertiary-container": "#ffffff",
+            "surface-dim": "#d9d9e5",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#f0f0fc",
+            "secondary-container": "#4069f1",
+            "primary-fixed": "#dbe1ff",
+            "on-primary-fixed": "#00174d",
+            "inverse-primary": "#b5c4ff",
+            "tertiary-container": "#cb4f00",
+            "surface-container-high": "#e7e7f4",
+            "primary": "#0051df",
+            "secondary-fixed": "#dce1ff",
+            "on-primary-fixed-variant": "#003cac",
+            "success-yellow": "#FFD43B",
+            "inverse-surface": "#2e3039"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "margin": "1.25rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "caption": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "script-accent": ["Caveat", "cursive"],
+            "section-title": ["Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "script-accent": ["22px", { "lineHeight": "1.2", "fontWeight": "600" }],
+            "section-title": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+            "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+            "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    
+    /* Playful floating confetti keyframes */
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(8deg); }
+    }
+    @keyframes float-reverse {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(-10deg); }
+    }
+    .confetti-anim-1 { animation: float-slow 4s ease-in-out infinite; }
+    .confetti-anim-2 { animation: float-reverse 4.5s ease-in-out infinite 0.5s; }
+  </style>
+</head>
+<body class="bg-[#eef2f8] text-ink antialiased min-h-screen flex items-center justify-center p-0 sm:p-4" data-screen="celebrate">
+<!-- Mobile Screen Container / Fullscreen Overlay Canvas -->
+<main class="w-full max-w-md bg-surface min-h-screen sm:min-h-[844px] sm:max-h-[920px] sm:rounded-3xl relative overflow-hidden flex flex-col justify-between shadow-2xl border border-line">
+<!-- Confetti & Celebration Layer (Top Floating Graphics) -->
+<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden z-10">
+<!-- Blue & Yellow Floating Decorative Confetti -->
+<div class="confetti-anim-1 absolute top-6 left-8 w-3 h-3 bg-primary-container rounded-sm rotate-12 opacity-85"></div>
+<div class="confetti-anim-2 absolute top-14 left-24 w-2.5 h-4 bg-success-yellow rounded-full -rotate-45 opacity-90"></div>
+<div class="confetti-anim-1 absolute top-8 right-20 w-3.5 h-2 bg-primary-container rounded-sm rotate-45 opacity-80"></div>
+<div class="confetti-anim-2 absolute top-20 right-10 w-3 h-3 bg-success-yellow rounded-sm rotate-12 opacity-85"></div>
+<div class="confetti-anim-1 absolute top-28 left-6 w-2 h-3.5 bg-primary-container rounded-full rotate-6 opacity-75"></div>
+<div class="confetti-anim-2 absolute top-32 right-24 w-2.5 h-2.5 bg-success-yellow rounded-full rotate-45 opacity-80"></div>
+<!-- Soft ink swirl doodles / confetti dots -->
+<div class="absolute top-16 left-1/2 -translate-x-12 w-2 h-2 rounded-full bg-primary-container opacity-60"></div>
+<div class="absolute top-10 right-1/3 w-1.5 h-3 bg-success-yellow rounded-sm -rotate-12 opacity-75"></div>
+</div>
+<!-- Close Button Top Right -->
+<header class="relative z-20 flex justify-end items-center px-margin pt-space-md">
+<button aria-label="닫기" class="w-10 h-10 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-cream active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</header>
+<!-- Scrollable Central Content Canvas -->
+<div class="relative z-20 px-margin flex-1 flex flex-col items-center text-center overflow-y-auto pb-4">
+<!-- English Handwritten Casual Script Accent -->
+<p class="font-script-accent text-script-accent text-primary-container tracking-wide mb-1">
+        Great job!
+      </p>
+<!-- Main Headline -->
+<h1 class="font-headline-lg text-headline-lg text-ink font-bold tracking-tight mb-2">
+        오늘 미션 <span class="text-primary-container">3/3</span> 완수!
+      </h1>
+<!-- Reassuring Subtitle -->
+<p class="font-body-sm text-body-sm text-muted max-w-xs mb-5">
+        단백질 30g 채우기까지 성공했어요. 오늘 달력에 스탬프가 찍혔어요.
+      </p>
+<!-- Center Celebration Hand-Drawn Illustration Frame -->
+<div class="relative w-44 h-44 mb-4 flex items-center justify-center">
+<!-- Warm Cozy Glow Circle -->
+<div class="absolute inset-0 rounded-full bg-cream scale-105 border border-line"></div>
+<div class="relative w-40 h-40 rounded-full overflow-hidden flex items-center justify-center bg-surface">
+<img alt="Joyful celebration illustration of stamping a calendar" class="w-full h-full object-cover p-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClBTS1kZeVIg7iKn3nf7RaNgrLJFt2vdyvRxOYHqKXN2q-LtyKqmZtU8d5oyC3s4_nB1j2hn8Yd3-o_YMNohzLbjgg1hsCgnhIZMWR3LyfMRCZ6RUGY3amauX9DvX9438wHPaMZJcoU8unXYGyb_EW0-tMfQ3pJtoKZefECPoJywZsLKZFTlQnScHNef3IlusQsSf9hkV39GIkP0bZ81VCtyg86w_tPlYEy0H1Oop3FY1Ccq4ByG61zt-x3yuMKB7brs7-76SXGbHA"/>
+</div>
+</div>
+<!-- Streak Pill Badge -->
+<div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-success-yellow/25 border border-success-yellow text-ink font-headline-md text-caption font-bold mb-5 shadow-sm">
+<span class="text-[14px]">🔥</span>
+<span>연속 10일 → 11일</span>
+</div>
+<!-- Completed Mission Checklist Cards -->
+<section class="w-full space-y-2.5 mb-4 text-left">
+<!-- Mission 1 -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface border border-line shadow-[0_2px_8px_rgba(27,31,42,0.04)]">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-success-yellow flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined fill-icon text-white text-[16px]">check</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-bold font-caption text-caption">식단</span>
+<span class="font-body-sm text-body-sm text-ink font-medium">단백질 30g 채우기</span>
+</div>
+</div>
+<span class="font-caption text-caption text-muted font-medium">30/30g 달성</span>
+</div>
+<!-- Mission 2 -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface border border-line shadow-[0_2px_8px_rgba(27,31,42,0.04)]">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-success-yellow flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined fill-icon text-white text-[16px]">check</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-cream text-ink font-bold font-caption text-caption border border-line">생활</span>
+<span class="font-body-sm text-body-sm text-ink font-medium">물 1.5L 마시기</span>
+</div>
+</div>
+<span class="font-caption text-caption text-muted font-medium">1,500ml 달성</span>
+</div>
+<!-- Mission 3 -->
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface border border-line shadow-[0_2px_8px_rgba(27,31,42,0.04)]">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded-full bg-success-yellow flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined fill-icon text-white text-[16px]">check</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-bold font-caption text-caption">운동</span>
+<span class="font-body-sm text-body-sm text-ink font-medium">스쿼트 30개 하기</span>
+</div>
+</div>
+<span class="font-caption text-caption text-muted font-medium">2세트 완료</span>
+</div>
+</section>
+<!-- AI 1-line Coaching Card -->
+<section class="w-full bg-primary-soft rounded-[16px] p-3.5 flex items-start gap-2.5 text-left border border-line/60">
+<span class="material-symbols-outlined fill-icon text-primary text-[20px] shrink-0 mt-0.5">auto_awesome</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant font-medium leading-snug">
+          단백질 목표를 채우고 제로콜라까지! 완벽한 하루예요.
+        </p>
+</section>
+</div>
+<!-- Bottom Action Buttons (Full-Width Tactile Pills) -->
+<footer class="relative z-20 px-margin pb-6 pt-2 bg-surface flex flex-col gap-2.5">
+<!-- Main Action Button -->
+<button class="w-full h-[50px] rounded-full bg-primary-container text-white font-headline-md text-body font-bold flex items-center justify-center gap-1 shadow-md active:scale-95 hover:bg-primary transition-all" type="button">
+<span>달력 보러 가기</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Secondary Outline Button -->
+<button class="w-full h-[48px] rounded-full bg-surface border-[1.5px] border-primary-container text-primary-container font-headline-md text-body font-semibold flex items-center justify-center hover:bg-primary-soft active:scale-95 transition-all" type="button">
+        닫기
+      </button>
+</footer>
+</main>
+<script src="nav.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body></html>

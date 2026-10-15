@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>FitLog AI - 리워드 달력</title>
+<!-- Google Fonts: Plus Jakarta Sans & Caveat -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "line": "#E3E6EE",
+            "surface-container-lowest": "#ffffff",
+            "outline": "#737687",
+            "on-primary-container": "#000318",
+            "on-tertiary-container": "#ffffff",
+            "on-tertiary-fixed": "#360f00",
+            "secondary": "#1e4ed7",
+            "inverse-primary": "#b5c4ff",
+            "tertiary-container": "#cb4f00",
+            "on-secondary-fixed-variant": "#0039b5",
+            "danger": "#F05252",
+            "primary-fixed": "#dbe1ff",
+            "on-background": "#191b24",
+            "surface-dim": "#d9d9e5",
+            "on-surface-variant": "#434655",
+            "background": "#faf8ff",
+            "inverse-surface": "#2e3039",
+            "secondary-fixed": "#dce1ff",
+            "surface-tint": "#0051e0",
+            "on-secondary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb596",
+            "tertiary": "#a33e00",
+            "outline-variant": "#c3c5d8",
+            "primary": "#0051df",
+            "on-primary-fixed": "#00174d",
+            "cream": "#FFF9EE",
+            "surface-container-low": "#f3f3ff",
+            "primary-fixed-dim": "#b5c4ff",
+            "on-tertiary-fixed-variant": "#7c2d00",
+            "on-surface": "#191b24",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#e1e1ee",
+            "on-primary": "#ffffff",
+            "secondary-container": "#4069f1",
+            "surface-container": "#ededf9",
+            "surface-container-high": "#e7e7f4",
+            "primary-container": "#2f6bff",
+            "muted": "#7A8194",
+            "surface-variant": "#e1e1ee",
+            "on-secondary-fixed": "#001551",
+            "secondary-fixed-dim": "#b7c4ff",
+            "success-yellow": "#FFD43B",
+            "primary-soft": "#E8EFFF",
+            "on-primary-fixed-variant": "#003cac",
+            "on-secondary-container": "#fffbff",
+            "surface-bright": "#faf8ff",
+            "error-container": "#ffdad6",
+            "tertiary-fixed": "#ffdbcd",
+            "ink": "#1B1F2A",
+            "surface": "#FFFFFF",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "inverse-on-surface": "#f0f0fc"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1.25rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Plus Jakarta Sans"],
+            "section-title": ["Plus Jakarta Sans"],
+            "body": ["Plus Jakarta Sans"],
+            "caption": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "script-accent": ["'Caveat', cursive"],
+            "body-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "section-title": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+            "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }],
+            "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "script-accent": ["16px", { "lineHeight": "1.2", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8FAFD;
+      color: #191b24;
+      -webkit-font-smoothing: antialiased;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 1rem);
+    }
+    .paper-card {
+      box-shadow: 0 2px 10px rgba(27, 31, 42, 0.04);
+    }
+    .stamp-rotate {
+      transform: rotate(-6deg);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center bg-[#F3F4F8] text-on-surface" data-screen="calendar">
+<!-- Mobile Viewport Container -->
+<div class="w-full max-w-md bg-surface min-h-screen flex flex-col relative pb-24 shadow-xl">
+<!-- Top Navigation Header -->
+<header class="sticky top-0 z-40 bg-surface/95 backdrop-blur-md px-margin py-space-sm flex items-center justify-between border-b border-line">
+<div class="flex items-center gap-2">
+<button aria-label="뒤로가기" class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface" type="button">
+<span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span>
+</button>
+<h1 class="font-section-title text-section-title tracking-tight text-on-surface">리워드 달력</h1>
+</div>
+<div class="flex items-center gap-1">
+<button aria-label="알림" class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-95 text-on-surface relative" type="button">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-danger ring-2 ring-surface"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-margin pt-4 pb-6 flex flex-col gap-5">
+<!-- Month Selector Bar -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-md text-headline-md text-ink tracking-tight">2026년 10월</span>
+<button class="w-6 h-6 flex items-center justify-center text-muted hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-full border border-line">
+<button aria-label="이전 달" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface text-ink transition-colors active:scale-90" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<button aria-label="다음 달" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface text-ink transition-colors active:scale-90" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Hero Banner (Signature Cream Card) -->
+<section class="bg-cream border border-[#F1E5CF] rounded-lg p-5 relative overflow-hidden paper-card">
+<div class="flex items-center justify-between relative z-10">
+<div class="flex flex-col gap-1.5 max-w-[210px]">
+<span class="font-script-accent text-script-accent text-primary tracking-wide">Keep going!</span>
+<h2 class="font-headline-md text-[21px] leading-tight text-ink font-bold">
+<span class="text-primary-container underline decoration-primary-soft decoration-wavy decoration-2">11일째</span> 매일 완수 중이에요
+            </h2>
+<div class="mt-1">
+<span class="inline-flex items-center gap-1 bg-[#FFF1B8] text-[#8C4A00] font-headline-md text-[12px] font-bold px-2.5 py-1 rounded-full border border-[#FFE28A]">
+<span>🔥</span> 연속 11일 달성
+              </span>
+</div>
+</div>
+<!-- Hand-drawn Stamp Illustration from DataStore -->
+<div class="w-24 h-24 rounded-2xl bg-surface/90 border border-[#EADBBD] p-1.5 shadow-sm flex items-center justify-center shrink-0">
+<img alt="달력에 성실하게 스탬프를 찍고 있는 활기찬 캐릭터 일러스트" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDI_XKzEQx5QwvoONt1LF23m67wQ6CxuTo3Nxirk9SmUvU0AnjABjxzE4R_mDpkKCAgo8kto4Kq4fLrq0VhH8fsaxoCap2oMbzxA0lybCr-CBxa8dg2CTPTA09aFNOFyJd-wJhjAUwgTPAYRXb4iOZAdEhohR8RFnHR9pF1JRE61VSpJxIKMMR1rS0H-NEhgDROHDP4ioe7Welm7T8NLrTwz5C0R-FDtBZTirER58WPocpyg-1d5aKSQJM2Nvl8IFb6Mw_DaF6A-aB"/>
+</div>
+</div>
+<!-- Decorative Subtle Background Circles -->
+<div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-success-yellow/10 pointer-events-none"></div>
+<div class="absolute right-24 -top-8 w-20 h-20 rounded-full bg-primary-soft/40 pointer-events-none"></div>
+</section>
+<!-- Monthly Calendar Section -->
+<section class="bg-surface rounded-lg border border-line p-4 paper-card flex flex-col gap-3">
+<!-- Weekday Headers (Sun ~ Sat) -->
+<div class="grid grid-cols-7 text-center font-caption text-caption pb-2 border-b border-line">
+<span class="text-danger font-bold">일</span>
+<span class="text-on-surface-variant font-medium">월</span>
+<span class="text-on-surface-variant font-medium">화</span>
+<span class="text-on-surface-variant font-medium">수</span>
+<span class="text-on-surface-variant font-medium">목</span>
+<span class="text-on-surface-variant font-medium">금</span>
+<span class="text-primary font-bold">토</span>
+</div>
+<!-- Calendar Days Grid (October 2026: 1st is Thursday) -->
+<div class="grid grid-cols-7 gap-y-3.5 gap-x-1.5 text-center">
+<!-- Empty Slots (Sun, Mon, Tue, Wed) -->
+<div class="h-11"></div>
+<div class="h-11"></div>
+<div class="h-11"></div>
+<div class="h-11"></div>
+<!-- Day 1: Partial 1/3 (Thu) -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">1</span>
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-7 h-7 -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#E8EFFF" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#2F6BFF" stroke-dasharray="88" stroke-dashoffset="58.6" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-headline-md text-[10px] text-primary-container font-bold">1</span>
+</div>
+</div>
+<!-- Day 2: Partial 2/3 (Fri) -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">2</span>
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-7 h-7 -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#E8EFFF" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#2F6BFF" stroke-dasharray="88" stroke-dashoffset="29.3" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-headline-md text-[10px] text-primary-container font-bold">2</span>
+</div>
+</div>
+<!-- Day 3: Partial 2/3 (Sat) -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-primary font-medium">3</span>
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-7 h-7 -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#E8EFFF" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#2F6BFF" stroke-dasharray="88" stroke-dashoffset="29.3" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-headline-md text-[10px] text-primary-container font-bold">2</span>
+</div>
+</div>
+<!-- Day 4: Partial 1/3 (Sun) -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-danger font-medium">4</span>
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-7 h-7 -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#E8EFFF" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#2F6BFF" stroke-dasharray="88" stroke-dashoffset="58.6" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-headline-md text-[10px] text-primary-container font-bold">1</span>
+</div>
+</div>
+<!-- Days 5 ~ 14: Perfect 3/3 (Yellow Stamps) -->
+<!-- Day 5 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">5</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs stamp-rotate">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 6 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">6</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 7 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">7</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs stamp-rotate">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 8 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">8</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 9 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">9</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs stamp-rotate">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 10 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-primary font-medium">10</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 11 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-danger font-medium">11</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs stamp-rotate">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 12 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">12</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 13 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">13</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs stamp-rotate">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 14 -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-muted">14</span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-ink" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Day 15 (TODAY): Blue Highlight Ring + Completed Stamp -->
+<div class="flex flex-col items-center justify-center gap-0.5 relative">
+<span class="font-caption text-[11px] text-primary-container font-extrabold flex items-center justify-center">
+              15
+            </span>
+<div class="w-8 h-8 rounded-full bg-success-yellow flex items-center justify-center ring-2 ring-primary-container ring-offset-2 ring-offset-surface shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-primary-container font-black">check</span>
+</div>
+<span class="absolute -bottom-3.5 px-1 py-0.2 bg-primary-container text-white text-[9px] rounded-full font-bold scale-90">오늘</span>
+</div>
+<!-- Day 16 ~ 31: Future Dates -->
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">16</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">17</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">18</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">19</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">20</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">21</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">22</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">23</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">24</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">25</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">26</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">27</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">28</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">29</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">30</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-0.5">
+<span class="font-caption text-[11px] text-outline-variant">31</span>
+<div class="w-8 h-8 rounded-full border border-dashed border-line flex items-center justify-center text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-high"></span>
+</div>
+</div>
+</div>
+<!-- Legend Bar -->
+<div class="mt-4 pt-3 border-t border-line flex items-center justify-between text-[11px] text-muted px-1">
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full border border-line bg-surface-container-low"></div>
+<span>미수행</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full border-2 border-primary-container border-t-transparent"></div>
+<span>1~2개</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-success-yellow flex items-center justify-center text-[9px] text-ink font-bold">
+              ★
+            </div>
+<span class="font-semibold text-ink">3개 완수</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-success-yellow ring-2 ring-primary-container"></div>
+<span class="font-semibold text-primary-container">오늘</span>
+</div>
+</div>
+</section>
+<!-- Badge Collection Section -->
+<section class="bg-surface rounded-lg border border-line p-4 paper-card">
+<div class="flex items-center justify-between mb-3.5">
+<div class="flex items-center gap-2">
+<h3 class="font-section-title text-[16px] text-ink">획득한 배지</h3>
+<span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-primary-soft text-primary">3 / 12</span>
+</div>
+<button class="text-[13px] text-muted hover:text-primary transition-colors flex items-center gap-0.5" type="button">
+            전체보기
+            <span class="material-symbols-outlined text-[15px]">chevron_right</span>
+</button>
+</div>
+<!-- Badges Horizontal Row -->
+<div class="grid grid-cols-4 gap-2">
+<!-- Badge 1: First Mission -->
+<div class="flex flex-col items-center gap-1.5 p-1">
+<div class="w-14 h-14 rounded-full border-2 border-primary-container bg-primary-soft flex items-center justify-center text-2xl shadow-xs transition-transform hover:scale-105">
+              🌱
+            </div>
+<div class="text-center">
+<span class="block font-headline-md text-[12px] font-bold text-ink">첫 미션</span>
+<span class="block text-[10px] text-muted">첫 발걸음</span>
+</div>
+</div>
+<!-- Badge 2: 7 Days Streak -->
+<div class="flex flex-col items-center gap-1.5 p-1">
+<div class="w-14 h-14 rounded-full border-2 border-primary-container bg-[#FFF4E5] flex items-center justify-center text-2xl shadow-xs transition-transform hover:scale-105">
+              🔥
+            </div>
+<div class="text-center">
+<span class="block font-headline-md text-[12px] font-bold text-ink">7일 연속</span>
+<span class="block text-[10px] text-muted">일주일 달성</span>
+</div>
+</div>
+<!-- Badge 3: Drink Water 10 Times -->
+<div class="flex flex-col items-center gap-1.5 p-1">
+<div class="w-14 h-14 rounded-full border-2 border-primary-container bg-primary-soft flex items-center justify-center text-2xl shadow-xs transition-transform hover:scale-105">
+              💧
+            </div>
+<div class="text-center">
+<span class="block font-headline-md text-[12px] font-bold text-ink">물 10회</span>
+<span class="block text-[10px] text-muted">수분 충전</span>
+</div>
+</div>
+<!-- Badge 4: Locked (30 Days) -->
+<div class="flex flex-col items-center gap-1.5 p-1 opacity-70">
+<div class="w-14 h-14 rounded-full border-2 border-dashed border-outline-variant bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[24px]">lock</span>
+</div>
+<div class="text-center">
+<span class="block font-headline-md text-[12px] font-semibold text-muted">30일 연속</span>
+<span class="block text-[10px] text-outline">도전 중</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Reassuring Message Banner -->
+<div class="bg-surface-container-low rounded-2xl p-3.5 flex items-center gap-3 border border-line">
+<div class="w-8 h-8 rounded-full bg-cream border border-[#F1E5CF] flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<p class="font-body-sm text-[13px] text-on-surface-variant leading-tight">
+          꾸준함이 가장 큰 보상이에요. 오늘도 건강한 하루를 만들어봐요!
+        </p>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Shared Component strictly mapped to active: '캘린더') -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-gutter py-space-xs pb-safe max-w-md mx-auto left-0 right-0 bg-surface dark:bg-inverse-surface border-t border-line dark:border-outline-variant shadow-sm dark:shadow-none">
+<!-- Tab 1: 오늘 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">today</span>
+<span class="text-caption font-caption">오늘</span>
+</button>
+<!-- Tab 2: 캘린더 (ACTIVE: Exact match for Reward Calendar) -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold gap-0.5 active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="text-caption font-caption">달력</span>
+</button>
+<!-- Tab 3: 통계 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="text-caption font-caption">리포트</span>
+</button>
+<!-- Tab 4: 마이 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-caption font-caption">설정</span>
+</button>
+</nav>
+</div>
+<script src="nav.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body></html>

@@ -1,0 +1,223 @@
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitLog AI 설정</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#360f00",
+              "on-surface": "#191b24",
+              "inverse-primary": "#b5c4ff",
+              "success-yellow": "#FFD43B",
+              "surface-container": "#ededf9",
+              "on-primary-fixed": "#00174d",
+              "outline": "#737687",
+              "tertiary-fixed": "#ffdbcd",
+              "surface-tint": "#0051e0",
+              "primary-soft": "#E8EFFF",
+              "on-secondary": "#ffffff",
+              "on-tertiary-container": "#ffffff",
+              "surface-container-highest": "#e1e1ee",
+              "outline-variant": "#c3c5d8",
+              "on-secondary-fixed": "#001551",
+              "secondary-container": "#4069f1",
+              "inverse-on-surface": "#f0f0fc",
+              "secondary": "#1e4ed7",
+              "on-primary-fixed-variant": "#003cac",
+              "primary-fixed": "#dbe1ff",
+              "muted": "#7A8194",
+              "primary-fixed-dim": "#b5c4ff",
+              "inverse-surface": "#2e3039",
+              "on-tertiary": "#ffffff",
+              "danger": "#F05252",
+              "surface-container-low": "#f3f3ff",
+              "ink": "#1B1F2A",
+              "secondary-fixed-dim": "#b7c4ff",
+              "on-primary-container": "#000318",
+              "surface-container-high": "#e7e7f4",
+              "line": "#E3E6EE",
+              "surface": "#FFFFFF",
+              "on-tertiary-fixed-variant": "#7c2d00",
+              "error": "#ba1a1a",
+              "surface-bright": "#faf8ff",
+              "background": "#faf8ff",
+              "tertiary-container": "#cb4f00",
+              "tertiary": "#a33e00",
+              "cream": "#FFF9EE",
+              "on-secondary-fixed-variant": "#0039b5",
+              "primary": "#0051df",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-dim": "#d9d9e5",
+              "on-background": "#191b24",
+              "surface-variant": "#e1e1ee",
+              "primary-container": "#2f6bff",
+              "secondary-fixed": "#dce1ff",
+              "on-surface-variant": "#434655",
+              "on-secondary-container": "#fffbff",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+              "DEFAULT": "1rem",
+              "lg": "2rem",
+              "xl": "3rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "space-lg": "1.5rem",
+              "space-xs": "0.25rem",
+              "space-xl": "2rem",
+              "margin": "1.25rem",
+              "space-md": "1rem",
+              "gutter": "1rem",
+              "space-sm": "0.5rem"
+            },
+            "fontFamily": {
+              "headline-lg": ["Plus Jakarta Sans"],
+              "caption": ["Plus Jakarta Sans"],
+              "body-sm": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "section-title": ["Plus Jakarta Sans"],
+              "headline-md": ["Plus Jakarta Sans"],
+              "script-accent": ["\"Caveat, cursive\""]
+            },
+            "fontSize": {
+              "headline-lg": ["28px", { "lineHeight": "1.35", "fontWeight": "700" }],
+              "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+              "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+              "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }],
+              "section-title": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+              "headline-md": ["24px", { "lineHeight": "1.35", "fontWeight": "700" }],
+              "script-accent": ["16px", { "lineHeight": "1.2", "fontWeight": "600" }]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen pb-24" data-screen="settings">
+<!-- TopAppBar -->
+<header class="bg-cream dark:bg-background flex justify-between items-center w-full px-margin py-space-sm max-w-md mx-auto sticky top-0 z-40">
+<button aria-label="뒤로가기" class="flex items-center justify-center p-2 rounded-full hover:bg-primary-soft dark:hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">설정</h1>
+<div class="w-10"></div>
+</header>
+<main class="max-w-md mx-auto px-margin mt-space-md space-y-space-md">
+<!-- Gemini API Key Card -->
+<section class="bg-surface rounded-lg p-space-lg border border-line shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-space-sm">
+<div>
+<h2 class="text-section-title font-section-title text-on-surface">Gemini API 키</h2>
+<p class="text-body-sm font-body-sm text-muted mt-0.5">AI 자동 분석 및 음성 인식을 위한 Gemini API 키를 관리하세요</p>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-caption font-caption bg-primary-soft text-primary font-bold">저장됨 ✅</span>
+</div>
+<div class="mt-space-md space-y-space-sm">
+<label class="block text-caption font-caption text-on-surface-variant font-medium" for="apiKey">API 키 입력</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-line rounded-DEFAULT px-4 py-3 text-body font-body text-on-surface focus:outline-none focus:border-primary transition-colors pr-10" id="apiKey" type="password" value="AIzaSyA-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-xl">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="mt-space-md flex items-center justify-between gap-3 pt-2">
+<button class="text-danger text-body-sm font-body-sm font-semibold hover:opacity-80 transition-opacity px-2 py-1" type="button">키 삭제</button>
+<button class="bg-primary text-on-primary rounded-full px-6 py-2.5 text-body-sm font-body-sm font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all" type="button">확인 후 저장</button>
+</div>
+</section>
+<!-- Additional Settings List -->
+<section class="bg-surface rounded-lg border border-line shadow-sm overflow-hidden divide-y divide-line">
+<div class="flex items-center justify-between p-space-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-soft flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</div>
+<div>
+<h3 class="text-body font-body font-semibold text-on-surface">알림 설정</h3>
+<p class="text-caption font-caption text-muted">운동 리마인더 및 미션 알림</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-space-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-soft flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">cloud_upload</span>
+</div>
+<div>
+<h3 class="text-body font-body font-semibold text-on-surface">데이터 백업 및 복구</h3>
+<p class="text-caption font-caption text-muted">클라우드에 운동 기록 안전하게 보관</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-space-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-soft flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">palette</span>
+</div>
+<div>
+<h3 class="text-body font-body font-semibold text-on-surface">테마 설정</h3>
+<p class="text-caption font-caption text-muted">라이트 모드 / 다크 모드</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-space-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-soft flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">help</span>
+</div>
+<div>
+<h3 class="text-body font-body font-semibold text-on-surface">고객 지원 및 피드백</h3>
+<p class="text-caption font-caption text-muted">문의하기 및 FAQ</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted">chevron_right</span>
+</div>
+</section>
+<!-- App Version Info -->
+<div class="text-center py-4">
+<p class="text-caption font-caption text-muted">FitLog AI v1.0.4</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-gutter py-space-xs pb-safe max-w-md mx-auto left-0 right-0 bg-surface dark:bg-inverse-surface shadow-sm dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="text-caption font-caption">오늘</span>
+</a>
+<a class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-caption font-caption">달력</span>
+</a>
+<a class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 hover:text-primary transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-caption font-caption">리포트</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold gap-0.5 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-caption font-caption">설정</span>
+</a>
+</nav>
+<script src="nav.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body></html>
