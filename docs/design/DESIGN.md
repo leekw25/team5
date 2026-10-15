@@ -40,7 +40,9 @@ Rules: blue + cream + white carry 90% of the screen. Yellow is a reward accent o
 - Pagination dots: one elongated active pill + small dots.
 
 ## Illustration
-- Hand-drawn ink line illustrations (thin black pen strokes, slightly sketchy), with **flat cobalt blue fills** on a few objects and occasional yellow accents. White/cream background, no outlines around the scene.
+- **Notion-style characters**: minimal black-and-white line art like Notion's illustrations and avatars. Bold, clean, slightly hand-drawn black outlines; flat white fills; simple faces (dot eyes, small curved smile, no nose detail); simple bob/short hair shapes filled solid black; no shading, no gradients, no textures.
+- **One character only — "지유 (Jiyu)"**: woman in her 20s, chin-length solid black bob with straight bangs, dot eyes, small curved smile, no nose, plain white short-sleeve crew-neck T-shirt, black pants, white sneakers. Every illustration uses this same character; no gender/character selection.
+- Color: monochrome by default. At most **one small cobalt blue (#2F6BFF) accent** per image (e.g. the phone, a cup, a stamp) and yellow (#FFD43B) only for reward moments. Transparent/white background, generous empty space, no scene borders.
 - Subjects: friendly people eating (burger set, rice bowl), drinking water, doing squats, walking, holding a phone and talking to it, a calendar with stamps.
 - Feature icons: illustration inside a **circle outlined in blue** (~140px), as in reference service steps.
 
