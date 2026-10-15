@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>핏로그 - FitLog AI</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Pretendard:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary": "#1e4ed7",
+            "tertiary": "#a33e00",
+            "line": "#E3E6EE",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "on-primary-fixed-variant": "#003cac",
+            "ink": "#1B1F2A",
+            "secondary-container": "#4069f1",
+            "on-secondary-fixed-variant": "#0039b5",
+            "on-secondary-fixed": "#001551",
+            "surface-container": "#ededf9",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#7c2d00",
+            "tertiary-fixed-dim": "#ffb596",
+            "surface-container-highest": "#e1e1ee",
+            "on-secondary-container": "#fffbff",
+            "outline": "#737687",
+            "on-primary": "#ffffff",
+            "on-background": "#191b24",
+            "error-container": "#ffdad6",
+            "cream": "#FFF9EE",
+            "surface-bright": "#faf8ff",
+            "primary-fixed-dim": "#b5c4ff",
+            "outline-variant": "#c3c5d8",
+            "surface-dim": "#d9d9e5",
+            "primary-fixed": "#dbe1ff",
+            "tertiary-container": "#cb4f00",
+            "on-surface": "#191b24",
+            "muted": "#7A8194",
+            "surface-tint": "#0051e0",
+            "success-yellow": "#FFD43B",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e7e7f4",
+            "secondary-fixed": "#dce1ff",
+            "on-tertiary-fixed": "#360f00",
+            "danger": "#F05252",
+            "background": "#faf8ff",
+            "primary-container": "#2f6bff",
+            "tertiary-fixed": "#ffdbcd",
+            "primary-soft": "#E8EFFF",
+            "inverse-surface": "#2e3039",
+            "inverse-primary": "#b5c4ff",
+            "surface-container-low": "#f3f3ff",
+            "on-tertiary-container": "#ffffff",
+            "surface": "#FFFFFF",
+            "on-primary-container": "#000318",
+            "surface-variant": "#e1e1ee",
+            "secondary-fixed-dim": "#b7c4ff",
+            "on-surface-variant": "#434655",
+            "primary": "#0051df",
+            "on-primary-fixed": "#00174d",
+            "inverse-on-surface": "#f0f0fc",
+            "on-tertiary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "margin": "1.25rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Pretendard", "Plus Jakarta Sans", "sans-serif"],
+            "caption": ["Pretendard", "Plus Jakarta Sans", "sans-serif"],
+            "section-title": ["Pretendard", "Plus Jakarta Sans", "sans-serif"],
+            "script-accent": ["\"Caveat\", cursive"],
+            "body-sm": ["Pretendard", "Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Pretendard", "Plus Jakarta Sans", "sans-serif"],
+            "body": ["Pretendard", "Plus Jakarta Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+            "section-title": ["18px", { "lineHeight": "1.4", "fontWeight": "700" }],
+            "script-accent": ["16px", { "lineHeight": "1.2", "fontWeight": "600" }],
+            "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "1.35", "fontWeight": "700" }],
+            "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #F1F4F9;
+      color: #1B1F2A;
+      font-family: 'Pretendard', 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    @keyframes gentle-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+    .animate-gentle-bounce {
+      animation: gentle-bounce 2s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2.5s ease-in-out infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex justify-center min-h-screen" data-screen="onboarding">
+<!-- Mobile Viewport Wrapper (390px Max Width) -->
+<div class="w-full max-w-md bg-surface min-h-screen flex flex-col relative shadow-xl overflow-x-hidden">
+<!-- 1) Top Navigation Bar (Shared Component Anchor) -->
+<header class="bg-cream sticky top-0 z-50 border-b border-line">
+<div class="flex justify-between items-center w-full px-5 py-3 max-w-md mx-auto">
+<!-- Logo Badge + Brand Text -->
+<a class="font-headline-md text-headline-md font-bold text-ink flex items-center gap-2 group" href="#">
+<div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
+<span class="material-symbols-outlined text-[20px]" data-icon="fitness_center">fitness_center</span>
+</div>
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-ink">핏로그</span>
+</a>
+<!-- Header Actions -->
+<div class="flex items-center gap-2">
+<button class="border border-primary text-primary font-caption text-caption px-3.5 py-1.5 rounded-full font-bold hover:bg-primary-soft transition-colors active:scale-95 duration-150" type="button">
+            시작하기
+          </button>
+<button aria-label="메뉴 열기" class="w-8 h-8 flex items-center justify-center text-ink rounded-full hover:bg-black/5 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Flow -->
+<main class="flex-1 flex flex-col">
+<!-- 2) Cream Hero Section -->
+<section class="bg-cream px-5 pt-8 pb-10 flex flex-col relative overflow-hidden">
+<!-- Tagline (Caveat script font) -->
+<div class="mb-2">
+<span class="font-script-accent text-script-accent text-primary text-xl tracking-wide inline-block -rotate-1">
+            Just say it, FitLog logs it!
+          </span>
+</div>
+<!-- Hero Headline -->
+<h1 class="font-headline-lg text-headline-lg text-ink font-extrabold tracking-tight mb-3">
+          말 한마디로 끝나는<br/>
+          식단·운동 기록,<br/>
+<span class="text-primary underline decoration-primary-soft decoration-wavy decoration-2 underline-offset-4">핏로그</span>와 함께하세요.
+        </h1>
+<!-- Hero Subtitle -->
+<p class="font-body text-body text-muted leading-relaxed mb-6">
+          손으로 일일이 적지 마세요. 말하거나 사진 찍으면 AI가 영양소 분석부터 미션 체크까지 알아서!
+        </p>
+<!-- Hand-drawn Style Hero Illustration -->
+<div class="w-full bg-surface rounded-2xl border border-line p-5 shadow-sm relative mb-4">
+<img src="img/hero-burger-talk.jpg" alt="햄버거 세트 앞에서 휴대폰에 말하는 사람 손그림" class="w-full h-auto rounded-xl select-none"/>
+<!-- Little Tag Overlay on Card -->
+<div class="absolute bottom-3 left-4 bg-cream/90 backdrop-blur-sm border border-line px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-success-yellow"></span>
+<span class="font-caption text-caption text-ink font-semibold">음성 인식 준비 완료</span>
+</div>
+</div>
+<!-- Scroll Indicator Pin -->
+<div class="flex items-center justify-end gap-2 pt-2 text-muted select-none">
+<span class="font-caption text-caption uppercase tracking-wider font-semibold text-[11px]">Scroll</span>
+<div class="w-6 h-6 rounded-full border border-line flex items-center justify-center animate-gentle-bounce">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="arrow_downward">arrow_downward</span>
+</div>
+</div>
+</section>
+<!-- 3) Full-bleed Cobalt Blue Section (#0051df / theme primary) -->
+<section class="bg-primary px-6 py-12 text-white flex flex-col items-center text-center relative">
+<!-- Floating Sparkles (SVG) -->
+<div class="absolute top-6 left-6 text-success-yellow opacity-80">
+<svg fill="currentColor" height="24" viewbox="0 0 24 24" width="24">
+<path d="M12 2L14.4 8.6L21 11L14.4 13.4L12 20L9.6 13.4L3 11L9.6 8.6Z"></path>
+</svg>
+</div>
+<div class="absolute bottom-10 right-6 text-white/40">
+<svg fill="currentColor" height="18" viewbox="0 0 24 24" width="18">
+<path d="M12 2L13.8 7.8L19.6 9.6L13.8 11.4L12 17.2L10.2 11.4L4.4 9.6L10.2 7.8Z"></path>
+</svg>
+</div>
+<!-- Step Pill Badge -->
+<div class="bg-white/20 backdrop-blur-sm px-3.5 py-1 rounded-full font-caption text-caption font-semibold tracking-wide text-white mb-4">
+          Step 1
+        </div>
+<!-- Section Title -->
+<h2 class="font-headline-md text-headline-md text-white font-extrabold mb-2 leading-tight">
+          기록은 3초,<br/>성취감은 하루 종일!
+        </h2>
+<!-- Circular Microphone Interactive Highlight Container -->
+<div class="my-6 relative flex items-center justify-center">
+<!-- Pulse animation rings -->
+<div class="absolute w-44 h-44 rounded-full border border-white/20 animate-pulse-ring"></div>
+<div class="absolute w-36 h-36 rounded-full border border-white/40"></div>
+<!-- Inner White Card Circle -->
+<div class="w-32 h-32 rounded-full bg-white flex flex-col items-center justify-center relative shadow-lg overflow-visible">
+<img src="img/step-mic-hand.jpg" alt="휴대폰 마이크 버튼을 누르는 손" class="w-full h-full object-cover rounded-full"/>
+<!-- Yellow spark accent badge -->
+<div class="absolute -top-1 -right-1 bg-success-yellow text-ink rounded-full p-1 border-2 border-white shadow-xs">
+<span class="material-symbols-outlined text-[16px] block font-bold" data-icon="sparkles">auto_awesome</span>
+</div>
+</div>
+</div>
+<!-- Subtitle & Description -->
+<h3 class="font-section-title text-section-title text-white font-bold mb-2">
+          말하거나 찍어서 기록
+        </h3>
+<p class="font-body-sm text-body-sm text-white/85 leading-relaxed max-w-xs mb-8">
+          오늘 먹은 점심, 가볍게 한마디 남겨보세요.<br/>
+          사진 한 장이면 칼로리와 탄단지까지 즉시 정리됩니다.
+        </p>
+<!-- Pagination Dots -->
+<div class="flex items-center gap-2">
+<span class="w-6 h-2 rounded-full bg-white transition-all"></span>
+<span class="w-2 h-2 rounded-full bg-white/40"></span>
+<span class="w-2 h-2 rounded-full bg-white/40"></span>
+<span class="w-2 h-2 rounded-full bg-white/40"></span>
+</div>
+</section>
+<!-- 4) White Section: 3 Feature Showcases (Vertical Stack) -->
+<section class="bg-surface px-5 py-12 flex flex-col gap-14">
+<!-- Feature 1: AI 자동 분석 -->
+<div class="flex flex-col items-center text-center">
+<!-- Illustration Circle Badge (~120px) -->
+<div class="w-28 h-28 rounded-full border-2 border-primary bg-white flex items-center justify-center mb-5 relative shadow-xs overflow-hidden">
+<!-- Hand-drawn SVG Illustration -->
+<img src="img/feat-nutrition.jpg" alt="돋보기로 햄버거 영양 성분을 보는 사람" class="w-full h-full object-cover rounded-full"/>
+<div class="absolute -bottom-1 -right-1 bg-surface rounded-full p-1 border border-line shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="restaurant">restaurant</span>
+</div>
+</div>
+<!-- Chip -->
+<div class="bg-primary-soft text-primary font-caption text-caption font-bold px-3 py-1 rounded-full mb-2">
+            AI가 자동으로 분석해요
+          </div>
+<!-- Title -->
+<h3 class="font-section-title text-section-title text-ink font-bold mb-2">
+            음식명·칼로리·영양소 자동 기록
+          </h3>
+<!-- Description -->
+<p class="font-body-sm text-body-sm text-muted leading-relaxed max-w-xs">
+            복잡한 식단 계산기는 이제 그만.<br/>
+            자연스러운 일상 언어를 AI가 알아듣고 영양 성분을 분석합니다.<br/>
+            부족한 단백질과 주의할 당류까지 한눈에 피드백해 드려요.
+          </p>
+</div>
+<!-- Divider line -->
+<div class="w-12 h-px bg-line self-center"></div>
+<!-- Feature 2: 오늘의 미션 3종 -->
+<div class="flex flex-col items-center text-center">
+<!-- Illustration Circle Badge -->
+<div class="w-28 h-28 rounded-full border-2 border-primary bg-white flex items-center justify-center mb-5 relative shadow-xs overflow-hidden">
+<img src="img/feat-missions.jpg" alt="체크된 미션 카드 3장을 든 사람" class="w-full h-full object-cover rounded-full"/>
+<div class="absolute -bottom-1 -right-1 bg-surface rounded-full p-1 border border-line shadow-xs">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="checklist">checklist</span>
+</div>
+</div>
+<!-- Chip -->
+<div class="bg-primary-soft text-primary font-caption text-caption font-bold px-3 py-1 rounded-full mb-2">
+            작은 습관이 만드는 변화
+          </div>
+<!-- Title -->
+<h3 class="font-section-title text-section-title text-ink font-bold mb-2">
+            오늘의 미션 3종 세트
+          </h3>
+<!-- Description -->
+<p class="font-body-sm text-body-sm text-muted leading-relaxed max-w-xs">
+            무리한 다이어트 대신 매일 지킬 수 있는 3가지 맞춤 미션.<br/>
+            물 1.5L 마시기, 단백질 채우기, 15분 산책하기처럼<br/>
+            쉽고 가벼운 실천으로 건강한 루틴을 완성하세요.
+          </p>
+</div>
+<!-- Divider line -->
+<div class="w-12 h-px bg-line self-center"></div>
+<!-- Feature 3: 달력을 채우는 성취감 -->
+<div class="flex flex-col items-center text-center">
+<!-- Illustration Circle Badge -->
+<div class="w-28 h-28 rounded-full border-2 border-primary bg-white flex items-center justify-center mb-5 relative shadow-xs overflow-hidden">
+<img src="img/feat-stamp.jpg" alt="달력에 노란 스탬프를 찍는 사람" class="w-full h-full object-cover rounded-full"/>
+<!-- Streak Flame Floating Chip -->
+<div class="absolute -bottom-2.5 bg-ink text-white font-caption text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white">
+<span>🔥</span> 연속 11일
+            </div>
+</div>
+<!-- Chip -->
+<div class="bg-primary-soft text-primary font-caption text-caption font-bold px-3 py-1 rounded-full mb-2">
+            매일 쌓이는 뿌듯함
+          </div>
+<!-- Title -->
+<h3 class="font-section-title text-section-title text-ink font-bold mb-2">
+            달력을 채우는 성취감
+          </h3>
+<!-- Description -->
+<p class="font-body-sm text-body-sm text-muted leading-relaxed max-w-xs">
+            미션을 완료할 때마다 달력에 찍히는 노란 성공 도장!<br/>
+            연속 달성 스트릭으로 지속 가능한 동기부여를 얻고<br/>
+            한 달 후 눈에 띄게 달라진 나의 건강 변화를 확인하세요.
+          </p>
+</div>
+</section>
+<!-- 5) Bottom Blue Section (Conversion / CTA Section) -->
+<section class="bg-primary px-6 py-14 text-white text-center flex flex-col items-center relative overflow-hidden">
+<!-- Playful Background Hand-Drawn Confetti / Stars -->
+<div class="absolute -top-3 right-8 text-success-yellow select-none opacity-90">
+<svg fill="none" height="34" viewbox="0 0 34 34" width="34">
+<path d="M17 0L20.8 11.8L33 13.4L23.6 21.2L26.6 33L17 26.6L7.4 33L10.4 21.2L1 13.4L13.2 11.8L17 0Z" fill="#FFD43B"></path>
+</svg>
+</div>
+<div class="absolute bottom-6 left-6 text-white/30 select-none">
+<svg fill="none" height="24" viewbox="0 0 24 24" width="24">
+<circle cx="12" cy="12" r="6" stroke="#FFF" stroke-dasharray="3 3" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="absolute top-1/2 left-4 text-success-yellow select-none text-xs">
+          ✦
+        </div>
+<div class="absolute bottom-16 right-5 text-white/50 select-none text-lg">
+          ★
+        </div>
+<!-- Headline -->
+<h2 class="font-headline-md text-headline-md text-white font-extrabold leading-snug mb-3">
+          이제 기록은 핏로그와 함께,<br/>
+          오늘 미션부터 시작해 보세요.
+        </h2>
+<!-- Subtext -->
+<p class="font-body-sm text-body-sm text-white/90 mb-8 max-w-xs">
+          가입 즉시 나만의 맞춤 건강 미션 3개가 배정됩니다.
+        </p>
+<!-- CTA Buttons Stack -->
+<div class="w-full flex flex-col gap-3 max-w-xs">
+<!-- Primary Pill Button -->
+<button class="w-full h-14 bg-white text-primary font-headline-md text-body font-bold rounded-full flex items-center justify-center gap-2 shadow-md hover:bg-cream active:scale-95 transition-all duration-150" type="button">
+<span>오늘 미션 보기</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<!-- Secondary Pill Button -->
+<button class="w-full h-12 bg-transparent border-[1.5px] border-white text-white font-body-sm text-body-sm font-semibold rounded-full flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all duration-150" type="button">
+            둘러보기
+          </button>
+</div>
+</section>
+</main>
+<!-- 6) Dark Gray Footer (Shared Component Anchor) -->
+<footer class="bg-ink text-surface py-10 px-6 border-t border-line/20">
+<div class="w-full max-w-md mx-auto flex flex-col items-center gap-5 text-center">
+<!-- Logo Wordmark & Tagline -->
+<div class="flex flex-col items-center gap-1.5">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[14px]" data-icon="fitness_center">fitness_center</span>
+</div>
+<span class="font-headline-md text-section-title font-bold text-white tracking-tight">핏로그</span>
+</div>
+<p class="font-caption text-caption text-muted">
+            말 한마디, 사진 한 장으로 끝내는 AI 건강 다이어리
+          </p>
+</div>
+<!-- Links Navigation Row -->
+<div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-muted font-caption text-[12px]">
+<a class="hover:text-surface transition-colors" href="#">개인정보처리방침</a>
+<span class="text-muted/40">|</span>
+<a class="hover:text-surface transition-colors" href="#">이용약관</a>
+<span class="text-muted/40">|</span>
+<a class="hover:text-surface transition-colors" href="#">오픈소스 라이선스</a>
+<span class="text-muted/40">|</span>
+<a class="hover:text-surface transition-colors" href="#">고객센터</a>
+</div>
+<!-- Team & Legal Info (2 lines) -->
+<div class="font-caption text-[11px] text-muted/80 leading-relaxed max-w-xs">
+          (주)마크애니 | 사업자등록번호: 101-81-47345<br/>
+          서울특별시 중구 퇴계로 286 13층 | 5team@markany.com
+        </div>
+<!-- Copyright -->
+<div class="font-caption text-[11px] text-muted/60 pt-2 border-t border-white/10 w-full">
+          © 2026 FitLog AI. All rights reserved. 일상의 건강한 습관을 함께 만듭니다.
+        </div>
+</div>
+</footer>
+</div>
+<script src="nav.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body></html>

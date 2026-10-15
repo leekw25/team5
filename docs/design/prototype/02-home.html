@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitLog AI - 오늘</title>
+<!-- Fonts: Plus Jakarta Sans & Caveat -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-soft": "#E8EFFF",
+            "tertiary-container": "#cb4f00",
+            "inverse-primary": "#b5c4ff",
+            "surface-container-low": "#f3f3ff",
+            "primary": "#0051df",
+            "secondary-container": "#4069f1",
+            "on-surface": "#191b24",
+            "on-secondary-fixed": "#001551",
+            "secondary-fixed-dim": "#b7c4ff",
+            "surface-container-high": "#e7e7f4",
+            "on-primary-fixed-variant": "#003cac",
+            "primary-fixed-dim": "#b5c4ff",
+            "surface": "#FFFFFF",
+            "on-tertiary-fixed-variant": "#7c2d00",
+            "primary-container": "#2f6bff",
+            "ink": "#1B1F2A",
+            "success-yellow": "#FFD43B",
+            "surface-container": "#ededf9",
+            "tertiary": "#a33e00",
+            "secondary": "#1e4ed7",
+            "surface-bright": "#faf8ff",
+            "on-background": "#191b24",
+            "on-surface-variant": "#434655",
+            "on-error": "#ffffff",
+            "error": "#ba1a1a",
+            "on-secondary-fixed-variant": "#0039b5",
+            "muted": "#7A8194",
+            "danger": "#F05252",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "outline": "#737687",
+            "on-tertiary-fixed": "#360f00",
+            "on-primary-container": "#000318",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#dce1ff",
+            "on-secondary-container": "#fffbff",
+            "inverse-surface": "#2e3039",
+            "surface-dim": "#d9d9e5",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#e1e1ee",
+            "background": "#faf8ff",
+            "tertiary-fixed-dim": "#ffb596",
+            "line": "#E3E6EE",
+            "primary-fixed": "#dbe1ff",
+            "tertiary-fixed": "#ffdbcd",
+            "on-primary-fixed": "#00174d",
+            "cream": "#FFF9EE",
+            "surface-variant": "#e1e1ee",
+            "surface-tint": "#0051e0",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#ffffff",
+            "outline-variant": "#c3c5d8",
+            "inverse-on-surface": "#f0f0fc",
+            "on-secondary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "space-md": "1rem",
+            "margin": "1.25rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "section-title": [
+              "Plus Jakarta Sans"
+            ],
+            "body-sm": [
+              "Plus Jakarta Sans"
+            ],
+            "caption": [
+              "Plus Jakarta Sans"
+            ],
+            "headline-md": [
+              "Plus Jakarta Sans"
+            ],
+            "script-accent": [
+              "\"Caveat\", cursive"
+            ],
+            "headline-lg": [
+              "Plus Jakarta Sans"
+            ],
+            "body": [
+              "Plus Jakarta Sans"
+            ]
+          },
+          "fontSize": {
+            "section-title": [
+              "18px",
+              {
+                "lineHeight": "1.4",
+                "fontWeight": "700"
+              }
+            ],
+            "body-sm": [
+              "14px",
+              {
+                "lineHeight": "1.5",
+                "fontWeight": "400"
+              }
+            ],
+            "caption": [
+              "12px",
+              {
+                "lineHeight": "1.4",
+                "fontWeight": "400"
+              }
+            ],
+            "headline-md": [
+              "24px",
+              {
+                "lineHeight": "1.35",
+                "fontWeight": "700"
+              }
+            ],
+            "script-accent": [
+              "18px",
+              {
+                "lineHeight": "1.2",
+                "fontWeight": "600"
+              }
+            ],
+            "headline-lg": [
+              "28px",
+              {
+                "lineHeight": "1.35",
+                "fontWeight": "700"
+              }
+            ],
+            "body": [
+              "15px",
+              {
+                "lineHeight": "1.5",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Subtle pulse animation for audio mic */
+    @keyframes subtle-ripple {
+      0% {
+        box-shadow: 0 0 0 0 rgba(47, 107, 255, 0.35);
+      }
+      70% {
+        box-shadow: 0 0 0 16px rgba(47, 107, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(47, 107, 255, 0);
+      }
+    }
+    .mic-ripple {
+      animation: subtle-ripple 2.2s infinite ease-out;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-28 selection:bg-primary-soft selection:text-primary" data-screen="home">
+<!-- Mobile Container Wrapper (Max-width for app view) -->
+<div class="max-w-md mx-auto min-h-screen bg-background relative flex flex-col">
+<!-- TopAppBar (from Shared Components JSON) -->
+<header class="bg-cream dark:bg-background border-b border-line dark:border-outline-variant sticky top-0 z-40 transition-colors">
+<div class="flex justify-between items-center w-full px-margin py-space-sm max-w-md mx-auto">
+<!-- Leading: Brand Logo Badge -->
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-DEFAULT bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+</div>
+<span class="font-headline-md text-section-title font-bold text-primary dark:text-inverse-primary tracking-tight">핏로그</span>
+</div>
+<!-- Center: Date Pill Badge -->
+<div class="flex items-center gap-1.5 px-3 py-1 bg-surface rounded-full border border-line text-ink font-body-sm text-caption shadow-xs">
+<span class="material-symbols-outlined text-[15px] text-primary">calendar_month</span>
+<span class="font-medium text-ink">10월 15일 (수)</span>
+</div>
+<!-- Trailing: Notifications Icon -->
+<button aria-label="알림" class="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:bg-primary-soft dark:hover:bg-surface-container-high transition-colors active:scale-95 duration-150 relative" type="button">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-danger"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-margin pt-space-md space-y-5">
+<!-- 2. Hero Section: Cream Tone Card with Character Line Art -->
+<section class="bg-cream border border-line rounded-DEFAULT p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-start justify-between gap-2">
+<!-- Text Content -->
+<div class="flex-1 z-10">
+<!-- English Accent Script -->
+<div class="flex items-center gap-1 text-primary font-script-accent text-script-accent -mb-0.5">
+<span>Good job today!</span>
+<span class="text-sm">✨</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-headline-md text-headline-md font-bold text-ink mt-1 leading-snug">
+              오늘 미션 3개 중 <br/>
+<span class="text-primary-container underline decoration-primary decoration-2 underline-offset-4">2개</span> 완료했어요!
+            </h1>
+<!-- Streak Pill Badge -->
+<div class="inline-flex items-center gap-1 mt-2.5 px-2.5 py-0.5 rounded-full bg-success-yellow/30 border border-success-yellow text-ink font-caption text-caption font-semibold">
+<span class="text-xs">🔥</span>
+<span>연속 10일 달성</span>
+</div>
+<!-- Goal Progress Stats -->
+<div class="mt-4 pt-3 border-t border-line/60 flex items-center gap-4">
+<div>
+<span class="block text-muted font-caption text-caption">남은 미션</span>
+<span class="font-bold text-ink font-body-sm text-body-sm">앞으로 1개</span>
+</div>
+<div class="h-6 w-[1px] bg-line"></div>
+<div>
+<span class="block text-muted font-caption text-caption">오늘 달성률</span>
+<span class="font-bold text-primary font-body-sm text-body-sm">66% 달성</span>
+</div>
+</div>
+</div>
+<!-- Character Illustration (User Provided Placeholder https://lh3.googleusercontent.com/aida/AEtjO1VBnEkejt5p__5wGxoG1BHQvsAULNVTPFMLefQg8HZq_ZXCHUkJRBip5fi_paL-G3lLKwlsnAoNXD9bN5dkywJ0SxDcp4Fjrw-bx9DlOwfkIjRPsgU7LPjvZrOUH1k2Fh9VDyDMCVJkiMJVa3adO8Q0HEJMuaH1MmVJtp2xUau7axLUVBqune2eIKyuyGBZXNpfzzOcCW1Fs1IUN3YnGfLzY6G625SOZRzlLOr44dP73Sdr0w_18HvYbSTw) -->
+<div class="w-28 h-36 flex-shrink-0 relative self-end -mb-1">
+<div class="w-full h-full rounded-DEFAULT overflow-hidden border border-line bg-surface/80 flex items-center justify-center p-1 shadow-xs">
+<img alt="물병 든 친근한 캐릭터 손그림 라인 드로잉" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VBnEkejt5p__5wGxoG1BHQvsAULNVTPFMLefQg8HZq_ZXCHUkJRBip5fi_paL-G3lLKwlsnAoNXD9bN5dkywJ0SxDcp4Fjrw-bx9DlOwfkIjRPsgU7LPjvZrOUH1k2Fh9VDyDMCVJkiMJVa3adO8Q0HEJMuaH1MmVJtp2xUau7axLUVBqune2eIKyuyGBZXNpfzzOcCW1Fs1IUN3YnGfLzY6G625SOZRzlLOr44dP73Sdr0w_18HvYbSTw"/>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. '오늘의 미션' Section -->
+<section class="space-y-3">
+<!-- Section Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="font-section-title text-section-title font-bold text-ink">오늘의 미션</h2>
+<span class="px-2 py-0.5 bg-primary-soft text-primary font-caption text-caption font-bold rounded-full">3개 중 2개</span>
+</div>
+<button class="text-muted hover:text-primary font-caption text-caption font-medium flex items-center gap-0.5 transition-colors" type="button">
+            전체보기
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<!-- Mission Cards Bento / Stack -->
+<div class="space-y-2.5">
+<!-- Card 1 (진행중: 식단) -->
+<div class="bg-surface border border-line rounded-DEFAULT p-3.5 hover:border-primary/40 transition-all shadow-xs">
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-caption text-caption font-bold">식단</span>
+<span class="text-muted font-caption text-caption">13 / 30g (43%)</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-body-sm text-body font-bold text-ink">단백질 30g 채우기</h3>
+<p class="text-muted font-caption text-caption mt-0.5">점심과 저녁으로 나누어 채워보아요</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-line flex items-center justify-center text-muted">
+<span class="font-caption text-caption font-semibold">1/2</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden mt-3">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 43%;"></div>
+</div>
+</div>
+<!-- Card 2 (완료: 생활) -->
+<div class="bg-cream/40 border border-success-yellow/70 rounded-DEFAULT p-3.5 transition-all shadow-xs relative">
+<div class="flex items-center justify-between mb-1.5">
+<span class="px-2 py-0.5 rounded-full bg-success-yellow/30 text-ink font-caption text-caption font-bold">생활</span>
+<span class="text-ink font-caption text-caption font-semibold">1,500ml / 1,500ml</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-body-sm text-body font-bold text-ink line-through decoration-muted/60 text-on-surface-variant">물 1.5L 마시기</h3>
+<p class="text-primary font-caption text-caption mt-0.5 font-medium">✨ 하루 수분 권장량 달성 완료!</p>
+</div>
+<!-- Success Yellow Badge -->
+<div class="w-8 h-8 rounded-full bg-success-yellow text-ink flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[20px] font-bold" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+</div>
+<!-- Card 3 (완료: 운동) -->
+<div class="bg-cream/40 border border-success-yellow/70 rounded-DEFAULT p-3.5 transition-all shadow-xs relative">
+<div class="flex items-center justify-between mb-1.5">
+<span class="px-2 py-0.5 rounded-full bg-success-yellow/30 text-ink font-caption text-caption font-bold">운동</span>
+<span class="text-ink font-caption text-caption font-semibold">2세트 완료</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-body-sm text-body font-bold text-ink line-through decoration-muted/60 text-on-surface-variant">스쿼트 30개 하기</h3>
+<p class="text-primary font-caption text-caption mt-0.5 font-medium">오전 루틴으로 훌륭히 마쳤어요</p>
+</div>
+<!-- Success Yellow Badge -->
+<div class="w-8 h-8 rounded-full bg-success-yellow text-ink flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[20px] font-bold" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. AI Easy Input Card (Tell FitLog AI) -->
+<section class="bg-surface border border-line rounded-DEFAULT p-space-md shadow-xs space-y-4">
+<!-- Title & Subtitle -->
+<div>
+<div class="flex items-center gap-1.5 text-primary font-script-accent text-script-accent">
+<span>Tell FitLog AI</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+<h2 class="font-section-title text-section-title font-bold text-ink mt-0.5">간편하게 말하거나 터치해서 기록해요</h2>
+</div>
+<!-- Quick Tag Chips -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+<button class="px-2.5 py-1 bg-surface-container-low hover:bg-primary-soft text-ink hover:text-primary rounded-full font-caption text-caption border border-line whitespace-nowrap transition-colors flex items-center gap-0.5" type="button">
+<span>+</span> 스쿼트 15×2
+          </button>
+<button class="px-2.5 py-1 bg-surface-container-low hover:bg-primary-soft text-ink hover:text-primary rounded-full font-caption text-caption border border-line whitespace-nowrap transition-colors flex items-center gap-0.5" type="button">
+<span>+</span> 푸시업 10×2
+          </button>
+<button class="px-2.5 py-1 bg-surface-container-low hover:bg-primary-soft text-ink hover:text-primary rounded-full font-caption text-caption border border-line whitespace-nowrap transition-colors flex items-center gap-0.5" type="button">
+<span>+</span> 걷기 30분
+          </button>
+</div>
+<!-- Central Action Cluster (72px Big Blue Mic Button) -->
+<div class="py-2 flex items-center justify-center gap-6">
+<!-- Camera Action -->
+<button aria-label="사진으로 기록" class="w-11 h-11 rounded-full bg-surface-container-low border border-line text-muted hover:text-primary hover:bg-primary-soft flex items-center justify-center transition-all active:scale-95" type="button">
+<span class="material-symbols-outlined text-[22px]">photo_camera</span>
+</button>
+<!-- Big Input Button (Cobalt Blue 72px) -->
+<button aria-label="음성으로 기록하기" class="w-[72px] h-[72px] rounded-full bg-primary-container hover:bg-primary text-white flex items-center justify-center mic-ripple shadow-md hover:shadow-lg transition-transform active:scale-90" type="button">
+<span class="material-symbols-outlined text-[32px]">mic</span>
+</button>
+<!-- Text Action -->
+<button aria-label="직접 적기" class="w-11 h-11 rounded-full bg-surface-container-low border border-line text-muted hover:text-primary hover:bg-primary-soft flex items-center justify-center transition-all active:scale-95" type="button">
+<span class="material-symbols-outlined text-[22px]">edit_note</span>
+</button>
+</div>
+<!-- Helper Prompt Text -->
+<p class="text-center font-caption text-caption text-muted">
+          버튼을 누르고 <span class="text-primary font-medium">"점심으로 닭가슴살 샐러드 먹었어"</span>라고 말해보세요
+        </p>
+<!-- Input Bar with Send Button -->
+<div class="relative flex items-center mt-2">
+<input class="w-full bg-surface-container-low border border-line rounded-full py-2.5 pl-4 pr-11 text-body-sm font-body-sm placeholder:text-muted focus:outline-none focus:border-primary focus:bg-surface text-ink transition-colors" placeholder="말하거나 적어서 기록해요" type="text"/>
+<button aria-label="기록 저장" class="absolute right-1.5 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+</button>
+</div>
+</section>
+<!-- 5. '오늘의 기록' Timeline Section -->
+<section class="space-y-3 pt-1">
+<!-- Section Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<h2 class="font-section-title text-section-title font-bold text-ink">오늘의 기록</h2>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+<span class="text-muted font-caption text-caption font-medium">총 3건 등록</span>
+</div>
+<!-- Timeline Items -->
+<div class="relative pl-5 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1px] before:bg-line">
+<!-- Item 1: 07:30 운동 -->
+<div class="relative group">
+<!-- Node Pin -->
+<div class="absolute -left-5 top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-background"></div>
+<div class="bg-surface border border-line rounded-DEFAULT p-3 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption font-bold text-primary">07:30 (오전)</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-caption text-caption font-semibold">20 kcal</span>
+</div>
+<h4 class="font-body-sm text-body-sm font-bold text-ink mt-1">스쿼트 15개 × 2세트</h4>
+<p class="font-caption text-caption text-muted mt-0.5">자세 양호 · 쉬는 시간 45초 유지</p>
+</div>
+</div>
+<!-- Item 2: 08:10 식단 -->
+<div class="relative group">
+<!-- Node Pin -->
+<div class="absolute -left-5 top-1 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-background"></div>
+<div class="bg-surface border border-line rounded-DEFAULT p-3 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption font-bold text-primary">08:10 (아침)</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-caption text-caption">아침 식단</span>
+</div>
+<h4 class="font-body-sm text-body-sm font-bold text-ink mt-1">사과 반 개, 삶은 계란 2개</h4>
+<div class="flex items-center gap-1.5 mt-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-caption text-caption font-medium">203 kcal</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-soft text-primary font-caption text-caption font-medium">단백질 13g</span>
+</div>
+</div>
+</div>
+<!-- Item 3: 10:00 수분 (노란 점) -->
+<div class="relative group">
+<!-- Node Pin (Yellow) -->
+<div class="absolute -left-5 top-1 w-2.5 h-2.5 rounded-full bg-success-yellow ring-4 ring-background"></div>
+<div class="bg-surface border border-line rounded-DEFAULT p-3 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption font-bold text-ink">10:00 (오전)</span>
+<span class="px-2 py-0.5 rounded-full bg-success-yellow/30 text-ink font-caption text-caption font-bold">미션 성공</span>
+</div>
+<h4 class="font-body-sm text-body-sm font-bold text-ink mt-1">💧 물 1,500ml 섭취</h4>
+<p class="font-caption text-caption text-muted mt-0.5">500ml 개인 텀블러로 총 3회 완수</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (from Shared Components JSON: Active '오늘') -->
+<!-- Fixed bottom navigation locked to mobile shell width -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 bg-surface dark:bg-inverse-surface border-t border-line dark:border-outline-variant shadow-sm dark:shadow-none">
+<div class="flex justify-around items-center px-gutter py-space-xs pb-safe max-w-md mx-auto">
+<!-- Tab 1: 오늘 (Active State as per rules) -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold gap-0.5 py-1 px-3 active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">today</span>
+<span class="text-caption font-caption">오늘</span>
+</button>
+<!-- Tab 2: 캘린더 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 py-1 px-3 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+<span class="text-caption font-caption">달력</span>
+</button>
+<!-- Tab 3: 통계 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 py-1 px-3 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="text-caption font-caption">리포트</span>
+</button>
+<!-- Tab 4: 마이 (Inactive) -->
+<button class="flex flex-col items-center justify-center text-muted dark:text-outline gap-0.5 py-1 px-3 hover:text-primary dark:hover:text-inverse-primary transition-colors active:scale-95 duration-150" type="button">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-caption font-caption">설정</span>
+</button>
+</div>
+</nav>
+</div>
+<script src="nav.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body></html>
