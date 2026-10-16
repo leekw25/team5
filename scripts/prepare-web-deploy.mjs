@@ -1,7 +1,7 @@
 // 웹 빌드(dist)를 Vercel에 올리기 전에 정리·검사한다.  사용: npm run build:web
 // 1) Vercel은 업로드 때 node_modules 폴더를 빼므로, 아이콘 글꼴 등이 든 assets/node_modules 를 assets/vendor 로 옮긴다.
 // 2) 공개 사이트에 비밀번호·이전 Supabase 주소가 들어가지 않았는지 검사하고, 있으면 실패로 끝낸다.
-// 3) SPA 주소 되돌리기용 vercel.json 을 dist 에 넣는다.
+// 3) vercel.json 을 dist 에 넣는다: 이미 빌드된 파일이라 Vercel 쪽 빌드는 끄고, SPA 주소는 / 로 되돌린다.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -29,5 +29,9 @@ if (problems.length) {
   process.exit(1);
 }
 
-fs.writeFileSync(path.join(DIST, 'vercel.json'), JSON.stringify({ cleanUrls: true, rewrites: [{ source: '/:path*', destination: '/' }] }, null, 2));
+fs.writeFileSync(path.join(DIST, 'vercel.json'), JSON.stringify({ framework: null, buildCommand: '', installCommand: '', outputDirectory: '.', cleanUrls: true, rewrites: [{ source: '/:path*', destination: '/' }] }, null, 2));
 console.log('웹 배포 준비 완료: ' + DIST + ' (Supabase ' + url + ')');
+
+// 빌드가 dist 를 통째로 지우면 Vercel 연결도 사라져 'dist' 라는 새 프로젝트로 올라간다. fitlog-team5 에 고정한다(공개돼도 되는 ID).
+fs.mkdirSync(path.join(DIST, '.vercel'), { recursive: true });
+fs.writeFileSync(path.join(DIST, '.vercel', 'project.json'), JSON.stringify({ orgId: 'team_92KrZ4JBl3ffB7YRkzqri0ET', projectId: 'prj_IzTMm5KWQIVyaSD8SGw96fSfl9bO', projectName: 'fitlog-team5' }));

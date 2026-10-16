@@ -37,7 +37,8 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test": "node --test",
-    "build:web": "expo export -p web --clear && node --env-file=.env scripts/prepare-web-deploy.mjs"
+    "build:web": "expo export -p web --clear && node --env-file=.env scripts/prepare-web-deploy.mjs",
+    "deploy:web": "npm run build:web && npx vercel deploy --prod --yes --cwd dist"
   },
   "private": true
 }
