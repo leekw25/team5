@@ -29,6 +29,9 @@ function toMissions(records: HealthRecord[]): Mission[] {
   ];
 }
 
+// 로그인 전 예시 화면용: 미션 3개 중 2개 달성
+export const SAMPLE_MISSIONS = toMissions([]).map((m, i) => ({ ...m, value: [18, 1500, 30][i] }));
+
 export function useTodayMissions(dayKey: string) {
   const [missions, setMissions] = useState<Mission[]>(toMissions([]));
   const [tick, setTick] = useState(0);

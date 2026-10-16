@@ -14,7 +14,7 @@ function koreanDate(dayKey: string): string {
   return `${m}월 ${d}일 (${WEEKDAY[w]})`;
 }
 
-export function AppHeader({ dayKey, title }: { dayKey?: string; title?: string }) {
+export function AppHeader({ dayKey, title, right }: { dayKey?: string; title?: string; right?: ReactNode }) {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -42,7 +42,7 @@ export function AppHeader({ dayKey, title }: { dayKey?: string; title?: string }
           <Text style={{ fontFamily: font.body, fontSize: 13, color: color.ink }}>{koreanDate(dayKey)}</Text>
         </View>
       )}
-      <MaterialIcons name="notifications-none" size={24} color={color.ink} />
+      {right ?? <MaterialIcons name="notifications-none" size={24} color={color.ink} />}
     </View>
   );
 }
