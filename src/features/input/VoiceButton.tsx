@@ -55,6 +55,7 @@ export function VoiceButton({ disabled, onRecordingChange, onRecorded, onProblem
   return (
     <View style={{ width: SIZE * 1.5, height: SIZE * 1.5, alignItems: 'center', justifyContent: 'center' }}>
       {!inactive && <Ripple size={SIZE} fast={recording} />}
+      <View style={{ position: 'absolute', width: SIZE + 18, height: SIZE + 18, borderRadius: (SIZE + 18) / 2, backgroundColor: '#DCE6FF' }} />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={recording ? '녹음 끝내기' : '말해서 기록하기'}

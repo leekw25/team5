@@ -105,7 +105,7 @@ export function InputPanel(_props: InputPanelProps) {
     setWarnings([message]);
   };
 
-  const circle = { width: 52, height: 52, borderRadius: 26, borderWidth: 1.5, borderColor: color.line, backgroundColor: color.surface, alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
+  const circle = { width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: color.line, backgroundColor: '#F1F3FA', alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
 
   return (
     <View style={{ ...card, padding: 18, gap: 14, backgroundColor: '#FBFCFF' }}>
@@ -114,7 +114,7 @@ export function InputPanel(_props: InputPanelProps) {
         <Text style={{ ...text.section, fontSize: 19 }}>간편하게 말하거나 터치해서 기록해요</Text>
       </View>
 
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
         {QUICK_CHIPS.map((chip) => (
           <Pressable
             key={chip.id}
@@ -122,20 +122,20 @@ export function InputPanel(_props: InputPanelProps) {
             accessibilityLabel={chip.label + ' 바로 기록'}
             disabled={locked}
             onPress={() => onQuick(chip)}
-            style={{ paddingVertical: 7, paddingHorizontal: 12, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: color.surface, opacity: locked ? 0.4 : 1 }}
+            style={{ paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: '#F1F3FA', opacity: locked ? 0.4 : 1 }}
           >
-            <Text style={{ fontFamily: font.body, fontSize: 13, color: color.ink }}>+ {QUICK_SHORT[chip.id] ?? chip.label}</Text>
+            <Text style={{ fontFamily: font.body, fontSize: 12.5, color: color.ink }}>+ {QUICK_SHORT[chip.id] ?? chip.label}</Text>
           </Pressable>
         ))}
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 28, paddingVertical: 8 }}>
         <Pressable accessibilityRole="button" accessibilityLabel="사진으로 기록" disabled={locked} onPress={onPhoto} style={circle}>
-          <MaterialIcons name="photo-camera" size={22} color={color.ink} />
+          <MaterialIcons name="photo-camera" size={22} color={color.muted} />
         </Pressable>
         <VoiceButton disabled={busy} onRecordingChange={setRecording} onRecorded={onRecorded} onProblem={onMicProblem} />
         <Pressable accessibilityRole="button" accessibilityLabel="글로 입력" disabled={locked} onPress={() => inputRef.current?.focus()} style={circle}>
-          <MaterialIcons name="edit-note" size={24} color={color.ink} />
+          <MaterialIcons name="edit-note" size={24} color={color.muted} />
         </Pressable>
       </View>
 

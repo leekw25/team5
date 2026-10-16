@@ -1,6 +1,7 @@
 // ponytail: 이미경님 MissionCards·판정 코드가 통합되기 전까지 쓰는 임시 미리보기.
 // 오늘 기록을 바로 합산해 미션 3개(단백질·물·스쿼트) 진행률을 보여 준다. 통합 때 이 파일은 지우고 MissionCards로 바꾼다.
 import { MaterialIcons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 import { recordsRepo } from '@/data';
@@ -96,6 +97,10 @@ export function MissionList({ missions }: { missions: Mission[] }) {
         <View style={{ backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
           <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary }}>3개 중 {done}개</Text>
         </View>
+        {/* 지난 미션 기록은 달력 탭에서 본다 */}
+        <Link href="/calendar" style={{ marginLeft: 'auto' }}>
+          <Text style={{ ...text.caption, fontSize: 13 }}>전체보기 ›</Text>
+        </Link>
       </View>
       {missions.map((m, i) => {
         const ok = m.value >= m.target;
@@ -112,6 +117,7 @@ export function MissionList({ missions }: { missions: Mission[] }) {
               <Text style={{ ...text.caption, color: ok ? color.ink : color.muted, fontWeight: ok ? '700' : '400' }}>
                 {Math.min(m.value, m.target).toLocaleString()} / {m.target.toLocaleString()}
                 {m.unit}
+                {!ok && ` (${Math.floor((m.value / m.target) * 100)}%)`}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
