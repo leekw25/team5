@@ -1,7 +1,8 @@
 // 앱 공통 틀: 상단 헤더(로고·날짜·알림)와 하단 탭바(오늘·달력·리포트·설정). Stitch 디자인 그대로.
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View, type ViewStyle } from 'react-native';
+import type { ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { color, font, radius } from './theme';
 
@@ -83,6 +84,19 @@ export function TabBar() {
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+// PC 브라우저에서도 휴대폰 크기로 보이게: 웹에서는 가운데 폭 430px 틀 안에 앱을 그린다.
+export const FRAME_WIDTH = 430;
+export function WebFrame({ children }: { children: ReactNode }) {
+  if (Platform.OS !== 'web') return <>{children}</>;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#E6EAF3', alignItems: 'center' }}>
+      <View style={{ flex: 1, width: '100%', maxWidth: FRAME_WIDTH, overflow: 'hidden', backgroundColor: color.page, boxShadow: '0 0 40px rgba(27,31,42,0.12)' } as ViewStyle}>
+        {children}
+      </View>
     </View>
   );
 }

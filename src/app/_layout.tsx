@@ -2,7 +2,7 @@ import { Slot } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { ensureSignedIn, signIn, supabase } from '@/shared/supabase';
-import { TabBar } from '@/ui/chrome';
+import { TabBar, WebFrame } from '@/ui/chrome';
 import { color } from '@/ui/theme';
 
 type Phase = 'loading' | 'login' | 'ready' | 'error';
@@ -67,7 +67,7 @@ function ConnectError({ message, onRetry, onLogin }: { message: string; onRetry:
   );
 }
 
-export default function RootLayout() {
+function RootContent() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [error, setError] = useState('');
 
@@ -111,5 +111,13 @@ export default function RootLayout() {
       </View>
       <TabBar />
     </View>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <WebFrame>
+      <RootContent />
+    </WebFrame>
   );
 }

@@ -62,7 +62,7 @@ export function ResultSheet({ result, seconds, busy, onSave, onRetry }: Props) {
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onRetry}>
       <View style={{ flex: 1, backgroundColor: 'rgba(27,31,42,0.35)', justifyContent: 'flex-end' }}>
-        <View style={{ backgroundColor: color.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, maxHeight: '88%' }}>
+        <View style={{ backgroundColor: color.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, maxHeight: '88%', width: '100%', maxWidth: 430, alignSelf: 'center' }}>
           <View style={{ alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: color.line, marginBottom: 14 }} />
           <ScrollView contentContainerStyle={{ gap: 12 }}>
             <View style={{ alignSelf: 'flex-start', flexDirection: 'row', gap: 4, alignItems: 'center', backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>

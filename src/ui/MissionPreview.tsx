@@ -43,13 +43,14 @@ export function useTodayMissions(dayKey: string) {
   return missions;
 }
 
-export function HeroCard({ missions }: { missions: Mission[] }) {
+export function HeroCard({ missions, name }: { missions: Mission[]; name?: string }) {
   const done = missions.filter((m) => m.value >= m.target).length;
   const rate = Math.round((done / missions.length) * 100);
   return (
     <Reveal style={{ ...card, backgroundColor: color.cream, borderColor: '#F3E6CC', padding: 18, flexDirection: 'row', gap: 12 }}>
       <View style={{ flex: 1, gap: 6 }}>
         <Text style={text.script}>Good job today! ✨</Text>
+        {!!name && <Text style={{ ...text.section, color: color.primary }}>{name}님,</Text>}
         <Text style={text.headline}>
           오늘 미션 3개 중{'\n'}
           <Text style={{ color: color.primary, textDecorationLine: 'underline' }}>{done}개</Text> 완료했어요!

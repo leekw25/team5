@@ -7,11 +7,13 @@ import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
 import { AppHeader } from '@/ui/chrome';
 import { HeroCard, MissionList, useTodayMissions } from '@/ui/MissionPreview';
+import { useDisplayName } from '@/ui/profile';
 import { color, radius, text } from '@/ui/theme';
 
 export default function TodayScreen() {
   const dayKey = toDayKey();
   const missions = useTodayMissions(dayKey);
+  const name = useDisplayName();
   const [hasKey, setHasKey] = useState(true);
 
   useFocusEffect(
@@ -29,7 +31,7 @@ export default function TodayScreen() {
             <Text style={{ ...text.body, fontSize: 14 }}>Gemini API 키가 없어요. 눌러서 설정에서 입력해 주세요 →</Text>
           </Link>
         )}
-        <HeroCard missions={missions} />
+        <HeroCard missions={missions} name={name} />
         <MissionList missions={missions} />
         <InputPanel />
         <Timeline dayKey={dayKey} />

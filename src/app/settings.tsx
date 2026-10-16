@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 
 import { deleteApiKey, getApiKey, saveApiKey, testApiKey } from '@/shared/gemini';
 import { supabase } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
+import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
 import { card, color, font, radius, text } from '@/ui/theme';
 
 // 로그아웃은 이 기기의 세션만 지운다(scope: local). 서버 로그아웃 요청이 실패해도 항상 로그인 화면으로 돌아간다.
@@ -17,11 +18,28 @@ export default function SettingsScreen() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [name, setName] = useState('');
+  const [nameMsg, setNameMsg] = useState<string | null>(null);
+  const [nameBusy, setNameBusy] = useState(false);
 
   useEffect(() => {
     getApiKey().then((key) => setSaved(!!key));
     supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? null));
+    getDisplayName().then(setName).catch(() => {});
   }, []);
+
+  async function onSaveName() {
+    setNameBusy(true);
+    setNameMsg(null);
+    try {
+      await saveDisplayName(name);
+      setNameMsg(name.trim() ? '저장했어요. 오늘 화면에 이름이 나와요.' : '이름을 지웠어요.');
+    } catch {
+      setNameMsg('저장하지 못했어요. 인터넷 연결을 확인해 주세요.');
+    } finally {
+      setNameBusy(false);
+    }
+  }
 
   const rows = [
     { icon: 'build', title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') },
@@ -57,6 +75,32 @@ export default function SettingsScreen() {
     <View style={{ flex: 1, backgroundColor: color.page }}>
       <AppHeader title="설정" />
       <ScrollView contentContainerStyle={{ padding: 20, gap: 16 }}>
+        <View style={{ ...card, padding: 20, gap: 12 }}>
+          <Text style={{ ...text.section, fontSize: 20 }}>내 이름</Text>
+          <Text style={text.caption}>오늘 화면에 “○○님”으로 나와요. 이 계정에 저장돼 다른 기기에서도 같아요.</Text>
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              maxLength={NAME_MAX}
+              placeholder="예) 지유"
+              placeholderTextColor={color.muted}
+              onSubmitEditing={onSaveName}
+              style={{ flex: 1, borderWidth: 1, borderColor: '#D5DCF0', borderRadius: 12, padding: 14, backgroundColor: '#F4F6FD', fontFamily: font.body, color: color.ink }}
+            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="이름 저장"
+              onPress={onSaveName}
+              disabled={nameBusy}
+              style={{ backgroundColor: color.primaryDeep, borderRadius: radius.pill, paddingHorizontal: 20, height: 48, alignItems: 'center', justifyContent: 'center', opacity: nameBusy ? 0.5 : 1 }}
+            >
+              {nameBusy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: font.body, fontSize: 15, fontWeight: '800', color: '#fff' }}>저장</Text>}
+            </Pressable>
+          </View>
+          {nameMsg && <Text style={{ ...text.caption, color: color.ink }}>{nameMsg}</Text>}
+        </View>
+
         <View style={{ ...card, padding: 20, gap: 12 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
             <View style={{ flex: 1, gap: 4 }}>
