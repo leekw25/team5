@@ -8,20 +8,25 @@ import { supabase } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
 import { card, color, font, radius, text } from '@/ui/theme';
 
-const ROWS = [
-  { icon: 'build', title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') },
-  { icon: 'logout', title: '로그아웃', sub: '다른 계정으로 로그인', onPress: () => supabase.auth.signOut().then(() => router.replace('/')) },
-] as const;
+// 로그아웃은 이 기기의 세션만 지운다(scope: local). 서버 로그아웃 요청이 실패해도 항상 로그인 화면으로 돌아간다.
+const signOut = () => supabase.auth.signOut({ scope: 'local' });
 
 export default function SettingsScreen() {
   const [input, setInput] = useState('');
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     getApiKey().then((key) => setSaved(!!key));
+    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? null));
   }, []);
+
+  const rows = [
+    { icon: 'build', title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') },
+    { icon: 'logout', title: '로그아웃', sub: email ? `${email} 로 로그인됨 · 다른 계정으로 바꾸기` : '다른 계정으로 로그인', onPress: signOut },
+  ] as const;
 
   async function onSave() {
     setBusy(true);
@@ -94,7 +99,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={{ ...card, overflow: 'hidden' }}>
-          {ROWS.map((row, i) => (
+          {rows.map((row, i) => (
             <Pressable
               key={row.title}
               accessibilityRole="button"
