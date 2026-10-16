@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Animated, Easing, Image, Platform, Pressable, ScrollView, Text, TextInput, View, type ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { signIn } from '@/shared/supabase';
-import { Reveal } from './motion';
+import { Loop, Pop, Reveal, Underline } from './motion';
 import { card, color, font, radius, text } from './theme';
 
 const NATIVE = Platform.OS !== 'web';
@@ -94,6 +94,12 @@ const IMG = {
 };
 
 const white = (a: number) => `rgba(255,255,255,${a})`;
+// 프로토타입 keyframes: gentle-bounce(아래로 6px), pulse-ring(0.95↔1.1배, 0.8↔0.3)
+const bounce = (v: Animated.Value) => ({ transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [0, 6] }) }] });
+const pulse = (v: Animated.Value) => ({
+  opacity: v.interpolate({ inputRange: [0, 1], outputRange: [0.8, 0.3] }),
+  transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.1] }) }],
+});
 const center = { alignItems: 'center', justifyContent: 'center' } as const;
 
 interface FeatureProps {
@@ -164,10 +170,14 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             <Text style={{ ...text.script, transform: [{ rotate: '-1deg' }] }}>Just say it, FitLog logs it!</Text>
           </Reveal>
           <Reveal index={1}>
-            <Text style={{ ...text.headline, fontSize: 30, lineHeight: 40 }}>
-              말 한마디로 끝나는{'\n'}식단·운동 기록,{'\n'}
-              <Text style={{ color: color.primary, textDecorationLine: 'underline' }}>핏로그</Text>와 함께하세요.
-            </Text>
+            <Text style={{ ...text.headline, fontSize: 30, lineHeight: 40 }}>말 한마디로 끝나는{'\n'}식단·운동 기록,</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+              <View>
+                <Text style={{ ...text.headline, fontSize: 30, lineHeight: 40, color: color.primary }}>핏로그</Text>
+                <Underline color={color.primary} />
+              </View>
+              <Text style={{ ...text.headline, fontSize: 30, lineHeight: 40 }}>와 함께하세요.</Text>
+            </View>
           </Reveal>
           <Reveal index={2}>
             <Text style={{ ...text.body, color: color.muted, lineHeight: 24 }}>손으로 일일이 적지 마세요. 말하거나 사진 찍으면 AI가 영양소 분석부터 미션 체크까지 알아서!</Text>
@@ -177,37 +187,41 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
               <Image source={IMG.hero} accessibilityLabel="햄버거 세트 앞에서 휴대폰에 말하는 지유" style={{ width: '100%', height: '100%', borderRadius: 12 }} resizeMode="contain" />
             </View>
             <View style={{ position: 'absolute', left: 16, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,249,238,0.92)', borderWidth: 1, borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
-              <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: color.yellow }} />
+              <Pop style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: color.yellow }} />
               <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '600', color: color.ink }}>음성 인식 준비 완료</Text>
             </View>
           </Reveal>
           <Pressable accessibilityRole="button" accessibilityLabel="아래로 스크롤" onPress={toStep} style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 8 }}>
             <Text style={{ fontFamily: font.body, fontSize: 11, fontWeight: '600', letterSpacing: 1, color: color.muted }}>SCROLL</Text>
-            <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 1, borderColor: color.line, ...center }}>
+            <Loop duration={2000} make={bounce} style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 1, borderColor: color.line, ...center }}>
               <MaterialIcons name="arrow-downward" size={16} color={color.primary} />
-            </View>
+            </Loop>
           </Pressable>
         </View>
 
         {/* Step 1 (파란 섹션) */}
         <View onLayout={(e) => setStepY(e.nativeEvent.layout.y)} style={{ backgroundColor: color.primary, paddingHorizontal: 24, paddingVertical: 48, alignItems: 'center' }}>
           <Text style={{ position: 'absolute', top: 20, left: 24, fontSize: 22, color: color.yellow }}>✦</Text>
-          <View style={{ backgroundColor: white(0.2), borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 4, marginBottom: 16 }}>
+          <Reveal style={{ backgroundColor: white(0.2), borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 4, marginBottom: 16 }}>
             <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '600', color: '#fff' }}>Step 1</Text>
-          </View>
-          <Text style={{ fontFamily: font.body, fontSize: 24, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center' }}>기록은 3초,{'\n'}성취감은 하루 종일!</Text>
-          <View style={{ width: 176, height: 176, marginVertical: 24, ...center }}>
-            <View style={{ position: 'absolute', width: 176, height: 176, borderRadius: 88, borderWidth: 1, borderColor: white(0.2) }} />
+          </Reveal>
+          <Reveal index={1}>
+            <Text style={{ fontFamily: font.body, fontSize: 24, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center' }}>기록은 3초,{'\n'}성취감은 하루 종일!</Text>
+          </Reveal>
+          <Reveal index={2} style={{ width: 176, height: 176, marginVertical: 24, ...center }}>
+            <Loop duration={2500} make={pulse} style={{ position: 'absolute', width: 176, height: 176, borderRadius: 88, borderWidth: 1, borderColor: white(0.2) }} />
             <View style={{ position: 'absolute', width: 144, height: 144, borderRadius: 72, borderWidth: 1, borderColor: white(0.4) }} />
             <Image source={IMG.mic} accessibilityLabel="휴대폰 마이크 버튼을 누르는 손" style={{ width: 128, height: 128, borderRadius: 64, backgroundColor: '#fff' }} />
-            <View style={{ position: 'absolute', top: 22, right: 22, backgroundColor: color.yellow, borderRadius: 999, padding: 4, borderWidth: 2, borderColor: '#fff' }}>
+            <Pop style={{ position: 'absolute', top: 22, right: 22, backgroundColor: color.yellow, borderRadius: 999, padding: 4, borderWidth: 2, borderColor: '#fff' }}>
               <MaterialIcons name="auto-awesome" size={16} color={color.ink} />
-            </View>
-          </View>
-          <Text style={{ ...text.section, color: '#fff', marginBottom: 8 }}>말하거나 찍어서 기록</Text>
-          <Text style={{ fontFamily: font.body, fontSize: 14, lineHeight: 22, color: white(0.85), textAlign: 'center' }}>
-            오늘 먹은 점심, 가볍게 한마디 남겨보세요.{'\n'}사진 한 장이면 칼로리와 탄단지까지 즉시 정리됩니다.
-          </Text>
+            </Pop>
+          </Reveal>
+          <Reveal index={3} style={{ alignItems: 'center' }}>
+            <Text style={{ ...text.section, color: '#fff', marginBottom: 8 }}>말하거나 찍어서 기록</Text>
+            <Text style={{ fontFamily: font.body, fontSize: 14, lineHeight: 22, color: white(0.85), textAlign: 'center' }}>
+              오늘 먹은 점심, 가볍게 한마디 남겨보세요.{'\n'}사진 한 장이면 칼로리와 탄단지까지 즉시 정리됩니다.
+            </Text>
+          </Reveal>
         </View>
 
         {/* 기능 3종 */}
@@ -245,13 +259,19 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
 
         {/* 하단 CTA */}
         <View style={{ backgroundColor: color.primary, paddingHorizontal: 24, paddingVertical: 56, alignItems: 'center', overflow: 'hidden' }}>
-          <Text style={{ position: 'absolute', top: 4, right: 32, fontSize: 30, color: color.yellow }}>★</Text>
+          <Pop style={{ position: 'absolute', top: 4, right: 32 }}>
+            <Text style={{ fontSize: 30, color: color.yellow }}>★</Text>
+          </Pop>
           <Text style={{ position: 'absolute', bottom: 64, right: 20, fontSize: 18, color: white(0.5) }}>★</Text>
-          <Text style={{ fontFamily: font.body, fontSize: 22, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center', marginBottom: 12 }}>
-            이제 기록은 핏로그와 함께,{'\n'}오늘 미션부터 시작해 보세요.
-          </Text>
-          <Text style={{ fontFamily: font.body, fontSize: 14, color: white(0.9), textAlign: 'center', marginBottom: 32 }}>가입 즉시 나만의 맞춤 건강 미션 3개가 배정됩니다.</Text>
-          <View style={{ width: '100%', maxWidth: 320, gap: 12 }}>
+          <Reveal>
+            <Text style={{ fontFamily: font.body, fontSize: 22, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center', marginBottom: 12 }}>
+              이제 기록은 핏로그와 함께,{'\n'}오늘 미션부터 시작해 보세요.
+            </Text>
+          </Reveal>
+          <Reveal index={1}>
+            <Text style={{ fontFamily: font.body, fontSize: 14, color: white(0.9), textAlign: 'center', marginBottom: 32 }}>가입 즉시 나만의 맞춤 건강 미션 3개가 배정됩니다.</Text>
+          </Reveal>
+          <Reveal index={2} style={{ width: '100%', maxWidth: 320, gap: 12 }}>
             <Pressable accessibilityRole="button" onPress={login} style={{ height: 56, borderRadius: radius.pill, backgroundColor: '#fff', flexDirection: 'row', gap: 8, ...center }}>
               <Text style={{ fontFamily: font.body, fontSize: 16, fontWeight: '700', color: color.primary }}>오늘 미션 보기</Text>
               <MaterialIcons name="arrow-forward" size={20} color={color.primary} />
@@ -259,7 +279,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             <Pressable accessibilityRole="button" onPress={toStep} style={{ height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: '#fff', ...center }}>
               <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '600', color: '#fff' }}>둘러보기</Text>
             </Pressable>
-          </View>
+          </Reveal>
         </View>
 
         {/* 푸터 */}
