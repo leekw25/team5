@@ -24,8 +24,9 @@ export async function signIn(email: string, password: string): Promise<void> {
 export async function ensureSignedIn(): Promise<boolean> {
   const { data } = await supabase.auth.getSession();
   if (data.session) return true;
-  const email = process.env.EXPO_PUBLIC_LOGIN_EMAIL;
-  const password = process.env.EXPO_PUBLIC_LOGIN_PASSWORD;
+  // 자동 로그인은 개발 모드(__DEV__)에서만. 배포 빌드에서는 이 값들이 코드에서 아예 빠진다.
+  const email = __DEV__ ? process.env.EXPO_PUBLIC_LOGIN_EMAIL : undefined;
+  const password = __DEV__ ? process.env.EXPO_PUBLIC_LOGIN_PASSWORD : undefined;
   if (!email || !password) return false;
   await signIn(email, password);
   return true;

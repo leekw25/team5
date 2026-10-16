@@ -1,9 +1,11 @@
 // Stitch 프로토타입과 같은 값의 모션(awesome-ai-motion 카드 기본값).
 // stagger 리빌 0.55s·24px·0.06s 간격, bar-grow 1.05s, scale-pop 0.5s. transform·opacity만 움직인다.
 import { useEffect, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, Animated, Easing, type StyleProp, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Platform, type StyleProp, type ViewStyle } from 'react-native';
 
 const easeOut = Easing.bezier(0.22, 1, 0.36, 1);
+// 웹에는 네이티브 애니메이션 모듈이 없어 JS 애니메이션을 쓴다(경고 방지)
+const NATIVE = Platform.OS !== 'web';
 
 // 애니메이션 값은 렌더 중 읽지 않도록 useState 로 한 번만 만든다.
 const useAnim = () => useState(() => new Animated.Value(0))[0];
@@ -24,7 +26,7 @@ export function Reveal({ index = 0, children, style }: { index?: number; childre
   useEffect(() => {
     if (reduced === null) return;
     if (reduced) return v.setValue(1);
-    Animated.timing(v, { toValue: 1, duration: 550, delay: Math.min(index, 6) * 60, easing: easeOut, useNativeDriver: true }).start();
+    Animated.timing(v, { toValue: 1, duration: 550, delay: Math.min(index, 6) * 60, easing: easeOut, useNativeDriver: NATIVE }).start();
   }, [v, index, reduced]);
   return (
     <Animated.View style={[style, { opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }] }]}>
@@ -50,7 +52,7 @@ export function ProgressBar({ ratio, fill, track, height = 8 }: { ratio: number;
 export function Pop({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const v = useAnim();
   useEffect(() => {
-    Animated.spring(v, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
+    Animated.spring(v, { toValue: 1, friction: 5, tension: 120, useNativeDriver: NATIVE }).start();
   }, [v]);
   return <Animated.View style={[style, { transform: [{ scale: v }] }]}>{children}</Animated.View>;
 }
@@ -64,7 +66,7 @@ export function Ripple({ size, fast }: { size: number; fast: boolean }) {
       Animated.loop(
         Animated.sequence([
           Animated.delay((i * period) / 6),
-          Animated.timing(r, { toValue: 1, duration: period, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(r, { toValue: 1, duration: period, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }),
         ]),
       ),
     );
