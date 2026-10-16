@@ -25,6 +25,18 @@
         "docs/design/prototype"
       ],
       "port": 5173
+    },
+    {
+      "name": "web-dist",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5180",
+        "--directory",
+        "dist"
+      ],
+      "port": 5180
     }
   ]
 }
