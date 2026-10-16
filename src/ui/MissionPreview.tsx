@@ -43,6 +43,14 @@ export function useTodayMissions(dayKey: string) {
   return missions;
 }
 
+// 오늘 달성한 미션 수(0~3)에 따라 바뀌는 지유 일러스트
+const JIYU = [
+  { src: require('../../assets/illustrations/jiyu-ok.jpg'), label: '손으로 OK 사인을 하는 지유' },
+  { src: require('../../assets/illustrations/jiyu-water.jpg'), label: '물병을 들고 엄지척하는 지유' },
+  { src: require('../../assets/illustrations/jiyu-v.jpg'), label: '브이를 하며 윙크하는 지유' },
+  { src: require('../../assets/illustrations/jiyu-cool.jpg'), label: '선글라스를 쓰고 자신감 있게 웃는 지유' },
+];
+
 export function HeroCard({ missions, name }: { missions: Mission[]; name?: string }) {
   const done = missions.filter((m) => m.value >= m.target).length;
   const rate = Math.round((done / missions.length) * 100);
@@ -71,7 +79,9 @@ export function HeroCard({ missions, name }: { missions: Mission[]; name?: strin
         </View>
       </View>
       <View style={{ width: 112, borderRadius: 12, borderWidth: 1, borderColor: color.line, backgroundColor: '#fff', overflow: 'hidden', alignSelf: 'center' }}>
-        <Image source={require('../../assets/illustrations/jiyu-water.jpg')} style={{ width: 112, height: 132 }} resizeMode="cover" accessibilityLabel="물병을 들고 엄지척하는 지유" />
+        <Pop key={done}>
+          <Image source={JIYU[done].src} style={{ width: 112, height: 132 }} resizeMode="cover" accessibilityLabel={JIYU[done].label} />
+        </Pop>
       </View>
     </Reveal>
   );
