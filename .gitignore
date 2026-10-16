@@ -45,3 +45,4 @@ yarn-error.*
 supabase/.temp/
 kits/
 dist/
+.vercel

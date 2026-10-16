@@ -19,7 +19,13 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "single",
+      "bundler": "metro",
+      "name": "핏로그",
+      "shortName": "핏로그",
+      "themeColor": "#2F6BFF",
+      "backgroundColor": "#FFF9EE"
     },
     "scheme": "fitlog",
     "plugins": [

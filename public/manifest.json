@@ -1,0 +1,22 @@
+{
+  "name": "핏로그 (FitLog AI)",
+  "short_name": "핏로그",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2F6BFF",
+  "background_color": "#FFF9EE",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
