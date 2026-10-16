@@ -1,24 +1,19 @@
-// 오늘 화면. 멘토가 A·B 컴포넌트를 조립하는 곳(A·B는 수정하지 않음).
-// A·B 컴포넌트가 merge되면 Placeholder를 contract.ts의 컴포넌트로 바꾼다.
+// 오늘 화면(Stitch 디자인 '오늘 홈'). 미션은 이미경님 코드 통합 전까지 임시 미리보기, 입력·기록·합계는 홍현정님 코드.
 import { Link, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { DailyTotals, InputPanel, Timeline } from '@/features/input';
 import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
-
-function Placeholder({ label }: { label: string }) {
-  return (
-    <View style={{ borderWidth: 1, borderStyle: 'dashed', borderColor: '#999', borderRadius: 12, padding: 16, marginBottom: 12 }}>
-      <Text style={{ color: '#666' }}>{label}</Text>
-    </View>
-  );
-}
+import { AppHeader } from '@/ui/chrome';
+import { HeroCard, MissionList, useTodayMissions } from '@/ui/MissionPreview';
+import { color, radius, text } from '@/ui/theme';
 
 export default function TodayScreen() {
   const dayKey = toDayKey();
+  const missions = useTodayMissions(dayKey);
   const [hasKey, setHasKey] = useState(true);
 
-  // 설정 화면에서 돌아올 때마다 키 상태를 다시 확인
   useFocusEffect(
     useCallback(() => {
       getApiKey().then((key) => setHasKey(!!key));
@@ -26,20 +21,20 @@ export default function TodayScreen() {
   );
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {!hasKey && (
-        <Link href="/settings" style={{ backgroundColor: '#FFF3CD', padding: 12, borderRadius: 8, marginBottom: 12 }}>
-          Gemini API 키가 없습니다. 눌러서 입력해 주세요.
-        </Link>
-      )}
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>{dayKey}</Text>
-      <Placeholder label={`B: <MissionCards dayKey="${dayKey}" />`} />
-      <Placeholder label="A: <InputPanel />" />
-      <Placeholder label={`A: <Timeline dayKey="${dayKey}" />`} />
-      <View style={{ flexDirection: 'row', gap: 16 }}>
-        <Link href="/calendar">리워드 달력 →</Link>
-        <Link href="/settings">설정 →</Link>
-      </View>
-    </ScrollView>
+    <View style={{ flex: 1, backgroundColor: color.page }}>
+      <AppHeader dayKey={dayKey} />
+      <ScrollView contentContainerStyle={{ padding: 20, gap: 24, paddingBottom: 40 }}>
+        {!hasKey && (
+          <Link href="/settings" style={{ backgroundColor: '#FFFCF0', borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
+            <Text style={{ ...text.body, fontSize: 14 }}>Gemini API 키가 없어요. 눌러서 설정에서 입력해 주세요 →</Text>
+          </Link>
+        )}
+        <HeroCard missions={missions} />
+        <MissionList missions={missions} />
+        <InputPanel />
+        <Timeline dayKey={dayKey} />
+        <DailyTotals dayKey={dayKey} />
+      </ScrollView>
+    </View>
   );
 }

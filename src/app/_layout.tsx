@@ -1,7 +1,9 @@
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
-import { ensureSignedIn, signIn } from '@/shared/supabase';
+import { ensureSignedIn, signIn, supabase } from '@/shared/supabase';
+import { TabBar } from '@/ui/chrome';
+import { color } from '@/ui/theme';
 
 type Phase = 'loading' | 'login' | 'ready';
 
@@ -52,6 +54,9 @@ export default function RootLayout() {
     ensureSignedIn()
       .then((ok) => setPhase(ok ? 'ready' : 'login'))
       .catch((e: Error) => setError(e.message));
+    // 로그아웃하면 로그인 화면으로 돌아간다
+    const { data } = supabase.auth.onAuthStateChange((event) => event === 'SIGNED_OUT' && setPhase('login'));
+    return () => data.subscription.unsubscribe();
   }, []);
 
   if (error) {
@@ -71,11 +76,13 @@ export default function RootLayout() {
   }
   if (phase === 'login') return <LoginForm onDone={() => setPhase('ready')} />;
 
+  // 화면 + 하단 탭바(Stitch 디자인). 각 화면이 자기 헤더를 그린다.
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: '오늘' }} />
-      <Stack.Screen name="calendar" options={{ title: '리워드 달력' }} />
-      <Stack.Screen name="settings" options={{ title: '설정' }} />
-    </Stack>
+    <View style={{ flex: 1, backgroundColor: color.page }}>
+      <View style={{ flex: 1 }}>
+        <Slot />
+      </View>
+      <TabBar />
+    </View>
   );
 }
