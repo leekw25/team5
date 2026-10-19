@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { ensureSignedIn, supabase } from '@/shared/supabase';
 import { TabBar, WebFrame } from '@/ui/chrome';
+import '@/ui/install'; // 웹 설치 이벤트를 앱 시작 때 미리 받아 둔다
 import { GuestHome, MSG_NETWORK, isNetworkError } from '@/ui/GuestHome';
 import { color } from '@/ui/theme';
 

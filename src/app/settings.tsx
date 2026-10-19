@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 
 import { deleteApiKey, getApiKey, saveApiKey, testApiKey } from '@/shared/gemini';
 import { supabase } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
+import { promptInstall, useInstallState } from '@/ui/install';
 import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
 import { card, color, font, radius, text } from '@/ui/theme';
 
@@ -21,6 +22,8 @@ export default function SettingsScreen() {
   const [name, setName] = useState('');
   const [nameMsg, setNameMsg] = useState<string | null>(null);
   const [nameBusy, setNameBusy] = useState(false);
+  const install = useInstallState();
+  const [installHint, setInstallHint] = useState(false);
 
   useEffect(() => {
     getApiKey().then((key) => setSaved(!!key));
@@ -41,10 +44,29 @@ export default function SettingsScreen() {
     }
   }
 
-  const rows = [
+  // 웹에서만, 아직 설치 안 했을 때만 보인다. 바로 설치 창을 못 띄우는 브라우저는 누르면 방법을 알려 준다.
+  const installRow =
+    install === 'ready' || install === 'ios' || install === 'manual'
+      ? {
+          icon: 'install-mobile' as const,
+          title: '홈 화면에 앱 설치',
+          sub:
+            install === 'ready'
+              ? '누르면 바로 설치돼요. 주소창 없이 앱처럼 열려요'
+              : !installHint
+                ? '홈 화면에 핏로그 아이콘을 만들어요'
+                : install === 'ios'
+                  ? '사파리 아래쪽 공유 버튼(□↑) → "홈 화면에 추가"를 눌러 주세요'
+                  : '브라우저 메뉴(⋮) → "앱 설치" 또는 "홈 화면에 추가"를 눌러 주세요',
+          onPress: () => (install === 'ready' ? promptInstall() : setInstallHint(true)),
+        }
+      : null;
+
+  const rows: { icon: keyof typeof MaterialIcons.glyphMap; title: string; sub: string; onPress: () => unknown }[] = [
+    ...(installRow ? [installRow] : []),
     { icon: 'build', title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') },
     { icon: 'logout', title: '로그아웃', sub: email ? `${email} 로 로그인됨 · 다른 계정으로 바꾸기` : '다른 계정으로 로그인', onPress: signOut },
-  ] as const;
+  ];
 
   async function onSave() {
     setBusy(true);
