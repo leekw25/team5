@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  buildAudioPrompt,
   buildPrompt,
   EXERCISE_CODES,
   FOOD_TAGS,
@@ -185,6 +186,13 @@ test('buildPrompt: 이름·양·구분 제목·제품 영양정보 규칙이 들
   assert.ok(prompt.includes('quantity 를 0'));
   assert.ok(prompt.includes('구분 제목'));
   assert.ok(prompt.includes('표기 영양정보'));
+});
+
+test('buildPrompt·buildAudioPrompt: 마크애니 주소 별칭과 장소 간 거리 추정 규칙이 들어간다', () => {
+  for (const prompt of [buildPrompt('마크애니에서 동대입구역으로 걸었어', NOW), buildAudioPrompt(NOW)]) {
+    assert.ok(prompt.includes('"마크애니"는 장소로 쓰이면 "서울특별시 중구 퇴계로 286"'));
+    assert.ok(prompt.includes('두 장소 사이 이동 거리를 대략 추정'));
+  }
 });
 
 test('parseWith: 빈 입력은 Gemini를 부르지 않는다', async () => {

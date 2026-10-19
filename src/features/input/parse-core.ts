@@ -141,6 +141,9 @@ export interface RawParse {
 }
 
 // ── 질문 만들기 ──
+// 사용자가 자주 말하는 장소 별칭. 장소 이름 → 실제 주소. 문장·음성 질문에 같이 들어간다.
+export const PLACE_ALIASES: Record<string, string> = { 마크애니: '서울특별시 중구 퇴계로 286' };
+
 const TAG_RULE = '- tags 는 해당될 때만 넣는다: 튀김 fried, 가당 음료 sugary_drink, 제로 음료 zero_sugar_drink, 탄산 carbonated, 술 alcohol, 과자·간식 snack.';
 
 // 문장·음성 질문이 함께 쓰는 앞부분(역할, 현재 시각, 규칙). 규칙을 고치면 두 입력 방식이 같이 바뀐다.
@@ -163,6 +166,8 @@ function promptRules(now: Date): string[] {
     '- 음료를 제로·무가당으로 바꿨다고 하면 제로 음료(tags에 zero_sugar_drink)로 적고 kcal은 0에 가깝게 한다.',
     '- 운동은 kind="exercise" 기록 1개에 exercises 배열로 담는다. code는 목록 중에서만 고르고 해당 없으면 other.',
     '- 마신 물은 kind="water", water_ml 에 ml 로 적는다(1컵=200, 1병=500, 1L=1000).',
+    ...Object.entries(PLACE_ALIASES).map(([name, address]) => `- "${name}"는 장소로 쓰이면 "${address}"를 뜻한다. 출발지·도착지로 나오면 이 주소로 바꿔 생각한다.`),
+    '- 걷기·달리기·자전거를 "A에서 B까지", "A에서 B로"처럼 장소로만 말하고 시간·거리·걸음 수를 말하지 않았으면, 알고 있는 지리 정보로 두 장소 사이 이동 거리를 대략 추정한다. 그 거리로 duration_min(걷기 1분 약 70m, 달리기 1분 약 150m, 자전거 1분 약 250m), 걷기는 steps(1km 약 1,300보), kcal_burned 를 계산하고 confidence 를 0.7 이하로 적는다.',
     '- kcal, carb_g, protein_g, fat_g 는 숫자로 적는다. 양을 말했으면 그 양 전체 기준이다.',
     TAG_RULE,
     '- time 은 말한 시각(HH:MM)이다. 시각이 없으면 아침 08:00, 점심 12:30, 저녁 19:00, 간식 15:00 으로 정하고, 단서가 전혀 없으면 null.',
