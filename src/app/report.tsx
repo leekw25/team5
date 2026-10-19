@@ -1,11 +1,12 @@
 // 주간 리포트(Stitch 디자인 '핏로그 주간 리포트', docs/design/shots/07-report.png).
 // 숫자·그래프는 그 주 기록으로 계산하고(report-core), AI 총평은 버튼을 눌렀을 때만 Gemini를 부른다.
-// ponytail: 미션 달성·배지는 이미경님 미션 코드 통합 전까지 임시 미션 3개(missions-core)로 계산한다.
+// 미션 달성은 이미경님 판정 결과(daily_missions)를 읽는다. 배지 4개는 이 주 결과로 계산하는 임시 배지다(B 배지 P1 통합 전).
 import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
-import { recordsRepo } from '@/data';
+import { missionsRepo, recordsRepo } from '@/data';
 import { addDays, toDayKey } from '@/shared/date';
+import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
 import { onRecordsChanged } from '@/shared/events';
 import { generateJson } from '@/shared/gemini';
 import { AppHeader } from '@/ui/chrome';
@@ -27,14 +28,21 @@ function useWeek(monday: string, today: string) {
   useEffect(() => {
     let ignore = false;
     const days = weekDays(monday);
-    Promise.all(days.map(async (dayKey) => ({ dayKey, records: dayKey <= today ? await recordsRepo.listByDay(dayKey) : [] })))
+    Promise.all(
+      days.map(async (dayKey) =>
+        dayKey <= today
+          ? { dayKey, records: await recordsRepo.listByDay(dayKey), missions: await missionsRepo.listByDay(dayKey) }
+          : { dayKey, records: [], missions: [] },
+      ),
+    )
       .then((byDay) => !ignore && setWeek(summarizeWeek(byDay, today)))
-      .catch(() => !ignore && setWeek(summarizeWeek(days.map((dayKey) => ({ dayKey, records: [] })), today)));
+      .catch(() => !ignore && setWeek(summarizeWeek(days.map((dayKey) => ({ dayKey, records: [], missions: [] })), today)));
     return () => {
       ignore = true;
     };
   }, [monday, today, tick]);
   useEffect(() => onRecordsChanged(() => setTick((n) => n + 1)), []);
+  useEffect(() => onMissionsUpdated(() => setTick((n) => n + 1)), []);
   return week;
 }
 
@@ -251,8 +259,8 @@ export default function ReportScreen() {
               {next.map((m) => (
                 <View key={m.title} style={{ gap: 6 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <View style={{ backgroundColor: SLOT_TINT[m.slot][0], borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
-                      <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: SLOT_TINT[m.slot][1] }}>{m.slot}</Text>
+                    <View style={{ backgroundColor: SLOT_TINT[m.slot as keyof typeof SLOT_TINT][0], borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
+                      <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: SLOT_TINT[m.slot as keyof typeof SLOT_TINT][1] }}>{m.slot}</Text>
                     </View>
                     <Text style={{ ...text.body, fontWeight: '700', flex: 1 }}>{m.title}</Text>
                     <Text style={text.caption}>{m.days}일 달성</Text>

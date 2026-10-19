@@ -58,3 +58,7 @@ twa/.local/
 twa/*
 !twa/twa-manifest.json
 !twa/README.md
+
+# 개발자 제출 원본(통합 전 코드)은 레포에 올리지 않는다
+이미경/
+이미경_*.zip

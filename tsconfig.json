@@ -15,5 +15,13 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "이미경",
+    "핏로그_*",
+    "kits",
+    "twa"
   ]
 }

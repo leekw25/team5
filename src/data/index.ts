@@ -3,7 +3,7 @@
 // - 다른 사람 기록은 RLS 가 막는다(로그인한 본인 행만 읽고 쓴다).
 // - local-records.ts 는 홍현정님 로컬 저장소 구현으로, 테스트의 가짜 저장소로 계속 쓰인다(지우지 않는다).
 import { supabase } from '@/shared/supabase';
-import type { HealthRecord, NewHealthRecord, RecordsRepo } from '@/shared/types/contract';
+import type { DailyMission, DayStatus, HealthRecord, MissionsRepo, NewHealthRecord, RecordsRepo } from '@/shared/types/contract';
 
 const TABLE = 'records';
 
@@ -36,5 +36,32 @@ export const recordsRepo: RecordsRepo = {
 
   async remove(id) {
     check(await supabase.from(TABLE).delete().eq('id', id));
+  },
+};
+
+// 미션(이미경님 B). (user_id, day_key, slot) 유일 제약으로, 배정은 이미 있는 슬롯(시연 시드 포함)을 덮어쓰지 않는다.
+const SLOT_ORDER = { diet: 0, life: 1, exercise: 2 } as const;
+const bySlot = (a: DailyMission, b: DailyMission) => SLOT_ORDER[a.slot] - SLOT_ORDER[b.slot];
+
+export const missionsRepo: MissionsRepo = {
+  async listByDay(dayKey) {
+    return check<DailyMission[]>(await supabase.from('daily_missions').select('*').eq('day_key', dayKey)).sort(bySlot);
+  },
+
+  async assignIfEmpty(dayKey, missions) {
+    const rows = missions.map((m) => ({ day_key: dayKey, slot: m.slot, mission_code: m.mission_code, params: m.params }));
+    check(await supabase.from('daily_missions').upsert(rows, { onConflict: 'user_id,day_key,slot', ignoreDuplicates: true }));
+    return missionsRepo.listByDay(dayKey);
+  },
+
+  async update(id, patch) {
+    const { status, achieved_at } = patch;
+    return check<DailyMission>(await supabase.from('daily_missions').update({ status, achieved_at }).eq('id', id).select().single());
+  },
+
+  async listDayStatus(fromDayKey, toDayKey) {
+    return check<DayStatus[]>(
+      await supabase.from('v_day_status').select('*').gte('day_key', fromDayKey).lte('day_key', toDayKey).order('day_key', { ascending: true }),
+    );
   },
 };
