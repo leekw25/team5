@@ -93,7 +93,7 @@ export const FRAME_WIDTH = 430;
 export function WebFrame({ children }: { children: ReactNode }) {
   if (Platform.OS !== 'web') return <>{children}</>;
   return (
-    <View style={{ flex: 1, backgroundColor: '#E6EAF3', alignItems: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: color.backdrop, alignItems: 'center' }}>
       <View style={{ flex: 1, width: '100%', maxWidth: FRAME_WIDTH, overflow: 'hidden', backgroundColor: color.page, boxShadow: '0 0 40px rgba(27,31,42,0.12)' } as ViewStyle}>
         {children}
       </View>

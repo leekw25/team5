@@ -21,8 +21,8 @@ const ampm = (time: string) => (Number(time.slice(0, 2)) < 12 ? '오전' : '오�
 function Chip({ label, tone }: { label: string; tone: 'blue' | 'gray' | 'yellow' }) {
   const s = {
     blue: { bg: color.primarySoft, fg: color.primary, line: color.primarySoft },
-    gray: { bg: '#F1F3F8', fg: color.muted, line: '#F1F3F8' },
-    yellow: { bg: color.yellowSoft, fg: '#8A6A00', line: color.yellowLine },
+    gray: { bg: color.chipBg, fg: color.muted, line: color.chipBg },
+    yellow: { bg: color.yellowSoft, fg: color.yellowInk, line: color.yellowLine },
   }[tone];
   return (
     <View style={{ backgroundColor: s.bg, borderColor: s.line, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 9, paddingVertical: 2 }}>

@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { color, font } from '@/ui/theme';
+import { color, font, themedStyles } from '@/ui/theme';
 import { isComplete, MISSIONS_PER_DAY } from './streak.ts';
 
 const RING_SIZE = 34;
@@ -40,7 +40,7 @@ export function ProgressRing({ count, size = RING_SIZE }: { count: number; size?
 export function Stamp({ size = RING_SIZE }: { size?: number }) {
   return (
     <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: color.yellow, alignItems: 'center', justifyContent: 'center' }}>
-      <MaterialIcons name="star" size={size * 0.55} color={color.ink} />
+      <MaterialIcons name="star" size={size * 0.55} color={color.onYellow} />
     </View>
   );
 }
@@ -107,16 +107,18 @@ export function DayCell({ dayKey, count, isToday, isFuture }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = themedStyles(() =>
+  StyleSheet.create({
   cell: { flex: 1, alignItems: 'center', gap: 6, paddingVertical: 6 },
   day: { fontFamily: font.body, fontSize: 13 },
   ringBox: { width: RING_SIZE + 6, height: RING_SIZE + 6, borderRadius: (RING_SIZE + 6) / 2, alignItems: 'center', justifyContent: 'center' },
   todayRing: { borderWidth: 2, borderColor: color.primary },
   count: { position: 'absolute', fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
-  empty: { width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, backgroundColor: '#F1F3F8' },
+  empty: { width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, backgroundColor: color.chipBg },
   future: { width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, borderWidth: 1, borderStyle: 'dashed', borderColor: color.line, alignItems: 'center', justifyContent: 'center' },
   dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: color.line },
   todayFill: { width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, backgroundColor: color.yellow, alignItems: 'center', justifyContent: 'center' },
   todayTag: { marginTop: -12, backgroundColor: color.primary, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 1 },
   todayTagText: { fontFamily: font.body, fontSize: 9, fontWeight: '700', color: '#fff' },
-});
+}),
+);

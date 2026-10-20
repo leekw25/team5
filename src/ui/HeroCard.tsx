@@ -41,7 +41,7 @@ export function HeroCard({ done, streak, name }: { done: number; streak: number;
   const rate = Math.round((done / total) * 100);
   const jiyu = JIYU[Math.min(done, JIYU.length - 1)];
   return (
-    <Reveal style={{ ...card, backgroundColor: color.cream, borderColor: '#F3E6CC', padding: 18, flexDirection: 'row', gap: 12 }}>
+    <Reveal style={{ ...card, backgroundColor: color.cream, borderColor: color.creamLine, padding: 18, flexDirection: 'row', gap: 12 }}>
       <View style={{ flex: 1, gap: 6 }}>
         <Text style={text.script}>Good job today! ✨</Text>
         {!!name && <Text style={{ ...text.section, color: color.primary }}>{name}님,</Text>}
@@ -57,7 +57,7 @@ export function HeroCard({ done, streak, name }: { done: number; streak: number;
             </Text>
           </View>
         )}
-        <View style={{ flexDirection: 'row', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F3E6CC', gap: 18 }}>
+        <View style={{ flexDirection: 'row', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: color.creamLine, gap: 18 }}>
           <View>
             <Text style={text.caption}>남은 미션</Text>
             <Text style={{ ...text.body, fontWeight: '700' }}>{done >= total ? '모두 완료!' : `앞으로 ${total - done}개`}</Text>

@@ -7,6 +7,7 @@ import { deleteApiKey, getApiKey, saveApiKey, testApiKey } from '@/shared/gemini
 import { supabase } from '@/shared/supabase';
 import { MyMissions } from '@/features/mission';
 import { AppHeader } from '@/ui/chrome';
+import { ThemePicker } from '@/ui/ThemePicker';
 import { promptInstall, useInstallState } from '@/ui/install';
 import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
 import { card, color, font, radius, text } from '@/ui/theme';
@@ -109,7 +110,7 @@ export default function SettingsScreen() {
               placeholder="예) 지유"
               placeholderTextColor={color.muted}
               onSubmitEditing={onSaveName}
-              style={{ flex: 1, borderWidth: 1, borderColor: '#D5DCF0', borderRadius: 12, padding: 14, backgroundColor: '#F4F6FD', fontFamily: font.body, color: color.ink }}
+              style={{ flex: 1, borderWidth: 1, borderColor: color.inputLine, borderRadius: 12, padding: 14, backgroundColor: color.inputBg, fontFamily: font.body, color: color.ink }}
             />
             <Pressable
               accessibilityRole="button"
@@ -124,6 +125,8 @@ export default function SettingsScreen() {
           {nameMsg && <Text style={{ ...text.caption, color: color.ink }}>{nameMsg}</Text>}
         </View>
 
+        <ThemePicker />
+
         <MyMissions />
 
         <View style={{ ...card, padding: 20, gap: 12 }}>
@@ -132,7 +135,7 @@ export default function SettingsScreen() {
               <Text style={{ ...text.section, fontSize: 20 }}>Gemini API 키</Text>
               <Text style={text.caption}>AI 자동 분석과 음성 인식에 쓰는 키예요. Google AI Studio(aistudio.google.com) → Get API key에서 발급해 붙여넣으세요.</Text>
             </View>
-            <View style={{ backgroundColor: saved ? color.primarySoft : '#F1F3F8', borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+            <View style={{ backgroundColor: saved ? color.primarySoft : color.chipBg, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
               <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: saved ? color.primary : color.muted }}>{saved ? '저장됨 ✅' : '없음'}</Text>
             </View>
           </View>
@@ -145,7 +148,7 @@ export default function SettingsScreen() {
             secureTextEntry
             autoCapitalize="none"
             autoCorrect={false}
-            style={{ borderWidth: 1, borderColor: '#D5DCF0', borderRadius: 12, padding: 14, backgroundColor: '#F4F6FD', fontFamily: font.body, color: color.ink }}
+            style={{ borderWidth: 1, borderColor: color.inputLine, borderRadius: 12, padding: 14, backgroundColor: color.inputBg, fontFamily: font.body, color: color.ink }}
           />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             {saved ? (

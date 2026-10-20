@@ -1,6 +1,7 @@
 // Stitch 프로토타입과 같은 값의 모션(awesome-ai-motion 카드 기본값).
 // stagger 리빌 0.55s·24px·0.06s 간격, bar-grow 1.05s, scale-pop 0.5s. transform·opacity만 움직인다.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { color } from './theme';
 import { AccessibilityInfo, Animated, Easing, Platform, View, type StyleProp, type ViewStyle } from 'react-native';
 
 const easeOut = Easing.bezier(0.22, 1, 0.36, 1);
@@ -141,7 +142,7 @@ export function Ripple({ size, fast }: { size: number; fast: boolean }) {
             width: size,
             height: size,
             borderRadius: size,
-            backgroundColor: '#2F6BFF',
+            backgroundColor: color.primary,
             opacity: r.interpolate({ inputRange: [0, 1], outputRange: [fast ? 0.35 : 0.18, 0] }),
             transform: [{ scale: r.interpolate({ inputRange: [0, 1], outputRange: [1, 1.6] }) }],
           }}

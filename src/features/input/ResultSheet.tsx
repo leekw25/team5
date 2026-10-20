@@ -63,7 +63,7 @@ export function ResultSheet({ result, seconds, busy, onSave, onRetry }: Props) {
 
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onRetry}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(27,31,42,0.35)', justifyContent: 'flex-end' }}>
+      <View style={{ flex: 1, backgroundColor: color.overlay, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: color.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, maxHeight: '88%', width: '100%', maxWidth: 430, alignSelf: 'center' }}>
           <View style={{ alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: color.line, marginBottom: 14 }} />
           <ScrollView contentContainerStyle={{ gap: 12 }}>
@@ -82,7 +82,7 @@ export function ResultSheet({ result, seconds, busy, onSave, onRetry }: Props) {
             </Text>
             {list.map((r, i) => (
               <View key={i + r.name} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: color.line, borderRadius: radius.card, padding: 14 }}>
-                <View style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: '#C9D8FF', backgroundColor: color.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 44, height: 44, borderRadius: 22, borderWidth: 1.5, borderColor: color.primaryLine, backgroundColor: color.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
                   <MaterialIcons name={r.icon} size={22} color={color.primary} />
                 </View>
                 <View style={{ flex: 1, gap: 4 }}>
@@ -91,7 +91,7 @@ export function ResultSheet({ result, seconds, busy, onSave, onRetry }: Props) {
                     {!!r.qty && <Text style={text.caption}>{r.qty}</Text>}
                     {r.tags.map((t) => (
                       <View key={t} style={{ borderWidth: 1, borderColor: color.yellowLine, backgroundColor: color.yellowSoft, borderRadius: radius.pill, paddingHorizontal: 8 }}>
-                        <Text style={{ fontFamily: font.body, fontSize: 11, color: '#8A6A00' }}>{t}</Text>
+                        <Text style={{ fontFamily: font.body, fontSize: 11, color: color.yellowInk }}>{t}</Text>
                       </View>
                     ))}
                   </View>
@@ -109,7 +109,7 @@ export function ResultSheet({ result, seconds, busy, onSave, onRetry }: Props) {
               </View>
             )}
             {result.warnings.map((w) => (
-              <View key={w} style={{ borderWidth: 1.5, borderColor: color.yellowLine, backgroundColor: '#FFFCF0', borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 10 }}>
+              <View key={w} style={{ borderWidth: 1.5, borderColor: color.yellowLine, backgroundColor: color.successBg, borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 10 }}>
                 <Text style={{ ...text.caption, color: color.ink }}>{w}</Text>
               </View>
             ))}

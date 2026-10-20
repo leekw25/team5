@@ -8,7 +8,7 @@ import { ActivityIndicator, Animated, Image, Platform, Pressable, StyleSheet, Te
 import { missionsRepo } from '@/data';
 import { addDays, toDayKey } from '@/shared/date';
 import type { RewardCalendarProps } from '@/shared/types/contract';
-import { card, color, font, radius, text } from '@/ui/theme';
+import { card, color, font, radius, text, themedStyles } from '@/ui/theme';
 import { onMissionsUpdated } from '../mission/missionEvents.ts';
 import { DayCell, ProgressRing, Stamp } from './DayCell';
 import { buildMonthGrid, monthOf, shiftMonth } from './monthGrid.ts';
@@ -234,13 +234,14 @@ function StreakBanner({ streak }: { streak: number | null }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = themedStyles(() =>
+  StyleSheet.create({
   box: { gap: 16 },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   month: { fontFamily: font.body, fontSize: 24, fontWeight: '800', color: color.ink },
   navPill: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
   navDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: color.primary },
-  banner: { ...card, backgroundColor: color.cream, borderColor: '#F3E6CC', padding: 18, flexDirection: 'row', gap: 12, alignItems: 'center' },
+  banner: { ...card, backgroundColor: color.cream, borderColor: color.creamLine, padding: 18, flexDirection: 'row', gap: 12, alignItems: 'center' },
   bannerImage: { width: 96, height: 96, borderRadius: 14, borderWidth: 1, borderColor: color.line },
   streakPill: { alignSelf: 'flex-start', backgroundColor: color.yellowSoft, borderColor: color.yellowLine, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },
   streakPillText: { fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.ink },
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
   retry: { borderRadius: 999, borderWidth: 1, borderColor: color.line, paddingHorizontal: 12, paddingVertical: 6 },
   legend: { flexDirection: 'row', justifyContent: 'center', gap: 18, borderTopWidth: 1, borderTopColor: color.line, marginTop: 8, paddingTop: 12, paddingBottom: 4 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  legendEmpty: { width: 16, height: 16, borderRadius: 8, backgroundColor: '#F1F3F8' },
+  legendEmpty: { width: 16, height: 16, borderRadius: 8, backgroundColor: color.chipBg },
   legendText: { ...text.caption, fontSize: 12 },
   shelf: { ...card, padding: 18, gap: 12 },
   countPill: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 },
@@ -265,4 +266,5 @@ const styles = StyleSheet.create({
   chipOnText: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
   chipOff: { flexDirection: 'row', alignItems: 'center', gap: 3, borderWidth: 1, borderStyle: 'dashed', borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },
   chipOffText: { fontFamily: font.body, fontSize: 12, color: color.muted },
-});
+}),
+);

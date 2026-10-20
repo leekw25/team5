@@ -9,7 +9,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { missionsRepo, recordsRepo, userMissionsRepo } from '@/data';
 import { onRecordsChanged } from '@/shared/events';
 import type { DailyMission, MissionCardsProps } from '@/shared/types/contract';
-import { color, font, radius, text } from '@/ui/theme';
+import { color, font, radius, text, themedStyles } from '@/ui/theme';
 import { MissionCard } from './MissionCard';
 import { onCelebrate } from './missionEvents.ts';
 import { pickDailySet, pickReroll, rerollsLeft } from './pool.ts';
@@ -160,14 +160,15 @@ function RetryButton({ onPress }: { onPress: () => void }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = themedStyles(() =>
+  StyleSheet.create({
   box: { gap: 10 },
   center: { alignItems: 'center', justifyContent: 'center', paddingVertical: 32, gap: 8 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   heading: { ...text.section },
   countPill: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 },
   count: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
-  countDone: { color: '#8A6A00' },
+  countDone: { color: color.yellowInk },
   more: { ...text.caption, fontSize: 13 },
   allDone: { ...text.caption, fontSize: 14, fontWeight: '700', color: color.primary },
   muted: { ...text.caption, fontSize: 12 },
@@ -175,4 +176,5 @@ const styles = StyleSheet.create({
   inlineError: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   retry: { borderRadius: 999, borderWidth: 1, borderColor: color.line, paddingHorizontal: 12, paddingVertical: 6 },
   retryText: { ...text.caption, color: color.ink },
-});
+}),
+);

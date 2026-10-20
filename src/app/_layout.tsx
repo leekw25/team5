@@ -1,11 +1,11 @@
 import { Slot } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { ensureSignedIn, supabase } from '@/shared/supabase';
 import { TabBar, WebFrame } from '@/ui/chrome';
 import '@/ui/install'; // 웹 설치 이벤트를 앱 시작 때 미리 받아 둔다
 import { GuestHome, MSG_NETWORK, isNetworkError } from '@/ui/GuestHome';
-import { color } from '@/ui/theme';
+import { color, getThemeVersion, loadTheme, subscribeTheme } from '@/ui/theme';
 
 type Phase = 'loading' | 'login' | 'ready' | 'error';
 
@@ -26,7 +26,7 @@ function ConnectError({ message, onRetry, onLogin }: { message: string; onRetry:
   );
 }
 
-function RootContent() {
+function RootContent({ themeVersion }: { themeVersion: number }) {
   const [phase, setPhase] = useState<Phase>('loading');
   const [error, setError] = useState('');
 
@@ -61,11 +61,12 @@ function RootContent() {
     );
   }
   // 로그인 전: 홈 디자인을 예시로 보여 주고 우측 상단 버튼으로 로그인
-  if (phase === 'login') return <GuestHome onSignedIn={() => setPhase('ready')} />;
+  if (phase === 'login') return <GuestHome key={themeVersion} onSignedIn={() => setPhase('ready')} />;
 
   // 화면 + 하단 탭바(Stitch 디자인). 각 화면이 자기 헤더를 그린다.
+  // 테마를 바꾸면 화면 부분만 다시 그린다(로그인·현재 탭은 그대로)
   return (
-    <View style={{ flex: 1, backgroundColor: color.page }}>
+    <View key={themeVersion} style={{ flex: 1, backgroundColor: color.page }}>
       <View style={{ flex: 1 }}>
         <Slot />
       </View>
@@ -75,9 +76,16 @@ function RootContent() {
 }
 
 export default function RootLayout() {
+  // 이 기기에 저장된 테마를 먼저 불러온 뒤 그린다. 테마를 바꾸면 version 이 바뀌어 화면 전체를 새 색으로 다시 그린다.
+  const [themeReady, setThemeReady] = useState(false);
+  const themeVersion = useSyncExternalStore(subscribeTheme, getThemeVersion, getThemeVersion);
+  useEffect(() => {
+    loadTheme().finally(() => setThemeReady(true));
+  }, []);
+  if (!themeReady) return null;
   return (
     <WebFrame>
-      <RootContent />
+      <RootContent themeVersion={themeVersion} />
     </WebFrame>
   );
 }

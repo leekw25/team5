@@ -44,7 +44,7 @@ function LoginPopover({ onClose, onDone }: { onClose: () => void; onDone: () => 
   const input = { borderWidth: 1, borderColor: color.line, borderRadius: 12, paddingHorizontal: 14, height: 46, fontSize: 15, backgroundColor: color.page, color: color.ink, fontFamily: font.body } as const;
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-      <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(27,31,42,0.25)', opacity: v }}>
+      <Animated.View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: color.overlay, opacity: v }}>
         <Pressable accessibilityLabel="닫기" onPress={close} style={{ flex: 1 }} />
       </Animated.View>
       <Animated.View
@@ -134,13 +134,13 @@ const iconBadge = (name: keyof typeof MaterialIcons.glyphMap) => (
   </View>
 );
 
-const streakBadge = (
+const streakBadge = () => (
   <View style={{ position: 'absolute', bottom: -10, alignSelf: 'center', backgroundColor: color.ink, borderRadius: radius.pill, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 10, paddingVertical: 2 }}>
     <Text style={{ fontFamily: font.body, fontSize: 11, fontWeight: '700', color: '#fff' }}>🔥 연속 11일</Text>
   </View>
 );
 
-const divider = <View style={{ width: 48, height: 1, backgroundColor: color.line, alignSelf: 'center' }} />;
+const divider = () => <View style={{ width: 48, height: 1, backgroundColor: color.line, alignSelf: 'center' }} />;
 
 export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
   const [open, setOpen] = useState(false);
@@ -186,7 +186,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             <View style={{ width: '100%', aspectRatio: 1 }}>
               <Image source={IMG.hero} accessibilityLabel="햄버거 세트 앞에서 휴대폰에 말하는 지유" style={{ width: '100%', height: '100%', borderRadius: 12 }} resizeMode="contain" />
             </View>
-            <View style={{ position: 'absolute', left: 16, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,249,238,0.92)', borderWidth: 1, borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
+            <View style={{ position: 'absolute', left: 16, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: color.cream, borderWidth: 1, borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
               <Pop style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: color.yellow }} />
               <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '600', color: color.ink }}>음성 인식 준비 완료</Text>
             </View>
@@ -213,7 +213,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             <View style={{ position: 'absolute', width: 144, height: 144, borderRadius: 72, borderWidth: 1, borderColor: white(0.4) }} />
             <Image source={IMG.mic} accessibilityLabel="휴대폰 마이크 버튼을 누르는 손" style={{ width: 128, height: 128, borderRadius: 64, backgroundColor: '#fff' }} />
             <Pop style={{ position: 'absolute', top: 22, right: 22, backgroundColor: color.yellow, borderRadius: 999, padding: 4, borderWidth: 2, borderColor: '#fff' }}>
-              <MaterialIcons name="auto-awesome" size={16} color={color.ink} />
+              <MaterialIcons name="auto-awesome" size={16} color={color.onYellow} />
             </Pop>
           </Reveal>
           <Reveal index={3} style={{ alignItems: 'center' }}>
@@ -235,7 +235,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             title="음식명·칼로리·영양소 자동 기록"
             desc={'복잡한 식단 계산기는 이제 그만.\n자연스러운 일상 언어를 AI가 알아듣고 영양 성분을 분석합니다.\n부족한 단백질과 주의할 당류까지 한눈에 피드백해 드려요.'}
           />
-          {divider}
+          {divider()}
           <Feature
             index={1}
             img={IMG.missions}
@@ -245,12 +245,12 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             title="오늘의 미션 3종 세트"
             desc={'무리한 다이어트 대신 매일 지킬 수 있는 3가지 맞춤 미션.\n물 1.5L 마시기, 단백질 채우기, 15분 산책하기처럼\n쉽고 가벼운 실천으로 건강한 루틴을 완성하세요.'}
           />
-          {divider}
+          {divider()}
           <Feature
             index={2}
             img={IMG.stamp}
             alt="달력에 도장을 찍는 지유"
-            badge={streakBadge}
+            badge={streakBadge()}
             chip="매일 쌓이는 뿌듯함"
             title="달력을 채우는 성취감"
             desc={'미션을 완료할 때마다 달력에 찍히는 노란 성공 도장!\n연속 달성 스트릭으로 지속 가능한 동기부여를 얻고\n한 달 후 눈에 띄게 달라진 나의 건강 변화를 확인하세요.'}

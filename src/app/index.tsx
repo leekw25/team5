@@ -28,7 +28,7 @@ export default function TodayScreen() {
       <AppHeader dayKey={dayKey} />
       <ScrollView contentContainerStyle={{ padding: 20, gap: 24, paddingBottom: 40 }}>
         {!hasKey && (
-          <Link href="/settings" style={{ backgroundColor: '#FFFCF0', borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
+          <Link href="/settings" style={{ backgroundColor: color.successBg, borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
             <Text style={{ ...text.body, fontSize: 14 }}>Gemini API 키가 없어요. 눌러서 설정에서 입력해 주세요 →</Text>
           </Link>
         )}

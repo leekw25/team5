@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { DailyMission } from '@/shared/types/contract';
-import { color, font, radius, text } from '@/ui/theme';
+import { color, font, radius, text, themedStyles } from '@/ui/theme';
 import { formatAmount, SLOT_LABELS } from './catalog.ts';
 import { Confetti } from './Confetti';
 import type { MissionResult } from './evaluate.ts';
@@ -63,7 +63,7 @@ export function MissionCard({ mission, result, celebrating, onCelebrated, busy, 
     <Animated.View style={[styles.card, success && styles.cardSuccess, celebrating && styles.raised, { transform: [{ scale: pop }] }]}>
       <View style={styles.row}>
         <View style={[styles.slot, success && { backgroundColor: color.yellowSoft }]}>
-          <Text style={[styles.slotText, success && { color: '#8A6A00' }]}>{SLOT_LABELS[mission.slot]}</Text>
+          <Text style={[styles.slotText, success && { color: color.yellowInk }]}>{SLOT_LABELS[mission.slot]}</Text>
         </View>
         <Text style={[styles.amount, { flex: 1 }, success && { color: color.ink, fontWeight: '700' }]}>{amount}</Text>
         {!success && (
@@ -97,13 +97,13 @@ export function MissionCard({ mission, result, celebrating, onCelebrated, busy, 
             disabled={busy}
             style={[styles.checkButton, mission.checked_at ? styles.checkOn : null]}
           >
-            <MaterialIcons name="check" size={18} color={mission.checked_at ? color.ink : color.primary} />
+            <MaterialIcons name="check" size={18} color={mission.checked_at ? color.onYellow : color.primary} />
             {!mission.checked_at && <Text style={styles.checkText}>완료</Text>}
           </Pressable>
         ) : (
           success && (
             <View style={styles.check}>
-              <MaterialIcons name="check" size={22} color={color.ink} />
+              <MaterialIcons name="check" size={22} color={color.onYellow} />
             </View>
           )
         )}
@@ -120,9 +120,10 @@ export function MissionCard({ mission, result, celebrating, onCelebrated, busy, 
   );
 }
 
-const styles = StyleSheet.create({
+const styles = themedStyles(() =>
+  StyleSheet.create({
   card: { backgroundColor: color.surface, borderRadius: radius.card, borderWidth: 1, borderColor: color.line, padding: 16, gap: 8 },
-  cardSuccess: { borderColor: color.yellowLine, backgroundColor: '#FFFCF0' },
+  cardSuccess: { borderColor: color.yellowLine, backgroundColor: color.successBg },
   raised: { zIndex: 10, elevation: 4 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   slot: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 2 },
@@ -139,4 +140,5 @@ const styles = StyleSheet.create({
   checkText: { fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.primary },
   track: { height: 8, borderRadius: 8, backgroundColor: color.primarySoft, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: 8, backgroundColor: color.primary },
-});
+}),
+);

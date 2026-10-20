@@ -63,7 +63,7 @@ export function MyMissions() {
           placeholder="예) 영양제 챙겨 먹기"
           placeholderTextColor={color.muted}
           onSubmitEditing={add}
-          style={{ flex: 1, borderWidth: 1, borderColor: '#D5DCF0', borderRadius: 12, padding: 14, backgroundColor: '#F4F6FD', fontFamily: font.body, color: color.ink }}
+          style={{ flex: 1, borderWidth: 1, borderColor: color.inputLine, borderRadius: 12, padding: 14, backgroundColor: color.inputBg, fontFamily: font.body, color: color.ink }}
         />
         <Pressable
           accessibilityRole="button"

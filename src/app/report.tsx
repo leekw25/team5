@@ -16,7 +16,7 @@ import { card, color, font, radius, text } from '@/ui/theme';
 
 const WEEKDAY = ['월', '화', '수', '목', '금', '토', '일'];
 const CARB = '#BFD3FF';
-const SLOT_TINT = { 식단: [color.primarySoft, color.primary], 생활: [color.yellowSoft, '#8A6A00'], 운동: ['#F1EAFE', '#6B3FD4'] } as const;
+const slotTint = () => ({ 식단: [color.primarySoft, color.primary], 생활: [color.yellowSoft, color.yellowInk], 운동: [color.chipBg, '#7C5CE0'] }) as const; // 테마가 바뀌면 다시 읽도록 함수
 
 const md = (dayKey: string) => `${Number(dayKey.slice(5, 7))}.${Number(dayKey.slice(8, 10))}`;
 // 그 달의 몇째 주(월요일 날짜 기준)
@@ -64,7 +64,7 @@ function DayCircle({ done, counted }: { done: number; counted: boolean }) {
   if (counted && done === 3)
     return (
       <Pop style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: color.yellow, alignItems: 'center', justifyContent: 'center' }}>
-        <MaterialIcons name="check" size={20} color={color.ink} />
+        <MaterialIcons name="check" size={20} color={color.onYellow} />
       </Pop>
     );
   return (
@@ -87,7 +87,7 @@ function MacroBars({ week }: { week: WeekSummary }) {
         ];
         return (
           <View key={d.dayKey} style={{ alignItems: 'center', gap: 6, flex: 1 }}>
-            <View style={{ width: 22, height: H, justifyContent: 'flex-end', borderRadius: 6, overflow: 'hidden', backgroundColor: d.counted ? '#F3F5FB' : 'transparent' }}>
+            <View style={{ width: 22, height: H, justifyContent: 'flex-end', borderRadius: 6, overflow: 'hidden', backgroundColor: d.counted ? color.chipBg : 'transparent' }}>
               {parts.map((p) => (
                 <View key={p.c} style={{ height: (p.v / max) * H, backgroundColor: p.c }} />
               ))}
@@ -167,7 +167,7 @@ export default function ReportScreen() {
         ) : (
           <>
             {/* 요약 */}
-            <Reveal key={monday} style={{ ...card, backgroundColor: color.cream, borderColor: '#F3E6CC', padding: 18, gap: 12 }}>
+            <Reveal key={monday} style={{ ...card, backgroundColor: color.cream, borderColor: color.creamLine, padding: 18, gap: 12 }}>
               <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ flex: 1, gap: 6 }}>
                   <Text style={text.script}>Weekly report ✨</Text>
@@ -188,14 +188,14 @@ export default function ReportScreen() {
                 </View>
                 <Image source={require('../../assets/illustrations/jiyu-report.jpg')} accessibilityLabel="차트 클립보드를 든 지유" style={{ width: 84, height: 84, borderRadius: 14, borderWidth: 1, borderColor: color.line }} />
               </View>
-              <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#F3E6CC', paddingTop: 12 }}>
+              <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: color.creamLine, paddingTop: 12 }}>
                 {[
                   ['완수율', `${week.rate}%`, color.primary],
                   ['기록', `${week.records}건`, color.ink],
                   ['섭취 일평균', week.avgKcal ? `${week.avgKcal.toLocaleString()}kcal` : '-', color.ink],
                   ['운동 소모', week.burned ? `${week.burned.toLocaleString()}kcal` : '-', color.ink],
                 ].map(([label, value, c], i) => (
-                  <View key={label} style={{ flex: 1, alignItems: 'center', gap: 2, borderLeftWidth: i ? 1 : 0, borderLeftColor: '#F3E6CC' }}>
+                  <View key={label} style={{ flex: 1, alignItems: 'center', gap: 2, borderLeftWidth: i ? 1 : 0, borderLeftColor: color.creamLine }}>
                     <Text style={text.caption}>{label}</Text>
                     <Text style={{ fontFamily: font.body, fontSize: 15, fontWeight: '800', color: c }}>{value}</Text>
                   </View>
@@ -261,8 +261,8 @@ export default function ReportScreen() {
               {next.map((m) => (
                 <View key={m.title} style={{ gap: 6 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <View style={{ backgroundColor: SLOT_TINT[m.slot as keyof typeof SLOT_TINT][0], borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
-                      <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: SLOT_TINT[m.slot as keyof typeof SLOT_TINT][1] }}>{m.slot}</Text>
+                    <View style={{ backgroundColor: slotTint()[m.slot as keyof ReturnType<typeof slotTint>][0], borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
+                      <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: slotTint()[m.slot as keyof ReturnType<typeof slotTint>][1] }}>{m.slot}</Text>
                     </View>
                     <Text style={{ ...text.body, fontWeight: '700', flex: 1 }}>{m.title}</Text>
                     <Text style={text.caption}>{m.days}일 달성</Text>
@@ -278,7 +278,7 @@ export default function ReportScreen() {
                 {badges.map((b) => (
                   <View key={b.label} style={{ alignItems: 'center', gap: 6 }}>
                     <View style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2, borderColor: b.on ? b.tint : color.line, backgroundColor: b.on ? (b.tint === color.yellow ? color.yellowSoft : color.primarySoft) : color.page, alignItems: 'center', justifyContent: 'center' }}>
-                      <MaterialIcons name={b.on ? b.icon : 'lock-outline'} size={22} color={b.on ? (b.tint === color.yellow ? '#8A6A00' : color.primary) : color.muted} />
+                      <MaterialIcons name={b.on ? b.icon : 'lock-outline'} size={22} color={b.on ? (b.tint === color.yellow ? color.yellowInk : color.primary) : color.muted} />
                     </View>
                     <Text style={{ ...text.caption, color: b.on ? color.ink : color.muted, fontWeight: b.on ? '700' : '400' }}>{b.label}</Text>
                   </View>

@@ -105,10 +105,10 @@ export function InputPanel(_props: InputPanelProps) {
     setWarnings([message]);
   };
 
-  const circle = { width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: color.line, backgroundColor: '#F1F3FA', alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
+  const circle = { width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
 
   return (
-    <View style={{ ...card, padding: 18, gap: 14, backgroundColor: '#FBFCFF' }}>
+    <View style={{ ...card, padding: 18, gap: 14, backgroundColor: color.surface }}>
       <View style={{ gap: 2 }}>
         <Text style={{ ...text.script, fontSize: 18 }}>Tell FitLog AI •</Text>
         <Text style={{ ...text.section, fontSize: 19 }}>간편하게 말하거나 터치해서 기록해요</Text>
@@ -122,7 +122,7 @@ export function InputPanel(_props: InputPanelProps) {
             accessibilityLabel={chip.label + ' 바로 기록'}
             disabled={locked}
             onPress={() => onQuick(chip)}
-            style={{ paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: '#F1F3FA', opacity: locked ? 0.4 : 1 }}
+            style={{ paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, opacity: locked ? 0.4 : 1 }}
           >
             <Text style={{ fontFamily: font.body, fontSize: 12.5, color: color.ink }}>+ {QUICK_SHORT[chip.id] ?? chip.label}</Text>
           </Pressable>
@@ -147,7 +147,7 @@ export function InputPanel(_props: InputPanelProps) {
         )}
       </Text>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: radius.pill, backgroundColor: '#EEF2FB', paddingLeft: 18, paddingRight: 6, minHeight: 50 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: radius.pill, backgroundColor: color.inputBg, paddingLeft: 18, paddingRight: 6, minHeight: 50 }}>
         <TextInput
           ref={inputRef}
           value={text_}
@@ -172,7 +172,7 @@ export function InputPanel(_props: InputPanelProps) {
 
       {notice && <Text style={{ ...text.caption, color: color.primary, textAlign: 'center', fontWeight: '700' }}>{notice}</Text>}
       {warnings.map((w) => (
-        <View key={w} style={{ borderWidth: 1.5, borderColor: color.yellowLine, backgroundColor: '#FFFCF0', borderRadius: radius.card, paddingHorizontal: 14, paddingVertical: 10 }}>
+        <View key={w} style={{ borderWidth: 1.5, borderColor: color.yellowLine, backgroundColor: color.successBg, borderRadius: radius.card, paddingHorizontal: 14, paddingVertical: 10 }}>
           <Text style={{ ...text.caption, color: color.ink }}>{w}</Text>
         </View>
       ))}
