@@ -43,6 +43,20 @@ test('탄단지 비율은 칼로리 기준이고 합이 100', () => {
   assert.equal(w.avgKcal, 390);
 });
 
+test('운동 소모 칼로리는 지난 날만 합산한다', () => {
+  const run = (kcal_burned: number) => ({ kind: 'exercise', foods: [], exercises: [{ name: '달리기', code: 'running', body_parts: [], kcal_burned }], water_ml: null }) as unknown as HealthRecord;
+  const w = summarizeWeek(
+    [
+      { dayKey: '2026-10-12', records: [run(200), run(50.4)], missions: [] },
+      { dayKey: '2026-10-13', records: [run(100)], missions: [] },
+      { dayKey: '2026-10-14', records: [run(999)], missions: [] }, // 오늘 이후
+    ],
+    '2026-10-13',
+  );
+  assert.equal(w.burned, 350);
+  assert.equal(w.days[0].burned, 250.4);
+});
+
 test('기록이 없으면 0으로 나누지 않는다', () => {
   const w = summarizeWeek([{ dayKey: '2026-10-12', records: [], missions: [] }], '2026-10-12');
   assert.deepEqual(w.macroPct, { carb: 0, protein: 0, fat: 0 });

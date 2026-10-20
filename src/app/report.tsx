@@ -120,7 +120,8 @@ export default function ReportScreen() {
         미션: `${week.total}개 중 ${week.done}개 달성(${week.rate}%)`,
         요일별_달성: week.days.filter((d) => d.counted).map((d, i) => `${WEEKDAY[i]} ${d.done}/3, ${Math.round(d.kcal)}kcal`),
         탄단지_비율: week.macroPct,
-        평균_칼로리: week.avgKcal,
+        평균_섭취_칼로리: week.avgKcal,
+        주간_운동_소모_칼로리: week.burned,
         미션별_달성일수: week.missionDays,
       };
       const r = await generateJson<{ comment: string }>(
@@ -191,11 +192,12 @@ export default function ReportScreen() {
                 {[
                   ['완수율', `${week.rate}%`, color.primary],
                   ['기록', `${week.records}건`, color.ink],
-                  ['일 평균', week.avgKcal ? `${week.avgKcal.toLocaleString()} kcal` : '-', color.ink],
+                  ['섭취 일평균', week.avgKcal ? `${week.avgKcal.toLocaleString()}kcal` : '-', color.ink],
+                  ['운동 소모', week.burned ? `${week.burned.toLocaleString()}kcal` : '-', color.ink],
                 ].map(([label, value, c], i) => (
                   <View key={label} style={{ flex: 1, alignItems: 'center', gap: 2, borderLeftWidth: i ? 1 : 0, borderLeftColor: '#F3E6CC' }}>
                     <Text style={text.caption}>{label}</Text>
-                    <Text style={{ fontFamily: font.body, fontSize: 17, fontWeight: '800', color: c }}>{value}</Text>
+                    <Text style={{ fontFamily: font.body, fontSize: 15, fontWeight: '800', color: c }}>{value}</Text>
                   </View>
                 ))}
               </View>

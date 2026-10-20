@@ -35,8 +35,8 @@ export default function TodayScreen() {
         <HeroCard done={done} streak={streak} name={name} />
         <MissionCards dayKey={dayKey} />
         <InputPanel />
-        <Timeline dayKey={dayKey} />
         <DailyTotals dayKey={dayKey} />
+        <Timeline dayKey={dayKey} />
       </ScrollView>
     </View>
   );

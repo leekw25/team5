@@ -22,6 +22,7 @@ export interface DaySummary {
   carb_g: number;
   protein_g: number;
   fat_g: number;
+  burned: number; // 운동으로 소모한 kcal
   done: number; // 그날 성공한 미션 수 0~3(이미경님 판정 결과 daily_missions)
 }
 
@@ -32,6 +33,7 @@ export interface WeekSummary {
   rate: number; // 0~100
   records: number;
   avgKcal: number; // 기록이 있는 날 평균
+  burned: number; // 이번 주 운동 소모 kcal 합계
   macroPct: { carb: number; protein: number; fat: number }; // 칼로리 기준 비율(%), 합 100
   streak: number; // 이번 주 3/3 최장 연속 일수
   missionDays: { title: string; slot: string; days: number }[]; // 슬롯(식단·생활·운동)별 달성 일수
@@ -58,6 +60,7 @@ export function summarizeWeek(byDay: { dayKey: string; records: HealthRecord[]; 
       carb_g: sum('carb_g'),
       protein_g: sum('protein_g'),
       fat_g: sum('fat_g'),
+      burned: records.flatMap((r) => r.exercises).reduce((s, e) => s + e.kcal_burned, 0),
       done: succeeded(missions).length,
     };
   });
@@ -87,6 +90,7 @@ export function summarizeWeek(byDay: { dayKey: string; records: HealthRecord[]; 
     total,
     rate: total ? Math.round((done / total) * 100) : 0,
     records: counted.reduce((s, d) => s + d.records, 0),
+    burned: Math.round(counted.reduce((s, d) => s + d.burned, 0)),
     avgKcal: eaten.length ? Math.round(eaten.reduce((s, d) => s + d.kcal, 0) / eaten.length) : 0,
     macroPct: all ? { carb, protein, fat: 100 - carb - protein } : { carb: 0, protein: 0, fat: 0 },
     streak,
