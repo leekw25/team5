@@ -8,6 +8,7 @@ import { supabase } from '@/shared/supabase';
 import { MyMissions } from '@/features/mission';
 import { AppHeader } from '@/ui/chrome';
 import { ThemePicker } from '@/ui/ThemePicker';
+import { VoiceSetting } from '@/ui/VoiceSetting';
 import { isDevToolsOpen, openDevTools } from '@/ui/devtools-gate';
 import { promptInstall, useInstallState } from '@/ui/install';
 import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
@@ -137,6 +138,8 @@ export default function SettingsScreen() {
         </View>
 
         <ThemePicker />
+
+        <VoiceSetting />
 
         <MyMissions />
 
