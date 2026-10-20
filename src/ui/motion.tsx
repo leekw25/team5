@@ -195,17 +195,43 @@ export function HeaderShadow({ y }: { y: Animated.Value }) {
   );
 }
 
-// 400px 넘게 내리면 오른쪽 아래에 '맨 위로' 버튼이 떠오른다
+// '맨 위로' 버튼: 400px 넘게 내려가 있고 스크롤하는 동안에만 떠오르고, 1.2초 멈추면 사라진다(내용을 가리지 않게)
 export function ScrollTopButton({ y, onPress, children }: { y: Animated.Value; onPress: () => void; children: ReactNode }) {
-  const range = { inputRange: [300, 450], extrapolate: 'clamp' as const };
+  const [show] = useState(() => new Animated.Value(0));
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let shown = false;
+    const fade = (to: number) => Animated.timing(show, { toValue: to, duration: 180, useNativeDriver: NATIVE }).start();
+    const id = y.addListener(({ value }) => {
+      if (timer) clearTimeout(timer);
+      const want = value > 400;
+      if (want !== shown) {
+        shown = want;
+        setVisible(want);
+        fade(want ? 1 : 0);
+      }
+      if (want)
+        timer = setTimeout(() => {
+          shown = false;
+          setVisible(false);
+          fade(0);
+        }, 1200);
+    });
+    return () => {
+      y.removeListener(id);
+      if (timer) clearTimeout(timer);
+    };
+  }, [y, show]);
   return (
     <Animated.View
+      pointerEvents={visible ? 'auto' : 'none'}
       style={{
         position: 'absolute',
         right: 16,
         bottom: 16,
-        opacity: y.interpolate({ ...range, outputRange: [0, 1] }),
-        transform: [{ translateY: y.interpolate({ ...range, outputRange: [24, 0] }) }, { scale: y.interpolate({ ...range, outputRange: [0.8, 1] }) }],
+        opacity: show,
+        transform: [{ translateY: show.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }) }, { scale: show.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] }) }],
       }}
     >
       <Pressable accessibilityRole="button" accessibilityLabel="맨 위로" onPress={onPress} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: color.primary, alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(27,31,42,0.2)' } as ViewStyle}>

@@ -7,7 +7,7 @@ import { color } from '@/ui/theme';
 export default function CalendarScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: color.page }}>
-      <AppHeader title="리워드 달력" />
+      <AppHeader />
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         <RewardCalendar />
       </ScrollView>

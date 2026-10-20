@@ -188,16 +188,22 @@ export default function ReportScreen() {
                 </View>
                 <Image source={require('../../assets/illustrations/jiyu-report.jpg')} accessibilityLabel="차트 클립보드를 든 지유" style={{ width: 84, height: 84, borderRadius: 14, borderWidth: 1, borderColor: color.line }} />
               </View>
-              <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: color.creamLine, paddingTop: 12 }}>
+              {/* 2×2 칸: 큰 숫자(10,000kcal 이상)나 좁은 폰에서도 구분선에 닿지 않게 */}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', borderTopWidth: 1, borderTopColor: color.creamLine, paddingTop: 4 }}>
                 {[
                   ['완수율', `${week.rate}%`, color.primary],
                   ['기록', `${week.records}건`, color.ink],
-                  ['섭취 일평균', week.avgKcal ? `${week.avgKcal.toLocaleString()}kcal` : '-', color.ink],
-                  ['운동 소모', week.burned ? `${week.burned.toLocaleString()}kcal` : '-', color.ink],
+                  ['섭취 일평균', week.avgKcal ? `${week.avgKcal.toLocaleString()} kcal` : '-', color.ink],
+                  ['운동 소모', week.burned ? `${week.burned.toLocaleString()} kcal` : '-', color.ink],
                 ].map(([label, value, c], i) => (
-                  <View key={label} style={{ flex: 1, alignItems: 'center', gap: 2, borderLeftWidth: i ? 1 : 0, borderLeftColor: color.creamLine }}>
+                  <View
+                    key={label}
+                    style={{ width: '50%', alignItems: 'center', gap: 2, paddingVertical: 8, borderLeftWidth: i % 2 ? 1 : 0, borderTopWidth: i >= 2 ? 1 : 0, borderColor: color.creamLine }}
+                  >
                     <Text style={text.caption}>{label}</Text>
-                    <Text style={{ fontFamily: font.body, fontSize: 15, fontWeight: '800', color: c }}>{value}</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={{ fontFamily: font.body, fontSize: 17, fontWeight: '800', color: c }}>
+                      {value}
+                    </Text>
                   </View>
                 ))}
               </View>

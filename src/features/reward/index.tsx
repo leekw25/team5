@@ -76,8 +76,8 @@ export function RewardCalendar(_props: RewardCalendarProps) {
           <Pressable onPress={() => setMonthKey((m) => shiftMonth(m, -1))} hitSlop={12} accessibilityLabel="이전 달">
             <MaterialIcons name="chevron-left" size={22} color={color.ink} />
           </Pressable>
-          <Pressable onPress={() => setMonthKey(monthOf(toDayKey()))} hitSlop={8} accessibilityLabel="이번 달로">
-            <View style={[styles.navDot, !isThisMonth && { backgroundColor: color.muted }]} />
+          <Pressable onPress={() => setMonthKey(monthOf(toDayKey()))} disabled={isThisMonth} hitSlop={8} accessibilityLabel="이번 달로">
+            <Text style={[styles.navToday, isThisMonth && { color: color.muted }]}>이번 달</Text>
           </Pressable>
           <Pressable onPress={() => setMonthKey((m) => shiftMonth(m, 1))} hitSlop={12} accessibilityLabel="다음 달">
             <MaterialIcons name="chevron-right" size={22} color={color.ink} />
@@ -260,7 +260,7 @@ const styles = themedStyles(() =>
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   month: { fontFamily: font.body, fontSize: 24, fontWeight: '800', color: color.ink },
   navPill: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 6 },
-  navDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: color.primary },
+  navToday: { fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.primary },
   banner: { ...card, backgroundColor: color.cream, borderColor: color.creamLine, padding: 18, flexDirection: 'row', gap: 12, alignItems: 'center' },
   bannerImage: { width: 96, height: 96, borderRadius: 14, borderWidth: 1, borderColor: color.line },
   streakPill: { alignSelf: 'flex-start', backgroundColor: color.yellowSoft, borderColor: color.yellowLine, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },

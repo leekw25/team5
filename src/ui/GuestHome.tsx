@@ -51,8 +51,10 @@ function LoginPopover({ onClose, onDone }: { onClose: () => void; onDone: () => 
         style={{
           position: 'absolute',
           top: insets.top + 56,
-          right: 12,
-          width: 300,
+          left: 16,
+          right: 16,
+          maxWidth: 360,
+          marginHorizontal: 'auto',
           backgroundColor: color.surface,
           borderRadius: 20,
           borderWidth: 1,
@@ -60,7 +62,7 @@ function LoginPopover({ onClose, onDone }: { onClose: () => void; onDone: () => 
           padding: 18,
           gap: 10,
           boxShadow: '0 12px 32px rgba(27,31,42,0.18)',
-          transformOrigin: 'top right',
+          transformOrigin: 'top center',
           opacity: v.interpolate({ inputRange: [0, 0.6, 1], outputRange: [0, 1, 1] }),
           transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }) }, { translateY: v.interpolate({ inputRange: [0, 1], outputRange: [-10, 0] }) }],
         }}
@@ -183,7 +185,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
             <Text style={{ ...text.body, color: color.muted, lineHeight: 24 }}>손으로 일일이 적지 마세요. 말하거나 사진 찍으면 AI가 영양소 분석부터 미션 체크까지 알아서!</Text>
           </Reveal>
           <Reveal index={3} style={{ ...card, padding: 16, marginTop: 12, overflow: 'hidden' }}>
-            <View style={{ width: '100%', aspectRatio: 1 }}>
+            <View style={{ width: '100%', aspectRatio: 1.25 }}>
               <Image source={IMG.hero} accessibilityLabel="햄버거 세트 앞에서 휴대폰에 말하는 지유" style={{ width: '100%', height: '100%', borderRadius: 12 }} resizeMode="contain" />
             </View>
             <View style={{ position: 'absolute', left: 16, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: color.cream, borderWidth: 1, borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
@@ -199,11 +201,11 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
           </Pressable>
         </View>
 
-        {/* Step 1 (파란 섹션) */}
+        {/* 핵심 기능(파란 섹션) */}
         <View onLayout={(e) => setStepY(e.nativeEvent.layout.y)} style={{ backgroundColor: color.primary, paddingHorizontal: 24, paddingVertical: 48, alignItems: 'center' }}>
           <Text style={{ position: 'absolute', top: 20, left: 24, fontSize: 22, color: color.yellow }}>✦</Text>
           <Reveal style={{ backgroundColor: white(0.2), borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 4, marginBottom: 16 }}>
-            <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '600', color: '#fff' }}>Step 1</Text>
+            <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '600', color: '#fff' }}>핵심 기능</Text>
           </Reveal>
           <Reveal index={1}>
             <Text style={{ fontFamily: font.body, fontSize: 24, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center' }}>기록은 3초,{'\n'}성취감은 하루 종일!</Text>
@@ -262,7 +264,7 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
           <Pop style={{ position: 'absolute', top: 4, right: 32 }}>
             <Text style={{ fontSize: 30, color: color.yellow }}>★</Text>
           </Pop>
-          <Text style={{ position: 'absolute', bottom: 64, right: 20, fontSize: 18, color: white(0.5) }}>★</Text>
+          <Text style={{ position: 'absolute', top: 36, left: 28, fontSize: 18, color: white(0.5) }}>★</Text>
           <Reveal>
             <Text style={{ fontFamily: font.body, fontSize: 22, lineHeight: 32, fontWeight: '800', color: '#fff', textAlign: 'center', marginBottom: 12 }}>
               이제 기록은 핏로그와 함께,{'\n'}오늘 미션부터 시작해 보세요.

@@ -8,6 +8,7 @@ import { supabase } from '@/shared/supabase';
 import { MyMissions } from '@/features/mission';
 import { AppHeader } from '@/ui/chrome';
 import { ThemePicker } from '@/ui/ThemePicker';
+import { isDevToolsOpen, openDevTools } from '@/ui/devtools-gate';
 import { promptInstall, useInstallState } from '@/ui/install';
 import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
 import { card, color, font, radius, text } from '@/ui/theme';
@@ -25,6 +26,16 @@ export default function SettingsScreen() {
   const [nameMsg, setNameMsg] = useState<string | null>(null);
   const [nameBusy, setNameBusy] = useState(false);
   const install = useInstallState();
+  const [devOpen, setDevOpen] = useState(isDevToolsOpen);
+  const [taps, setTaps] = useState(0);
+  const tapVersion = () => {
+    const next = taps + 1;
+    setTaps(next);
+    if (next >= 7 && !devOpen) {
+      openDevTools();
+      setDevOpen(true);
+    }
+  };
   const [installHint, setInstallHint] = useState(false);
 
   useEffect(() => {
@@ -66,8 +77,8 @@ export default function SettingsScreen() {
 
   const rows: { icon: keyof typeof MaterialIcons.glyphMap; title: string; sub: string; onPress: () => unknown }[] = [
     ...(installRow ? [installRow] : []),
-    { icon: 'build', title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') },
-    { icon: 'logout', title: '로그아웃', sub: email ? `${email} 로 로그인됨 · 다른 계정으로 바꾸기` : '다른 계정으로 로그인', onPress: signOut },
+    ...(devOpen ? [{ icon: 'build' as const, title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') }] : []),
+    { icon: 'logout', title: '로그아웃', sub: email ? `로그인 계정: ${email} · 다른 계정으로 바꾸기` : '다른 계정으로 로그인', onPress: signOut },
   ];
 
   async function onSave() {
@@ -97,7 +108,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: color.page }}>
-      <AppHeader title="설정" />
+      <AppHeader />
       <ScrollView contentContainerStyle={{ padding: 20, gap: 16 }}>
         <View style={{ ...card, padding: 20, gap: 12 }}>
           <Text style={{ ...text.section, fontSize: 20 }}>내 이름</Text>
@@ -130,20 +141,18 @@ export default function SettingsScreen() {
         <MyMissions />
 
         <View style={{ ...card, padding: 20, gap: 12 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-            <View style={{ flex: 1, gap: 4 }}>
-              <Text style={{ ...text.section, fontSize: 20 }}>Gemini API 키</Text>
-              <Text style={text.caption}>AI 자동 분석과 음성 인식에 쓰는 키예요. Google AI Studio(aistudio.google.com) → Get API key에서 발급해 붙여넣으세요.</Text>
-            </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <Text style={{ ...text.section, fontSize: 20 }}>Gemini API 키</Text>
             <View style={{ backgroundColor: saved ? color.primarySoft : color.chipBg, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
               <Text style={{ fontFamily: font.body, fontSize: 12, fontWeight: '700', color: saved ? color.primary : color.muted }}>{saved ? '저장됨 ✅' : '없음'}</Text>
             </View>
           </View>
+          <Text style={text.caption}>AI 자동 분석과 음성 인식에 쓰는 키예요. Google AI Studio(aistudio.google.com) → Get API key에서 발급해 붙여넣으세요.</Text>
           <Text style={{ ...text.caption, color: color.ink }}>API 키 입력</Text>
           <TextInput
             value={input}
             onChangeText={setInput}
-            placeholder="AIza..."
+            placeholder="발급받은 API 키 붙여넣기"
             placeholderTextColor={color.muted}
             secureTextEntry
             autoCapitalize="none"
@@ -189,7 +198,10 @@ export default function SettingsScreen() {
             </Pressable>
           ))}
         </View>
-        <Text style={{ ...text.caption, textAlign: 'center' }}>FitLog AI v1.0</Text>
+        {/* 배포 버전에서는 개발 도구를 숨긴다. 버전 글자를 7번 누르면 이 기기에서만 열린다(시연·점검용). */}
+        <Pressable onPress={tapVersion} accessibilityLabel="앱 버전">
+          <Text style={{ ...text.caption, textAlign: 'center' }}>FitLog AI v1.0</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );

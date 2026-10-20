@@ -7,7 +7,7 @@
     <title>%WEB_TITLE%</title>
     <!-- PWA: 홈 화면에 추가하면 앱처럼 전체 화면으로 열린다 -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2F6BFF" />
+    <meta name="theme-color" content="#FFF9EE" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -26,6 +26,12 @@
         overflow: hidden;
       }
       /* These styles make the root element full-height */
+      /* 한국어는 단어(어절) 단위로 줄바꿈하고, 너무 긴 이메일·주소만 끊는다. 마지막 줄에 한두 글자만 남지 않게 한다. */
+      #root {
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        text-wrap: pretty;
+      }
       #root {
         display: flex;
         height: 100%;

@@ -121,6 +121,7 @@ function apply(name: ThemeName) {
   const next = makeText();
   for (const key of Object.keys(next) as (keyof typeof next)[]) Object.assign(text[key], next[key]);
   version += 1;
+  if (typeof document !== 'undefined') document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color.cream); // 상태 표시줄 = 헤더 색
   listeners.forEach((l) => l());
 }
 
