@@ -160,22 +160,6 @@ export function useScrollY() {
   return { y, onScroll };
 }
 
-// 스크롤을 내리면 천천히 따라 올라가며(절반 속도) 살짝 작아진다(흐려짐은 빼 달라는 요청으로 제거)
-export function Parallax({ y, children }: { y: Animated.Value; children: ReactNode }) {
-  const reduced = useReducedMotion();
-  if (reduced !== false) return <>{children}</>;
-  const range = { inputRange: [0, 260], extrapolate: 'clamp' as const };
-  return (
-    <Animated.View
-      style={{
-        transform: [{ translateY: y.interpolate({ ...range, outputRange: [0, 90] }) }, { scale: y.interpolate({ ...range, outputRange: [1, 0.94] }) }],
-      }}
-    >
-      {children}
-    </Animated.View>
-  );
-}
-
 // 헤더 아래 그림자: 스크롤을 조금이라도 내리면 나타난다
 export function HeaderShadow({ y }: { y: Animated.Value }) {
   return (

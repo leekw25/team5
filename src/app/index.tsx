@@ -14,7 +14,7 @@ import { MealSuggest } from '@/ui/MealSuggest';
 import { useCoach } from '@/ui/coach';
 import { voiceSupported } from '@/ui/voice';
 import { HeroCard, useMissionSummary } from '@/ui/HeroCard';
-import { Parallax, Reveal, ScrollTopButton, useScrollY } from '@/ui/motion';
+import { Reveal, ScrollTopButton, useScrollY } from '@/ui/motion';
 import { useDisplayName } from '@/ui/profile';
 import { color, radius, text } from '@/ui/theme';
 
@@ -38,7 +38,7 @@ export default function TodayScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: color.page }}>
       <AppHeader dayKey={dayKey} scrollY={y} />
-      {/* 스크롤 모션: 히어로 패럴랙스, 섹션이 보일 때 올라오는 리빌, 헤더 그림자, 맨 위로 버튼 */}
+      {/* 스크롤 모션: 섹션이 보일 때 올라오는 리빌, 헤더 그림자, 맨 위로 버튼(히어로 카드 축소 모션은 어색해서 뺌) */}
       <Animated.ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ padding: 20, gap: 24, paddingBottom: 80 }}>
         {guest ? (
           <View style={{ backgroundColor: color.primarySoft, borderRadius: radius.card, padding: 14 }}>
@@ -50,9 +50,7 @@ export default function TodayScreen() {
           </Link>
         )
         )}
-        <Parallax y={y}>
-          <HeroCard done={done} streak={streak} name={name} line={coach.line} onReplay={voiceSupported() ? coach.replay : undefined} />
-        </Parallax>
+        <HeroCard done={done} streak={streak} name={name} line={coach.line} onReplay={voiceSupported() ? coach.replay : undefined} />
         <MissionCards dayKey={dayKey} />
         <MealSuggest dayKey={dayKey} />
         <Reveal>
