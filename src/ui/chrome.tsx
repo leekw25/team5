@@ -1,9 +1,10 @@
 // 앱 공통 틀: 상단 헤더(로고·날짜·알림)와 하단 탭바(오늘·달력·리포트·설정). Stitch 디자인 그대로.
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
-import { Platform, Pressable, Text, View, type ViewStyle } from 'react-native';
+import { Animated, Platform, Pressable, Text, View, type ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HeaderShadow } from './motion';
 import { color, font, radius } from './theme';
 
 const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
@@ -14,7 +15,7 @@ function koreanDate(dayKey: string): string {
   return `${m}월 ${d}일 (${WEEKDAY[w]})`;
 }
 
-export function AppHeader({ dayKey, title, right }: { dayKey?: string; title?: string; right?: ReactNode }) {
+export function AppHeader({ dayKey, title, right, scrollY }: { dayKey?: string; title?: string; right?: ReactNode; scrollY?: Animated.Value }) {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -28,8 +29,10 @@ export function AppHeader({ dayKey, title, right }: { dayKey?: string; title?: s
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        zIndex: 2,
       }}
     >
+      {scrollY && <HeaderShadow y={scrollY} />}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: color.primary, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="fitness-center" size={18} color="#fff" />

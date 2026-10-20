@@ -2,7 +2,7 @@
 // stagger 리빌 0.55s·24px·0.06s 간격, bar-grow 1.05s, scale-pop 0.5s. transform·opacity만 움직인다.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { color } from './theme';
-import { AccessibilityInfo, Animated, Easing, Platform, View, type StyleProp, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Platform, Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 
 const easeOut = Easing.bezier(0.22, 1, 0.36, 1);
 // 웹에는 네이티브 애니메이션 모듈이 없어 JS 애니메이션을 쓴다(경고 방지)
@@ -12,7 +12,7 @@ const NATIVE = Platform.OS !== 'web';
 const useAnim = () => useState(() => new Animated.Value(0))[0];
 
 // '동작 줄이기'를 켠 기기에서는 null(확인 중) → true 가 되면 바로 완성 상태로 둔다.
-function useReducedMotion() {
+export function useReducedMotion() {
   const [reduced, setReduced] = useState<boolean | null>(null);
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduced).catch(() => setReduced(false));
@@ -149,5 +149,69 @@ export function Ripple({ size, fast }: { size: number; fast: boolean }) {
         />
       ))}
     </>
+  );
+}
+
+// ── 스크롤에 따라 움직이는 모션(오늘 홈) ──
+// 스크롤 위치(y)를 Animated 값으로 받아 히어로 카드 패럴랙스, 헤더 그림자, '맨 위로' 버튼에 쓴다.
+export function useScrollY() {
+  const [y] = useState(() => new Animated.Value(0));
+  const [onScroll] = useState(() => Animated.event([{ nativeEvent: { contentOffset: { y } } }], { useNativeDriver: NATIVE }));
+  return { y, onScroll };
+}
+
+// 스크롤을 내리면 천천히 따라 올라가며(절반 속도) 살짝 작아지고 흐려진다
+export function Parallax({ y, children }: { y: Animated.Value; children: ReactNode }) {
+  const reduced = useReducedMotion();
+  if (reduced !== false) return <>{children}</>;
+  const range = { inputRange: [0, 260], extrapolate: 'clamp' as const };
+  return (
+    <Animated.View
+      style={{
+        opacity: y.interpolate({ ...range, outputRange: [1, 0.35] }),
+        transform: [{ translateY: y.interpolate({ ...range, outputRange: [0, 90] }) }, { scale: y.interpolate({ ...range, outputRange: [1, 0.94] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
+// 헤더 아래 그림자: 스크롤을 조금이라도 내리면 나타난다
+export function HeaderShadow({ y }: { y: Animated.Value }) {
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: -10,
+        height: 10,
+        opacity: y.interpolate({ inputRange: [0, 24], outputRange: [0, 1], extrapolate: 'clamp' }),
+        boxShadow: '0 6px 10px rgba(27,31,42,0.12)',
+        backgroundColor: 'transparent',
+      } as ViewStyle}
+    />
+  );
+}
+
+// 400px 넘게 내리면 오른쪽 아래에 '맨 위로' 버튼이 떠오른다
+export function ScrollTopButton({ y, onPress, children }: { y: Animated.Value; onPress: () => void; children: ReactNode }) {
+  const range = { inputRange: [300, 450], extrapolate: 'clamp' as const };
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        right: 16,
+        bottom: 16,
+        opacity: y.interpolate({ ...range, outputRange: [0, 1] }),
+        transform: [{ translateY: y.interpolate({ ...range, outputRange: [24, 0] }) }, { scale: y.interpolate({ ...range, outputRange: [0.8, 1] }) }],
+      }}
+    >
+      <Pressable accessibilityRole="button" accessibilityLabel="맨 위로" onPress={onPress} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: color.primary, alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(27,31,42,0.2)' } as ViewStyle}>
+        {children}
+      </Pressable>
+    </Animated.View>
   );
 }

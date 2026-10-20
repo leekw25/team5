@@ -10,6 +10,7 @@ import { missionsRepo, recordsRepo, userMissionsRepo } from '@/data';
 import { onRecordsChanged } from '@/shared/events';
 import type { DailyMission, MissionCardsProps } from '@/shared/types/contract';
 import { color, font, radius, text, themedStyles } from '@/ui/theme';
+import { Reveal } from '@/ui/motion';
 import { MissionCard } from './MissionCard';
 import { onCelebrate } from './missionEvents.ts';
 import { pickDailySet, pickReroll, rerollsLeft } from './pool.ts';
@@ -135,7 +136,8 @@ export function MissionCards({ dayKey }: MissionCardsProps) {
           <RetryButton onPress={refresh} />
         </View>
       )}
-      {current.missions.map((mission) => (
+      {current.missions.map((mission, i) => (
+        <Reveal key={mission.id} index={i} style={{ zIndex: celebrating.includes(mission.id) ? 10 : 0 }}>
         <MissionCard
           key={mission.id}
           mission={mission}
@@ -147,6 +149,7 @@ export function MissionCards({ dayKey }: MissionCardsProps) {
           onReroll={() => onReroll(mission, current.missions)}
           onCheck={() => onCheck(mission)}
         />
+        </Reveal>
       ))}
     </View>
   );
