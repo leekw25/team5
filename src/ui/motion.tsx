@@ -160,7 +160,7 @@ export function useScrollY() {
   return { y, onScroll };
 }
 
-// 스크롤을 내리면 천천히 따라 올라가며(절반 속도) 살짝 작아지고 흐려진다
+// 스크롤을 내리면 천천히 따라 올라가며(절반 속도) 살짝 작아진다(흐려짐은 빼 달라는 요청으로 제거)
 export function Parallax({ y, children }: { y: Animated.Value; children: ReactNode }) {
   const reduced = useReducedMotion();
   if (reduced !== false) return <>{children}</>;
@@ -168,7 +168,6 @@ export function Parallax({ y, children }: { y: Animated.Value; children: ReactNo
   return (
     <Animated.View
       style={{
-        opacity: y.interpolate({ ...range, outputRange: [1, 0.35] }),
         transform: [{ translateY: y.interpolate({ ...range, outputRange: [0, 90] }) }, { scale: y.interpolate({ ...range, outputRange: [1, 0.94] }) }],
       }}
     >
