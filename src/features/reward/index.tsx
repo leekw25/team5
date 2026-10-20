@@ -13,6 +13,7 @@ import { onMissionsUpdated } from '../mission/missionEvents.ts';
 import { DayCell, ProgressRing, Stamp } from './DayCell';
 import { buildMonthGrid, monthOf, shiftMonth } from './monthGrid.ts';
 import { calcStreak, MISSIONS_PER_DAY, STREAK_LOOKBACK_DAYS } from './streak.ts';
+import { bestStreak, nextTitle, STREAK_TITLES, titleFor } from './titles.ts';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const useNativeDriver = Platform.OS !== 'web';
@@ -22,6 +23,7 @@ interface CalendarData {
   today: string;
   counts: Record<string, number>; // dayKey → 성공 수
   streak: number;
+  best: number; // 기록 기간 중 최장 연속(획득한 칭호 판단)
 }
 
 export function RewardCalendar(_props: RewardCalendarProps) {
@@ -45,6 +47,7 @@ export function RewardCalendar(_props: RewardCalendarProps) {
           today,
           counts: Object.fromEntries(monthRows.map((row) => [row.day_key, row.success_count])),
           streak: calcStreak(streakRows, today),
+          best: bestStreak(streakRows),
         });
         setError(null);
       },
@@ -138,6 +141,56 @@ export function RewardCalendar(_props: RewardCalendarProps) {
           </View>
         </View>
       </View>
+
+      {data && <TitleShelf streak={data.streak} best={data.best} />}
+    </View>
+  );
+}
+
+// 연속 달성 칭호 모음: 얻은 칭호(최장 연속 기준)와 다음 칭호
+function TitleShelf({ streak, best }: { streak: number; best: number }) {
+  const earned = STREAK_TITLES.filter((t) => best >= t.days);
+  const next = nextTitle(best); // 아직 못 얻은 첫 칭호. 남은 날은 지금 연속 기준
+  const current = titleFor(streak);
+  return (
+    <View style={styles.shelf}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Text style={text.section}>연속 달성 칭호</Text>
+        <View style={styles.countPill}>
+          <Text style={styles.countText}>
+            {earned.length} / {STREAK_TITLES.length}
+          </Text>
+        </View>
+      </View>
+      {current && (
+        <View style={styles.currentTitle}>
+          <Text style={{ fontSize: 22 }}>🏅</Text>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={{ ...text.body, fontWeight: '800' }}>
+              {current.name} <Text style={text.caption}>{current.english}</Text>
+            </Text>
+            <Text style={text.caption}>{current.description}</Text>
+          </View>
+        </View>
+      )}
+      <View style={styles.chips}>
+        {earned.map((t) => (
+          <View key={t.days} style={styles.chipOn}>
+            <Text style={styles.chipOnText}>
+              {t.days}일 · {t.name}
+            </Text>
+          </View>
+        ))}
+        {next && (
+          <View style={styles.chipOff}>
+            <MaterialIcons name="lock-outline" size={13} color={color.muted} />
+            <Text style={styles.chipOffText}>
+              {next.days}일 · {next.name}
+            </Text>
+          </View>
+        )}
+      </View>
+      {next && <Text style={text.caption}>3개 완수를 {next.days - streak}일 더 이어가면 「{next.name}」 칭호를 얻어요</Text>}
     </View>
   );
 }
@@ -170,7 +223,9 @@ function StreakBanner({ streak }: { streak: number | null }) {
         )}
         {!!streak && (
           <Animated.View style={[styles.streakPill, { transform: [{ scale: pop }] }]}>
-            <Text style={styles.streakPillText}>🔥 연속 {streak}일 달성</Text>
+            <Text style={styles.streakPillText}>
+              🔥 연속 {streak}일 달성{titleFor(streak) ? ` · ${titleFor(streak)?.name}` : ''}
+            </Text>
           </Animated.View>
         )}
       </View>
@@ -201,4 +256,13 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendEmpty: { width: 16, height: 16, borderRadius: 8, backgroundColor: '#F1F3F8' },
   legendText: { ...text.caption, fontSize: 12 },
+  shelf: { ...card, padding: 18, gap: 12 },
+  countPill: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 },
+  countText: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
+  currentTitle: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: color.yellowSoft, borderColor: color.yellowLine, borderWidth: 1, borderRadius: radius.card, padding: 12 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  chipOn: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 },
+  chipOnText: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
+  chipOff: { flexDirection: 'row', alignItems: 'center', gap: 3, borderWidth: 1, borderStyle: 'dashed', borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },
+  chipOffText: { fontFamily: font.body, fontSize: 12, color: color.muted },
 });

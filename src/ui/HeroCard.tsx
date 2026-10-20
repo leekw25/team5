@@ -5,6 +5,7 @@ import { Image, Text, View } from 'react-native';
 import { missionsRepo } from '@/data';
 import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
 import { calcStreak, MISSIONS_PER_DAY, STREAK_LOOKBACK_DAYS } from '@/features/reward/streak.ts';
+import { titleFor } from '@/features/reward/titles.ts';
 import { addDays } from '@/shared/date';
 import { Pop, Reveal } from './motion';
 import { card, color, font, radius, text } from './theme';
@@ -27,11 +28,12 @@ export function useMissionSummary(dayKey: string) {
   return summary;
 }
 
+// 이미경님 제안: 0개면 지쳐서 구부정한 지유 → 미션을 채울수록 표정이 밝아지고 자세가 펴진다(Stitch 4단계 시트).
 const JIYU = [
-  { src: require('../../assets/illustrations/jiyu-ok.jpg'), label: '손으로 OK 사인을 하는 지유' },
-  { src: require('../../assets/illustrations/jiyu-water.jpg'), label: '물병을 들고 엄지척하는 지유' },
-  { src: require('../../assets/illustrations/jiyu-v.jpg'), label: '브이를 하며 윙크하는 지유' },
-  { src: require('../../assets/illustrations/jiyu-cool.jpg'), label: '선글라스를 쓰고 자신감 있게 웃는 지유' },
+  { src: require('../../assets/illustrations/jiyu-stage0.jpg'), label: '지쳐서 구부정하게 서 있는 지유' },
+  { src: require('../../assets/illustrations/jiyu-stage1.jpg'), label: '물병을 들고 조금 기운을 차린 지유' },
+  { src: require('../../assets/illustrations/jiyu-stage2.jpg'), label: '바른 자세로 주먹을 쥐고 웃는 지유' },
+  { src: require('../../assets/illustrations/jiyu-stage3.jpg'), label: '팔에 힘을 주며 자신감 있게 웃는 지유' },
 ];
 
 export function HeroCard({ done, streak, name }: { done: number; streak: number; name?: string }) {
@@ -50,7 +52,9 @@ export function HeroCard({ done, streak, name }: { done: number; streak: number;
         {streak > 0 && (
           <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: color.yellowSoft, borderColor: color.yellowLine, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
             <Text>🔥</Text>
-            <Text style={{ fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.ink }}>연속 {streak}일 달성</Text>
+            <Text style={{ fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.ink }}>
+              연속 {streak}일 달성{titleFor(streak) ? ` · ${titleFor(streak)?.name}` : ''}
+            </Text>
           </View>
         )}
         <View style={{ flexDirection: 'row', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F3E6CC', gap: 18 }}>
