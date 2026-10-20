@@ -14,6 +14,7 @@ import { Reveal } from '@/ui/motion';
 import { MissionCard } from './MissionCard';
 import { onCelebrate } from './missionEvents.ts';
 import { pickDailySet, pickReroll, rerollsLeft } from './pool.ts';
+import { playClip } from '@/ui/voice';
 import { syncDay, type DaySnapshot } from './sync.ts';
 
 // 그날 처음 열 때 200개 + 내 미션에서 슬롯별로 하나씩 랜덤 배정
@@ -33,6 +34,9 @@ export function MissionCards({ dayKey }: MissionCardsProps) {
       (next) => {
         setSnapshot(next);
         setError(null);
+        const fresh = next.missions.find((m) => next.newlySucceeded.includes(m.id));
+        const allDone = next.missions.length > 0 && next.missions.every((m) => m.status === 'success');
+        if (fresh && !allDone) void playClip(`mission-${fresh.slot}`, `${dayKey}:${fresh.id}`); // 미션마다 하루 한 번
       },
       (e: unknown) => setError(e instanceof Error ? e.message : '미션을 불러오지 못했습니다'),
     );

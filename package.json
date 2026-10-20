@@ -41,7 +41,8 @@
     "test": "node --test \"src/**/*.test.ts\"",
     "build:web": "expo export -p web --clear && node --env-file=.env scripts/prepare-web-deploy.mjs",
     "deploy:web": "npm run build:web && node scripts/deploy-web.mjs",
-    "create:attendees": "node --env-file=.env scripts/create-attendees.mjs"
+    "create:attendees": "node --env-file=.env scripts/create-attendees.mjs",
+    "make:voice": "node --no-warnings scripts/make-voice-clips.mjs"
   },
   "private": true
 }

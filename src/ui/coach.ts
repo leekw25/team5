@@ -1,7 +1,7 @@
 // 지유 한마디: 기록을 저장하거나 미션을 체크하면 1.5초 뒤 오늘 상황을 보고 한 문장을 만들고(Gemini, 키 없으면 기본 문장) 소리 내어 읽는다.
 import { useEffect, useState } from 'react';
 import { missionsRepo, recordsRepo } from '@/data';
-import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
+import { onCelebrate, onMissionsUpdated } from '@/features/mission/missionEvents.ts';
 import { describe } from '@/features/mission/pool.ts';
 import { calcStreak, STREAK_LOOKBACK_DAYS } from '@/features/reward/streak.ts';
 import { addDays } from '@/shared/date';
@@ -27,6 +27,7 @@ export function useCoach(dayKey: string) {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let alive = true;
+    let quiet = false; // 이번 묶음에 미션 성공이 있었으면 음성 파일이 이미 나왔다
     const run = () => {
       if (timer) clearTimeout(timer);
       // 미션 재판정이 저장될 시간을 주고, 연달아 오는 알림은 한 번으로 묶는다
@@ -39,16 +40,22 @@ export function useCoach(dayKey: string) {
         const next = await makeLine(buildFacts([...records], [...missions], (m) => describe(m).title, calcStreak([...statuses], dayKey)));
         if (!alive) return;
         setLine(next);
-        speak(next);
+        const done = missions.filter((m) => m.status === 'success').length;
+        if (!quiet && (missions.length === 0 || done < missions.length)) speak(next); // 미션 완료 뒤에는 행동할 때마다 말하지 않는다
+        quiet = false;
       }, 1500);
     };
     const offRecords = onRecordsChanged((e) => e.day_key === dayKey && e.reason === 'created' && run());
     const offMissions = onMissionsUpdated((day) => day === dayKey && run());
+    const offCelebrate = onCelebrate((day) => {
+      if (day === dayKey) quiet = true;
+    });
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
       offRecords();
       offMissions();
+      offCelebrate();
     };
   }, [dayKey]);
   return { line, replay: () => line && speak(line, true) };

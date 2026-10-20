@@ -64,7 +64,7 @@ export default function TodayScreen() {
       <ScrollTopButton y={y} onPress={() => scroll.current?.scrollTo({ y: 0, animated: true })}>
         <MaterialIcons name="arrow-upward" size={22} color="#fff" />
       </ScrollTopButton>
-      {celebrate && <ClimaxOverlay streak={celebrate.streak} onClose={dismissCelebrate} />}
+      {celebrate && <ClimaxOverlay streak={celebrate.streak} dayKey={dayKey} onClose={dismissCelebrate} />}
     </View>
   );
 }

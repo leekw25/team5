@@ -5,12 +5,13 @@ import { Animated, Easing, Platform, Pressable, Text, View } from 'react-native'
 import { Confetti } from '@/features/mission/Confetti';
 import { titleFor } from '@/features/reward/titles.ts';
 import { color, font, radius, text } from './theme';
+import { playClip } from './voice';
 
 const NATIVE = Platform.OS !== 'web';
 const TIRED = require('../../assets/illustrations/jiyu-stage0.jpg');
 const PROUD = require('../../assets/illustrations/jiyu-stage3.jpg');
 
-export function ClimaxOverlay({ streak, onClose }: { streak: number; onClose: () => void }) {
+export function ClimaxOverlay({ streak, dayKey, onClose }: { streak: number; dayKey: string; onClose: () => void }) {
   const title = titleFor(streak);
   const newTitle = title && title.days === streak ? title : null; // 오늘로 막 칭호 기준에 닿은 경우만
   const [bg] = useState(() => new Animated.Value(0));
@@ -18,6 +19,11 @@ export function ClimaxOverlay({ streak, onClose }: { streak: number; onClose: ()
   const [morph] = useState(() => new Animated.Value(0));
   const [badge] = useState(() => new Animated.Value(0));
   const [burst, setBurst] = useState(0);
+
+  // 미리 만든 음성: '미션 세 개 모두 완수!' → 칭호를 얻었으면 '새 칭호 ○○를 얻었어요!' (그 기기에서 하루 한 번)
+  useEffect(() => {
+    void playClip('all-done', dayKey).then(() => newTitle && playClip(`title-${newTitle.days}`, dayKey));
+  }, [dayKey, newTitle]);
 
   useEffect(() => {
     const spring = (v: Animated.Value) => Animated.spring(v, { toValue: 1, friction: 5, tension: 90, useNativeDriver: NATIVE });
