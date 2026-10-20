@@ -1,6 +1,6 @@
 // B-F03 오늘의 미션 배정 + B-F05 재판정 저장.
 // MissionCards가 처음 열릴 때와 onRecordsChanged 이벤트를 받을 때마다 부른다.
-import type { DailyMission, MissionsRepo, RecordsRepo } from '../../shared/types/contract.ts';
+import type { DailyMission, MissionsRepo, NewDailyMission, RecordsRepo } from '../../shared/types/contract.ts';
 import { TODAY_MISSION_SET } from './catalog.ts';
 import { evaluateMissions, type MissionResult } from './evaluate.ts';
 import { celebrate, emitMissionsUpdated, markCelebrated } from './missionEvents.ts';
@@ -8,6 +8,8 @@ import { celebrate, emitMissionsUpdated, markCelebrated } from './missionEvents.
 export interface Repos {
   recordsRepo: RecordsRepo;
   missionsRepo: MissionsRepo;
+  // 그날 처음 배정할 미션. 없으면 고정 세트(TODAY_MISSION_SET). 앱은 200개 중 랜덤(pickDailySet)을 넣는다.
+  dailySet?: () => Promise<NewDailyMission[]>;
 }
 
 export interface DaySnapshot {
@@ -26,8 +28,9 @@ export function syncDay(repos: Repos, dayKey: string, now?: Date): Promise<DaySn
   return run;
 }
 
-async function syncDayNow({ recordsRepo, missionsRepo }: Repos, dayKey: string, now: Date): Promise<DaySnapshot> {
-  const assigned = await missionsRepo.assignIfEmpty(dayKey, TODAY_MISSION_SET); // 이미 있으면 그대로 돌려준다
+async function syncDayNow({ recordsRepo, missionsRepo, dailySet }: Repos, dayKey: string, now: Date): Promise<DaySnapshot> {
+  const existing = await missionsRepo.listByDay(dayKey);
+  const assigned = existing.length > 0 ? existing : await missionsRepo.assignIfEmpty(dayKey, dailySet ? await dailySet() : TODAY_MISSION_SET); // 이미 있으면 그대로
   markCelebrated(assigned.filter((mission) => mission.status === 'success').map((mission) => mission.id)); // 이미 성공한 미션은 연출 대상이 아니다
   const records = await recordsRepo.listByDay(dayKey);
   const results = evaluateMissions(assigned, records, now);

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatTime, toCardView } from './timeline-core.ts';
+import { detailsTitle, formatTime, toCardView } from './timeline-core.ts';
 import type { HealthRecord } from '../../shared/types/contract.ts';
 
 const common = { user_id: 'local-user', day_key: '2026-10-06', source: 'text' as const, raw_text: null, created_at: '2026-10-06T03:30:03.000Z' };
@@ -109,4 +109,10 @@ test('물 카드와 확인 필요 표시', () => {
   assert.equal(card.title, '물 500ml');
   assert.equal(card.kcalLabel, '');
   assert.equal(card.needsCheck, true);
+});
+
+test('detailsTitle: 수면·신체 기록 한 줄', () => {
+  assert.equal(detailsTitle('sleep', { sleep_min: 450, bed_time: '23:00', wake_time: '06:30' }), '수면 7시간 30분 (23:00~06:30)');
+  assert.equal(detailsTitle('sleep', { sleep_min: 420 }), '수면 7시간');
+  assert.equal(detailsTitle('body', { weight_kg: 58.2, condition: 4 }), '체중 58.2kg · 컨디션 4/5');
 });

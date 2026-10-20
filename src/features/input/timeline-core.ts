@@ -1,6 +1,6 @@
 // A-F05: 타임라인 카드에 보여 줄 글자를 만드는 순수 함수. 화면(React)과 분리해 테스트한다.
 import { startOfDayIso, toDayKey } from '../../shared/date.ts';
-import type { ExerciseItem, FoodItem, HealthRecord } from '../../shared/types/contract.ts';
+import type { ExerciseItem, FoodItem, HealthRecord, RecordDetails } from '../../shared/types/contract.ts';
 import { LOW_CONFIDENCE } from './parse-core.ts';
 
 // 카드 안의 한 줄: 음식 하나 또는 운동 하나
@@ -49,6 +49,23 @@ function foodDetail(item: FoodItem): string {
   return round(item.kcal) + ' kcal' + (item.protein_g > 0 ? ' · 단백질 ' + round(item.protein_g, 1) + 'g' : '');
 }
 
+// 수면·신체 기록 한 줄. 예) '수면 7시간 30분 (23:00~06:30)', '체중 58.2kg · 컨디션 4/5'
+export function detailsTitle(kind: 'sleep' | 'body', d: RecordDetails): string {
+  if (kind === 'sleep') {
+    const min = d.sleep_min ?? 0;
+    const length = min ? `${Math.floor(min / 60)}시간${min % 60 ? ` ${Math.round(min % 60)}분` : ''}` : '';
+    const range = d.bed_time || d.wake_time ? ` (${d.bed_time ?? '?'}~${d.wake_time ?? '?'})` : '';
+    return ('수면 ' + length + range).trim();
+  }
+  return [
+    d.weight_kg !== undefined ? `체중 ${d.weight_kg}kg` : '',
+    d.waist_cm !== undefined ? `허리 ${d.waist_cm}cm` : '',
+    d.condition !== undefined ? `컨디션 ${d.condition}/5` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
+
 export function toCardView(record: HealthRecord): CardView {
   let title = '';
   let kcalLabel = '';
@@ -63,6 +80,8 @@ export function toCardView(record: HealthRecord): CardView {
     title = record.exercises.map(exerciseTitle).join(', ');
     kcalLabel = round(record.exercises.reduce((sum, e) => sum + e.kcal_burned, 0)) + ' kcal 소모';
     items = record.exercises.map((e) => ({ label: exerciseTitle(e), detail: round(e.kcal_burned) + ' kcal 소모' }));
+  } else if (record.kind === 'sleep' || record.kind === 'body') {
+    title = detailsTitle(record.kind, record.details ?? {});
   } else {
     title = '물 ' + (record.water_ml ?? 0) + 'ml';
   }

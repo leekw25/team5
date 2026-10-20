@@ -104,6 +104,9 @@ export function createLocalStore(storage: KeyValueStorage, { newId, now = () => 
             params: { ...mission.params },
             status: 'in_progress',
             achieved_at: null,
+            checked_at: null,
+            reroll_count: 0,
+            title: mission.title ?? null,
           });
         }
         if (created.length > 0) await write(LOCAL_KEYS.daily_missions, [...rows, ...created]);
@@ -116,6 +119,27 @@ export function createLocalStore(storage: KeyValueStorage, { newId, now = () => 
         const index = rows.findIndex((mission) => mission.id === id);
         if (index < 0) throw new Error(`미션을 찾을 수 없습니다: ${id}`);
         rows[index] = { ...rows[index], status: patch.status, achieved_at: patch.achieved_at };
+        await write(LOCAL_KEYS.daily_missions, rows);
+        return rows[index];
+      }),
+
+    reroll: (id, next) =>
+      serial(async () => {
+        const rows = await read<DailyMission>(LOCAL_KEYS.daily_missions);
+        const index = rows.findIndex((mission) => mission.id === id);
+        if (index < 0) throw new Error(`미션을 찾을 수 없습니다: ${id}`);
+        const row = rows[index];
+        rows[index] = { ...row, mission_code: next.mission_code, params: { ...next.params }, title: next.title ?? null, status: 'in_progress', achieved_at: null, checked_at: null, reroll_count: row.reroll_count + 1 };
+        await write(LOCAL_KEYS.daily_missions, rows);
+        return rows[index];
+      }),
+
+    setChecked: (id, checkedAt) =>
+      serial(async () => {
+        const rows = await read<DailyMission>(LOCAL_KEYS.daily_missions);
+        const index = rows.findIndex((mission) => mission.id === id);
+        if (index < 0) throw new Error(`미션을 찾을 수 없습니다: ${id}`);
+        rows[index] = { ...rows[index], checked_at: checkedAt };
         await write(LOCAL_KEYS.daily_missions, rows);
         return rows[index];
       }),

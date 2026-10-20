@@ -82,7 +82,7 @@ test('JSON 배열로 LOCAL_KEYS에 contract 필드 이름 그대로 저장한다
   const records = JSON.parse(storage.data.get(LOCAL_KEYS.records) ?? '');
   const missions = JSON.parse(storage.data.get(LOCAL_KEYS.daily_missions) ?? '');
   assert.equal(Array.isArray(records) && Array.isArray(missions), true);
-  assert.deepEqual(Object.keys(missions[0]).sort(), ['achieved_at', 'day_key', 'id', 'mission_code', 'params', 'slot', 'status', 'user_id']);
+  assert.deepEqual(Object.keys(missions[0]).sort(), ['achieved_at', 'checked_at', 'day_key', 'id', 'mission_code', 'params', 'reroll_count', 'slot', 'status', 'title', 'user_id']);
   assert.equal(records[0].day_key, '2026-10-06');
 });
 

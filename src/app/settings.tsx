@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { deleteApiKey, getApiKey, saveApiKey, testApiKey } from '@/shared/gemini';
 import { supabase } from '@/shared/supabase';
+import { MyMissions } from '@/features/mission';
 import { AppHeader } from '@/ui/chrome';
 import { promptInstall, useInstallState } from '@/ui/install';
 import { getDisplayName, NAME_MAX, saveDisplayName } from '@/ui/profile';
@@ -122,6 +123,8 @@ export default function SettingsScreen() {
           </View>
           {nameMsg && <Text style={{ ...text.caption, color: color.ink }}>{nameMsg}</Text>}
         </View>
+
+        <MyMissions />
 
         <View style={{ ...card, padding: 20, gap: 12 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>

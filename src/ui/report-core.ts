@@ -1,6 +1,6 @@
 // 주간 리포트 계산(순수 함수). 화면은 이 결과를 그리기만 한다.
 import type { DailyMission, HealthRecord, MissionSlot } from '@/shared/types/contract';
-import { getMissionDef, SLOT_LABELS, TODAY_MISSION_SET } from '../features/mission/catalog.ts';
+import { SLOT_LABELS } from '../features/mission/catalog.ts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const shift = (dayKey: string, days: number) => new Date(Date.parse(dayKey) + days * DAY_MS).toISOString().slice(0, 10);
@@ -39,12 +39,8 @@ export interface WeekSummary {
   missionDays: { title: string; slot: string; days: number }[]; // 슬롯(식단·생활·운동)별 달성 일수
 }
 
-// 오늘의 미션 고정 세트(식단·생활·운동)의 이름. 다음 주 추천 목록에 쓴다.
-const SLOT_TITLES = TODAY_MISSION_SET.map((m) => {
-  const def = getMissionDef(m.mission_code);
-  const target = def ? m.params[def.paramKey] : undefined;
-  return { slot: m.slot, title: def && target !== undefined ? def.title(target) : m.mission_code };
-});
+// 미션은 매일 랜덤이라 슬롯(식단·생활·운동) 단위로 센다.
+const SLOT_TITLES = (['diet', 'life', 'exercise'] as MissionSlot[]).map((slot) => ({ slot, title: `${SLOT_LABELS[slot]} 미션` }));
 
 const succeeded = (missions: DailyMission[], slot?: MissionSlot) => missions.filter((m) => m.status === 'success' && (!slot || m.slot === slot));
 

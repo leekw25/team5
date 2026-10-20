@@ -12,6 +12,7 @@ import type {
   InputSource,
   NewHealthRecord,
   ParseResult,
+  RecordDetails,
   RecordKind,
 } from '../../shared/types/contract.ts';
 
@@ -30,11 +31,17 @@ const EXERCISE_CODE_TABLE: Record<ExerciseCode, true> = {
   walking: true,
   running: true,
   cycling: true,
+  lunge: true,
+  plank: true,
+  crunch: true,
+  jumping_jack: true,
+  burpee: true,
+  stairs: true,
   other: true,
 };
 export const FOOD_TAGS = Object.keys(FOOD_TAG_TABLE) as FoodTag[];
 export const EXERCISE_CODES = Object.keys(EXERCISE_CODE_TABLE) as ExerciseCode[];
-const KINDS: RecordKind[] = ['meal', 'exercise', 'water'];
+const KINDS: RecordKind[] = ['meal', 'exercise', 'water', 'sleep', 'body'];
 
 // 이 값보다 확신도가 낮은 기록은 저장은 하되 화면에 '확인 필요'를 띄운다(A-F06에서 사용).
 export const LOW_CONFIDENCE = 0.6;
@@ -87,6 +94,19 @@ export const PARSE_SCHEMA = {
             },
           },
           water_ml: { type: 'NUMBER', nullable: true },
+          details: {
+            type: 'OBJECT',
+            nullable: true,
+            description: 'kind 가 sleep·body 일 때만',
+            properties: {
+              sleep_min: { type: 'NUMBER', nullable: true },
+              bed_time: { type: 'STRING', nullable: true, description: '잠든 시각 HH:MM' },
+              wake_time: { type: 'STRING', nullable: true, description: '일어난 시각 HH:MM' },
+              weight_kg: { type: 'NUMBER', nullable: true },
+              waist_cm: { type: 'NUMBER', nullable: true },
+              condition: { type: 'INTEGER', nullable: true, description: '컨디션 1~5' },
+            },
+          },
           confidence: { type: 'NUMBER', description: '0~1, 파싱 확신도' },
         },
         required: ['kind', 'days_ago', 'foods', 'exercises', 'confidence'],
@@ -134,6 +154,7 @@ interface RawRecord {
   foods?: unknown;
   exercises?: unknown;
   water_ml?: unknown;
+  details?: unknown;
   confidence?: unknown;
 }
 export interface RawParse {
@@ -166,6 +187,9 @@ function promptRules(now: Date): string[] {
     '- 음료를 제로·무가당으로 바꿨다고 하면 제로 음료(tags에 zero_sugar_drink)로 적고 kcal은 0에 가깝게 한다.',
     '- 운동은 kind="exercise" 기록 1개에 exercises 배열로 담는다. code는 목록 중에서만 고르고 해당 없으면 other.',
     '- 마신 물은 kind="water", water_ml 에 ml 로 적는다(1컵=200, 1병=500, 1L=1000).',
+    '- 잠은 kind="sleep" 기록 1개로, details 에 sleep_min(잔 시간, 분), bed_time(잠든 시각 HH:MM), wake_time(일어난 시각 HH:MM)을 아는 만큼 적는다. time 은 일어난 시각이다("어젯밤 11시에 자서 7시에 일어났어" → bed_time 23:00, wake_time 07:00, sleep_min 480, time 07:00, days_ago 0).',
+    '- 체중·허리둘레·컨디션은 kind="body" 기록 1개로, details 에 weight_kg, waist_cm, condition(1~5, 아주 나쁨 1 · 아주 좋음 5)을 적는다.',
+    '- 운동 code: 런지 lunge, 플랭크 plank(버틴 시간은 duration_min, 30초=0.5), 크런치 crunch, 팔벌려뛰기 jumping_jack, 버피 burpee, 계단 오르기 stairs(오른 층수를 reps, sets 는 1). 러닝머신은 running, 실내 자전거는 cycling.',
     ...Object.entries(PLACE_ALIASES).map(([name, address]) => `- "${name}"는 장소로 쓰이면 "${address}"를 뜻한다. 출발지·도착지로 나오면 이 주소로 바꿔 생각한다.`),
     '- 걷기·달리기·자전거를 "A에서 B까지", "A에서 B로"처럼 장소로만 말하고 시간·거리·걸음 수를 말하지 않았으면, 알고 있는 지리 정보로 두 장소 사이 이동 거리를 대략 추정한다. 그 거리로 duration_min(걷기 1분 약 70m, 달리기 1분 약 150m, 자전거 1분 약 250m), 걷기는 steps(1km 약 1,300보), kcal_burned 를 계산하고 confidence 를 0.7 이하로 적는다.',
     '- kcal, carb_g, protein_g, fat_g 는 숫자로 적는다. 양을 말했으면 그 양 전체 기준이다.',
@@ -269,11 +293,13 @@ function normalizeRecord(raw: RawRecord, rawText: string | null, source: InputSo
       ? (raw.exercises as RawExercise[]).map(normalizeExercise).filter((e): e is ExerciseItem => e !== null)
       : [];
   const waterMl = kind === 'water' ? optionalNum(raw.water_ml) : undefined;
+  const details = kind === 'sleep' || kind === 'body' ? normalizeDetails(raw.details) : {};
 
   // 내용이 비어 있는 기록은 만들지 않는다.
   if (kind === 'meal' && foods.length === 0) return null;
   if (kind === 'exercise' && exercises.length === 0) return null;
   if (kind === 'water' && waterMl === undefined) return null;
+  if ((kind === 'sleep' || kind === 'body') && Object.keys(details).length === 0) return null;
 
   const confidence = typeof raw.confidence === 'number' && Number.isFinite(raw.confidence) ? Math.min(1, Math.max(0, raw.confidence)) : 0.5;
   return {
@@ -284,8 +310,25 @@ function normalizeRecord(raw: RawRecord, rawText: string | null, source: InputSo
     foods,
     exercises,
     water_ml: waterMl ?? null,
+    details,
     confidence,
   };
+}
+
+// 수면·신체 세부값: 숫자는 0보다 큰 값만, 시각은 HH:MM 만 남긴다.
+function normalizeDetails(raw: unknown): RecordDetails {
+  const d = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const time = (v: unknown) => (typeof v === 'string' && /^([01]?\d|2[0-3]):[0-5]\d$/.test(v.trim()) ? v.trim().padStart(5, '0') : undefined);
+  const condition = optionalNum(d.condition);
+  const out: RecordDetails = {
+    sleep_min: optionalNum(d.sleep_min),
+    bed_time: time(d.bed_time),
+    wake_time: time(d.wake_time),
+    weight_kg: optionalNum(d.weight_kg),
+    waist_cm: optionalNum(d.waist_cm),
+    condition: condition === undefined ? undefined : Math.min(5, Math.max(1, Math.round(condition))),
+  };
+  return Object.fromEntries(Object.entries(out).filter(([, v]) => v !== undefined)) as RecordDetails;
 }
 
 export const MSG_EMPTY_INPUT = '입력한 내용이 없어요. 먹은 것이나 한 운동을 적어 주세요.';

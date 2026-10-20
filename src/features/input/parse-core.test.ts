@@ -229,3 +229,20 @@ test('parseWith: 키 없음은 그 안내를, 그 밖의 오류는 공통 안내
   assert.deepEqual(offline.records, []);
   assert.deepEqual(offline.warnings, [MSG_AI_FAILED]);
 });
+
+test('normalizeParse: 수면·신체 기록은 details 를 정리해 담고, 비어 있으면 버린다', () => {
+  const result = normalizeParse(
+    {
+      records: [
+        { kind: 'sleep', time: '07:00', days_ago: 0, foods: [], exercises: [], details: { sleep_min: 480, bed_time: '23:00', wake_time: '7:00' }, confidence: 0.9 },
+        { kind: 'body', time: null, days_ago: 0, foods: [], exercises: [], details: { weight_kg: 58.2, condition: 9 }, confidence: 0.9 },
+        { kind: 'body', time: null, days_ago: 0, foods: [], exercises: [], details: { weight_kg: -1 }, confidence: 0.9 },
+      ],
+    },
+    '어젯밤 11시에 자서 7시에 일어났어, 체중 58.2',
+    NOW,
+  );
+  assert.equal(result.records.length, 2);
+  assert.deepEqual(result.records[0].details, { sleep_min: 480, bed_time: '23:00', wake_time: '07:00' });
+  assert.deepEqual(result.records[1].details, { weight_kg: 58.2, condition: 5 });
+});

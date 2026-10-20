@@ -3,7 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import type { NewHealthRecord, ParseResult } from '@/shared/types/contract';
 import { color, font, radius, text } from '@/ui/theme';
-import { formatTime } from './timeline-core.ts';
+import { detailsTitle, formatTime } from './timeline-core.ts';
 
 interface Row {
   icon: keyof typeof MaterialIcons.glyphMap;
@@ -36,6 +36,8 @@ function rows(records: NewHealthRecord[]): Row[] {
         macro: '운동',
         kcal: `${Math.round(e.kcal_burned)} kcal 소모`,
       }));
+    if (r.kind === 'sleep' || r.kind === 'body')
+      return [{ icon: r.kind === 'sleep' ? 'bedtime' : 'monitor-weight', name: detailsTitle(r.kind, r.details ?? {}), qty: '', tags: [], macro: r.kind === 'sleep' ? '수면' : '신체 기록', kcal: '' }];
     return [{ icon: 'water-drop', name: '물', qty: `${r.water_ml ?? 0}ml`, tags: [], macro: '수분', kcal: '' }];
   });
 }

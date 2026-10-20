@@ -3,15 +3,15 @@
 // - 다른 사람 기록은 RLS 가 막는다(로그인한 본인 행만 읽고 쓴다).
 // - local-records.ts 는 홍현정님 로컬 저장소 구현으로, 테스트의 가짜 저장소로 계속 쓰인다(지우지 않는다).
 import { supabase } from '@/shared/supabase';
-import type { DailyMission, DayStatus, HealthRecord, MissionsRepo, NewHealthRecord, RecordsRepo } from '@/shared/types/contract';
+import type { DailyMission, DayStatus, HealthRecord, MissionsRepo, NewHealthRecord, RecordsRepo, UserMission, UserMissionsRepo } from '@/shared/types/contract';
 
 const TABLE = 'records';
 
 // DB에 보내도 되는 칸만 고른다(id·user_id·day_key·created_at 은 DB가 채운다).
 function writable(r: Partial<NewHealthRecord>) {
-  const { occurred_at, kind, source, raw_text, foods, exercises, water_ml, confidence } = r;
+  const { occurred_at, kind, source, raw_text, foods, exercises, water_ml, details, confidence } = r;
   return Object.fromEntries(
-    Object.entries({ occurred_at, kind, source, raw_text, foods, exercises, water_ml, confidence }).filter(([, v]) => v !== undefined),
+    Object.entries({ occurred_at, kind, source, raw_text, foods, exercises, water_ml, details, confidence }).filter(([, v]) => v !== undefined),
   );
 }
 
@@ -49,7 +49,7 @@ export const missionsRepo: MissionsRepo = {
   },
 
   async assignIfEmpty(dayKey, missions) {
-    const rows = missions.map((m) => ({ day_key: dayKey, slot: m.slot, mission_code: m.mission_code, params: m.params }));
+    const rows = missions.map((m) => ({ day_key: dayKey, slot: m.slot, mission_code: m.mission_code, params: m.params, title: m.title ?? null }));
     check(await supabase.from('daily_missions').upsert(rows, { onConflict: 'user_id,day_key,slot', ignoreDuplicates: true }));
     return missionsRepo.listByDay(dayKey);
   },
@@ -59,9 +59,32 @@ export const missionsRepo: MissionsRepo = {
     return check<DailyMission>(await supabase.from('daily_missions').update({ status, achieved_at }).eq('id', id).select().single());
   },
 
+  async reroll(id, next) {
+    const current = check<DailyMission>(await supabase.from('daily_missions').select('reroll_count').eq('id', id).single());
+    const patch = { mission_code: next.mission_code, params: next.params, title: next.title ?? null, status: 'in_progress', achieved_at: null, checked_at: null, reroll_count: current.reroll_count + 1 };
+    return check<DailyMission>(await supabase.from('daily_missions').update(patch).eq('id', id).select().single());
+  },
+
+  async setChecked(id, checkedAt) {
+    return check<DailyMission>(await supabase.from('daily_missions').update({ checked_at: checkedAt }).eq('id', id).select().single());
+  },
+
   async listDayStatus(fromDayKey, toDayKey) {
     return check<DayStatus[]>(
       await supabase.from('v_day_status').select('*').gte('day_key', fromDayKey).lte('day_key', toDayKey).order('day_key', { ascending: true }),
     );
+  },
+};
+
+// 사용자가 직접 만든 미션(이미경님 제안). 랜덤 배정·다시 뽑기 후보가 된다.
+export const userMissionsRepo: UserMissionsRepo = {
+  async list() {
+    return check<UserMission[]>(await supabase.from('user_missions').select('*').order('created_at', { ascending: true }));
+  },
+  async add(slot, title) {
+    return check<UserMission>(await supabase.from('user_missions').insert({ slot, title: title.trim() }).select().single());
+  },
+  async remove(id) {
+    check(await supabase.from('user_missions').delete().eq('id', id));
   },
 };
