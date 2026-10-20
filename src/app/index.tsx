@@ -9,6 +9,7 @@ import { getApiKey } from '@/shared/gemini';
 import { AppHeader } from '@/ui/chrome';
 import { MissionCards } from '@/features/mission';
 import { ClimaxOverlay } from '@/ui/Climax';
+import { MealSuggest } from '@/ui/MealSuggest';
 import { useCoach } from '@/ui/coach';
 import { voiceSupported } from '@/ui/voice';
 import { HeroCard, useMissionSummary } from '@/ui/HeroCard';
@@ -45,6 +46,7 @@ export default function TodayScreen() {
           <HeroCard done={done} streak={streak} name={name} line={coach.line} onReplay={voiceSupported() ? coach.replay : undefined} />
         </Parallax>
         <MissionCards dayKey={dayKey} />
+        <MealSuggest dayKey={dayKey} />
         <Reveal>
           <InputPanel />
         </Reveal>
