@@ -1,8 +1,8 @@
 -- 시연 계정 초기화 + 시드. 리허설·발표 직전마다 SQL Editor에서 Run.
--- 결과: 어제까지 10일 연속 완수, 오늘은 물·스쿼트 성공 + 단백질 진행 중(2/3), 아침 기록 1개.
+-- 결과: 어제까지 19일 연속 완수, 오늘은 물·스쿼트 성공 + 단백질 진행 중(2/3), 아침 기록 1개.
 -- 미션은 평소 랜덤 배정이지만, 시연 날은 이 스크립트가 오늘 미션을 고정 3개로 넣어 둔다(다시 뽑기 5회 그대로).
 -- CLI: npx supabase db query --db-url <풀러 주소> -f supabase/demo/reset-demo.sql
--- 시연 문장으로 단백질이 달성되면 3/3 → 폭죽, 스탬프, 스트릭 11일.
+-- 시연 문장으로 단백질이 달성되면 3/3 → 지유 변신 + 폭죽 + 연속 20일 → 칭호 「루틴 비기너」 획득 연출.
 --
 -- 단백질 목표(target_g)는 시연 문장을 여러 번 파싱해 본 "아침+점심 단백질 합"의 최솟값보다 낮게 맞춘다.
 
@@ -23,10 +23,10 @@ begin
   delete from public.user_badges where user_id = v_user;
   delete from public.user_missions where user_id = v_user;
 
-  -- 어제부터 10일 전까지 매일 3개 완수
+  -- 어제부터 19일 전까지 매일 3개 완수(오늘 완수하면 20일 = 두 번째 칭호)
   insert into public.daily_missions (user_id, day_key, slot, mission_code, params, status, achieved_at)
   select v_user, v_today - d, m.slot, m.code, m.params::jsonb, 'success', (v_today - d + time '20:00') at time zone 'Asia/Seoul'
-  from generate_series(1, 10) as d
+  from generate_series(1, 19) as d
   cross join (values
     ('diet', 'protein_min', format('{"target_g": %s}', v_protein_target)),
     ('life', 'water_min', '{"target_ml": 1500}'),

@@ -8,6 +8,7 @@ import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
 import { AppHeader } from '@/ui/chrome';
 import { MissionCards } from '@/features/mission';
+import { ClimaxOverlay } from '@/ui/Climax';
 import { HeroCard, useMissionSummary } from '@/ui/HeroCard';
 import { Parallax, Reveal, ScrollTopButton, useScrollY } from '@/ui/motion';
 import { useDisplayName } from '@/ui/profile';
@@ -15,7 +16,7 @@ import { color, radius, text } from '@/ui/theme';
 
 export default function TodayScreen() {
   const dayKey = toDayKey();
-  const { done, streak } = useMissionSummary(dayKey);
+  const { done, streak, celebrate, dismissCelebrate } = useMissionSummary(dayKey);
   const name = useDisplayName();
   const [hasKey, setHasKey] = useState(true);
   const { y, onScroll } = useScrollY();
@@ -52,6 +53,7 @@ export default function TodayScreen() {
       <ScrollTopButton y={y} onPress={() => scroll.current?.scrollTo({ y: 0, animated: true })}>
         <MaterialIcons name="arrow-upward" size={22} color="#fff" />
       </ScrollTopButton>
+      {celebrate && <ClimaxOverlay streak={celebrate.streak} onClose={dismissCelebrate} />}
     </View>
   );
 }

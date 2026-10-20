@@ -1,6 +1,6 @@
 // 오늘 홈 맨 위 카드(Stitch '오늘 홈'). 오늘 미션 달성 수와 연속 달성은 이미경님 미션 저장소(daily_missions)에서 읽는다.
 // 달성 수(0~3)에 따라 지유 일러스트가 바뀐다.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 import { missionsRepo } from '@/data';
 import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
@@ -10,14 +10,22 @@ import { addDays } from '@/shared/date';
 import { Pop, Reveal } from './motion';
 import { card, color, font, radius, text } from './theme';
 
+// celebrate: 화면을 보는 중에 오늘 미션이 3개가 되는 순간에만 연출 정보(연속 일수)가 들어온다(처음 열 때 이미 3개면 없음)
 export function useMissionSummary(dayKey: string) {
   const [summary, setSummary] = useState({ done: 0, streak: 0 });
+  const [celebrate, setCelebrate] = useState<{ streak: number } | null>(null);
   const [tick, setTick] = useState(0);
+  const lastDone = useRef<number | null>(null);
   useEffect(() => {
     let ignore = false;
     Promise.all([missionsRepo.listByDay(dayKey), missionsRepo.listDayStatus(addDays(dayKey, -STREAK_LOOKBACK_DAYS), dayKey)])
       .then(([missions, statuses]) => {
-        if (!ignore) setSummary({ done: missions.filter((m) => m.status === 'success').length, streak: calcStreak(statuses, dayKey) });
+        if (ignore) return;
+        const done = missions.filter((m) => m.status === 'success').length;
+        const streak = calcStreak(statuses, dayKey);
+        if (lastDone.current !== null && lastDone.current < MISSIONS_PER_DAY && done >= MISSIONS_PER_DAY) setCelebrate({ streak });
+        lastDone.current = done;
+        setSummary({ done, streak });
       })
       .catch(() => {});
     return () => {
@@ -25,7 +33,7 @@ export function useMissionSummary(dayKey: string) {
     };
   }, [dayKey, tick]);
   useEffect(() => onMissionsUpdated((day) => day === dayKey && setTick((n) => n + 1)), [dayKey]);
-  return summary;
+  return { ...summary, celebrate, dismissCelebrate: () => setCelebrate(null) };
 }
 
 // 이미경님 제안: 0개면 지쳐서 구부정한 지유 → 미션을 채울수록 표정이 밝아지고 자세가 펴진다(Stitch 4단계 시트).
