@@ -4,6 +4,7 @@ import { router, usePathname } from 'expo-router';
 import { Animated, Platform, Pressable, Text, View, type ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AlertBell } from './AlertBell';
 import { HeaderShadow } from './motion';
 import { color, font, radius } from './theme';
 
@@ -45,7 +46,7 @@ export function AppHeader({ dayKey, title, right, scrollY }: { dayKey?: string; 
           <Text style={{ fontFamily: font.body, fontSize: 13, color: color.ink }}>{koreanDate(dayKey)}</Text>
         </View>
       )}
-      {right ?? <MaterialIcons name="notifications-none" size={24} color={color.ink} />}
+      {right ?? <AlertBell />}
     </View>
   );
 }
