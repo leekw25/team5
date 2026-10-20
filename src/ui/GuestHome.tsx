@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Animated, Easing, Image, Platform, Pressable, ScrollView, Text, TextInput, View, type ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { signIn, signInAsGuest } from '@/shared/supabase';
+import { signIn } from '@/shared/supabase';
 import { Loop, Pop, Reveal, Underline } from './motion';
 import { card, color, font, radius, text } from './theme';
 
@@ -35,7 +35,7 @@ function LoginPopover({ onClose, onDone }: { onClose: () => void; onDone: () => 
       await signIn(email, password);
       onDone();
     } catch (e) {
-      setMessage(isNetworkError(e) ? MSG_NETWORK : '이메일 또는 비밀번호가 맞지 않아요.');
+      setMessage(isNetworkError(e) ? MSG_NETWORK : '이름 또는 비밀번호가 맞지 않아요.');
       setBusy(false);
     }
   }
@@ -73,10 +73,10 @@ function LoginPopover({ onClose, onDone }: { onClose: () => void; onDone: () => 
           </Animated.View>
           <View style={{ flex: 1 }}>
             <Text style={{ ...text.section, fontSize: 16 }}>로그인</Text>
-            <Text style={text.caption}>멘토가 만들어 준 계정으로 들어와요</Text>
+            <Text style={text.caption}>참석자는 이름과 안내받은 비밀번호로 들어와요</Text>
           </View>
         </View>
-        <TextInput value={email} onChangeText={setEmail} placeholder="이메일" placeholderTextColor={color.muted} autoCapitalize="none" keyboardType="email-address" autoComplete="email" autoFocus style={input} />
+        <TextInput value={email} onChangeText={setEmail} placeholder="이름 (또는 이메일)" placeholderTextColor={color.muted} autoCapitalize="none" autoComplete="username" autoFocus style={input} />
         <TextInput value={password} onChangeText={setPassword} placeholder="비밀번호" placeholderTextColor={color.muted} secureTextEntry autoComplete="current-password" onSubmitEditing={() => !disabled && submit()} style={input} />
         {message && <Text style={{ ...text.caption, color: color.danger }}>{message}</Text>}
         <Pressable accessibilityRole="button" onPress={submit} disabled={disabled} style={{ backgroundColor: color.primary, borderRadius: radius.pill, height: 46, alignItems: 'center', justifyContent: 'center', opacity: disabled ? 0.5 : 1 }}>
@@ -144,25 +144,11 @@ const streakBadge = () => (
 
 const divider = () => <View style={{ width: 48, height: 1, backgroundColor: color.line, alignSelf: 'center' }} />;
 
-export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
-  const [open, setOpen] = useState(false);
+export function GuestHome({ onSignedIn, openLogin = false }: { onSignedIn: () => void; openLogin?: boolean }) {
+  const [open, setOpen] = useState(openLogin);
   const scroll = useRef<ScrollView>(null);
   const [stepY, setStepY] = useState(0);
   const login = () => setOpen(true);
-  const [guestBusy, setGuestBusy] = useState(false);
-  const [guestError, setGuestError] = useState<string | null>(null);
-  // 체험 계정(익명 로그인)으로 바로 시작. 발표 화면 QR 은 ?guest=1 로 같은 일을 자동으로 한다.
-  const tryAsGuest = async () => {
-    setGuestBusy(true);
-    setGuestError(null);
-    try {
-      await signInAsGuest();
-      onSignedIn();
-    } catch {
-      setGuestError('지금은 체험 모드를 쓸 수 없어요. 잠시 뒤 다시 시도해 주세요.');
-      setGuestBusy(false);
-    }
-  };
   const toStep = () => scroll.current?.scrollTo({ y: stepY });
 
   return (
@@ -292,10 +278,9 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
               <Text style={{ fontFamily: font.body, fontSize: 16, fontWeight: '700', color: color.primary }}>오늘 미션 보기</Text>
               <MaterialIcons name="arrow-forward" size={20} color={color.primary} />
             </Pressable>
-            <Pressable accessibilityRole="button" onPress={tryAsGuest} disabled={guestBusy} style={{ height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: '#fff', ...center }}>
-              <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '600', color: '#fff' }}>{guestBusy ? '체험 준비 중…' : '로그인 없이 체험하기'}</Text>
+            <Pressable accessibilityRole="button" onPress={login} style={{ height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: '#fff', ...center }}>
+              <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '600', color: '#fff' }}>참석자 로그인 (이름으로)</Text>
             </Pressable>
-            {guestError && <Text style={{ fontFamily: font.body, fontSize: 13, color: '#fff', textAlign: 'center' }}>{guestError}</Text>}
           </Reveal>
         </View>
 

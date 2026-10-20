@@ -7,7 +7,7 @@ import { supabase } from '@/shared/supabase';
 import { color, font } from '@/ui/theme';
 
 const SITE = 'https://fitlog-team5.vercel.app';
-const JOIN_URL = `${SITE}/?guest=1`;
+const JOIN_URL = `${SITE}/?join=1`; // 열면 로그인 상자가 바로 뜬다(참석자 이름 로그인)
 const NATIVE = Platform.OS !== 'web';
 
 interface Stats {
@@ -16,7 +16,7 @@ interface Stats {
   kcal: number;
   missions_done: number;
   perfect_days: number;
-  guests: number;
+  attendees: number;
 }
 
 // 숫자가 바뀌면 0.8초 동안 세어 올라가고, 바뀐 칸이 한 번 튄다
@@ -75,7 +75,7 @@ export default function LiveScreen() {
           <QRCode value={JOIN_URL} size={300} color="#1B1F2A" backgroundColor="#fff" />
         </View>
         <Text style={{ fontFamily: font.body, fontSize: 24, fontWeight: '800', color: '#fff' }}>폰 카메라로 찍고 바로 체험</Text>
-        <Text style={{ fontFamily: font.body, fontSize: 16, color: '#ffffff99' }}>로그인 없이 · fitlog-team5.vercel.app</Text>
+        <Text style={{ fontFamily: font.body, fontSize: 16, color: '#ffffff99' }}>이름 + 안내받은 비밀번호로 로그인 · fitlog-team5.vercel.app</Text>
       </View>
       <View style={{ width: 620, maxWidth: '100%', gap: 16 }}>
         <Text style={{ fontFamily: font.body, fontSize: 30, fontWeight: '900', color: '#fff' }}>
@@ -84,7 +84,7 @@ export default function LiveScreen() {
         {stats ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
             <Counter label="오늘 참여한 사람" value={stats.people} unit="명" accent />
-            <Counter label="체험 중인 관객" value={stats.guests} unit="명" />
+            <Counter label="로그인한 참석자" value={stats.attendees} unit="명" />
             <Counter label="오늘 쌓인 기록" value={stats.records} unit="건" />
             <Counter label="함께 먹은 칼로리" value={stats.kcal} unit="kcal" />
             <Counter label="완수한 미션" value={stats.missions_done} unit="개" />

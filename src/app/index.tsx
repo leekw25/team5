@@ -6,7 +6,7 @@ import { Animated, ScrollView, Text, View } from 'react-native';
 import { DailyTotals, InputPanel, Timeline } from '@/features/input';
 import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
-import { isGuest } from '@/shared/supabase';
+import { isAttendee } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
 import { MissionCards } from '@/features/mission';
 import { ClimaxOverlay } from '@/ui/Climax';
@@ -31,7 +31,7 @@ export default function TodayScreen() {
   useFocusEffect(
     useCallback(() => {
       getApiKey().then((key) => setHasKey(!!key));
-      isGuest().then(setGuest);
+      isAttendee().then(setGuest);
     }, []),
   );
 
@@ -42,7 +42,7 @@ export default function TodayScreen() {
       <Animated.ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ padding: 20, gap: 24, paddingBottom: 80 }}>
         {guest ? (
           <View style={{ backgroundColor: color.primarySoft, borderRadius: radius.card, padding: 14 }}>
-            <Text style={{ ...text.body, fontSize: 14, color: color.primary, fontWeight: '700' }}>체험 모드예요 👋 빠른 기록, 지유의 메뉴 추천, 미션 완료 체크로 핏로그를 바로 써 보세요!</Text>
+            <Text style={{ ...text.body, fontSize: 14, color: color.primary, fontWeight: '700' }}>환영해요 👋 빠른 기록, 지유의 메뉴 추천, 미션 완료 체크로 핏로그를 바로 써 보세요!</Text>
           </View>
         ) : (
           !hasKey && (<Link href="/settings" style={{ backgroundColor: color.successBg, borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
