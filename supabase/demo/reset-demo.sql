@@ -1,5 +1,7 @@
 -- 시연 계정 초기화 + 시드. 리허설·발표 직전마다 SQL Editor에서 Run.
 -- 결과: 어제까지 10일 연속 완수, 오늘은 물·스쿼트 성공 + 단백질 진행 중(2/3), 아침 기록 1개.
+-- 미션은 평소 랜덤 배정이지만, 시연 날은 이 스크립트가 오늘 미션을 고정 3개로 넣어 둔다(다시 뽑기 5회 그대로).
+-- CLI: npx supabase db query --db-url <풀러 주소> -f supabase/demo/reset-demo.sql
 -- 시연 문장으로 단백질이 달성되면 3/3 → 폭죽, 스탬프, 스트릭 11일.
 --
 -- 단백질 목표(target_g)는 시연 문장을 여러 번 파싱해 본 "아침+점심 단백질 합"의 최솟값보다 낮게 맞춘다.
@@ -19,6 +21,7 @@ begin
   delete from public.records where user_id = v_user;
   delete from public.daily_missions where user_id = v_user;
   delete from public.user_badges where user_id = v_user;
+  delete from public.user_missions where user_id = v_user;
 
   -- 어제부터 10일 전까지 매일 3개 완수
   insert into public.daily_missions (user_id, day_key, slot, mission_code, params, status, achieved_at)
