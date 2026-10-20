@@ -13,6 +13,7 @@ import { AppHeader } from '@/ui/chrome';
 import { Pop, ProgressBar, Reveal, Underline } from '@/ui/motion';
 import { mondayOf, summarizeWeek, weekDays, type WeekSummary } from '@/ui/report-core.ts';
 import { card, color, font, radius, text } from '@/ui/theme';
+import { speak, voiceSupported } from '@/ui/voice';
 
 const WEEKDAY = ['월', '화', '수', '목', '금', '토', '일'];
 const CARB = '#BFD3FF';
@@ -98,6 +99,16 @@ function MacroBars({ week }: { week: WeekSummary }) {
       })}
     </View>
   );
+}
+
+// 낭독용 한 주 요약(키 없이도 읽을 수 있게 숫자로 만든다)
+function weekNarration(w: WeekSummary): string {
+  const parts = [`이번 주 미션 ${w.total}개 중 ${w.done}개를 완료했어요. 완수율은 ${w.rate}퍼센트예요.`];
+  if (w.avgKcal) parts.push(`하루 평균 ${w.avgKcal.toLocaleString()}킬로칼로리를 먹었고`);
+  if (w.burned) parts.push(`운동으로 ${w.burned.toLocaleString()}킬로칼로리를 썼어요.`);
+  if (w.macroPct.protein) parts.push(`단백질 비율은 ${w.macroPct.protein}퍼센트${w.macroPct.protein >= 20 ? '로 목표를 넘었어요.' : '예요. 조금만 더 채워 봐요.'}`);
+  if (w.streak >= 2) parts.push(`미션 세 개를 모두 해낸 날이 ${w.streak}일 연속 이어졌어요. 다음 주도 같이 해요!`);
+  return parts.join(' ');
 }
 
 const SCHEMA = { type: 'object', properties: { comment: { type: 'string' } }, required: ['comment'] };
@@ -260,6 +271,17 @@ export default function ReportScreen() {
                 </Pressable>
               )}
               {aiError && <Text style={{ ...text.caption, color: color.danger }}>{aiError}</Text>}
+              {voiceSupported() && week.records > 0 && (
+                // 주간 리포트 낭독: AI 총평이 있으면 그 글, 없으면 이번 주 숫자로 만든 요약을 지유 목소리로 읽는다
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => speak(ai[monday] ?? weekNarration(week), true)}
+                  style={{ height: 42, borderRadius: radius.pill, borderWidth: 1.5, borderColor: color.primary, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <MaterialIcons name="volume-up" size={18} color={color.primary} />
+                  <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '700', color: color.primary }}>지유 목소리로 들려주기</Text>
+                </Pressable>
+              )}
             </Section>
 
             {/* 다음 주 추천 미션: 이번 주에 덜 달성한 순서 */}
