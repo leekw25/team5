@@ -149,23 +149,28 @@ export function RewardCalendar(_props: RewardCalendarProps) {
 
 // 연속 달성 칭호 모음: 얻은 칭호(최장 연속 기준)와 다음 칭호
 function TitleShelf({ streak, best }: { streak: number; best: number }) {
-  const earned = STREAK_TITLES.filter((t) => best >= t.days);
+  const [all, setAll] = useState(false);
+  const earnedCount = STREAK_TITLES.filter((t) => best >= t.days).length;
   const next = nextTitle(best); // 아직 못 얻은 첫 칭호. 남은 날은 지금 연속 기준
   const current = titleFor(streak);
+  // 기본은 얻은 칭호 + 다음 칭호 + 그다음 2개, '모두 보기'를 누르면 30개 전부
+  const shown = all ? STREAK_TITLES : STREAK_TITLES.slice(0, Math.max(3, earnedCount + 3));
   return (
     <View style={styles.shelf}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Text style={text.section}>연속 달성 칭호</Text>
         <View style={styles.countPill}>
           <Text style={styles.countText}>
-            {earned.length} / {STREAK_TITLES.length}
+            {earnedCount} / {STREAK_TITLES.length}
           </Text>
         </View>
       </View>
+      <Text style={text.caption}>미션 3개를 모두 완수한 날이 이어지면 10일마다 칭호를 얻어요. 한 번 얻은 칭호는 연속이 끊겨도 남아요.</Text>
       {current && (
         <View style={styles.currentTitle}>
           <Text style={{ fontSize: 22 }}>🏅</Text>
           <View style={{ flex: 1, gap: 2 }}>
+            <Text style={text.caption}>지금 내 칭호</Text>
             <Text style={{ ...text.body, fontWeight: '800' }}>
               {current.name} <Text style={text.caption}>{current.english}</Text>
             </Text>
@@ -173,24 +178,39 @@ function TitleShelf({ streak, best }: { streak: number; best: number }) {
           </View>
         </View>
       )}
-      <View style={styles.chips}>
-        {earned.map((t) => (
-          <View key={t.days} style={styles.chipOn}>
-            <Text style={styles.chipOnText}>
-              {t.days}일 · {t.name}
-            </Text>
+      {next && (
+        <View style={{ gap: 6 }}>
+          <Text style={{ ...text.caption, color: color.ink }}>
+            다음 칭호 「{next.name}」까지 3개 완수 <Text style={{ fontWeight: '800', color: color.primary }}>{next.days - streak}일</Text> 더
+          </Text>
+          <View style={styles.track}>
+            <View style={[styles.fill, { width: `${Math.min(100, (streak / next.days) * 100)}%` }]} />
           </View>
-        ))}
-        {next && (
-          <View style={styles.chipOff}>
-            <MaterialIcons name="lock-outline" size={13} color={color.muted} />
-            <Text style={styles.chipOffText}>
-              {next.days}일 · {next.name}
-            </Text>
-          </View>
-        )}
+        </View>
+      )}
+      <View style={{ gap: 2 }}>
+        {shown.map((t) => {
+          const got = best >= t.days;
+          const isNext = t.days === next?.days;
+          return (
+            <View key={t.days} style={[styles.titleRow, isNext && styles.titleRowNext]}>
+              <View style={[styles.titleBadge, got ? styles.titleBadgeOn : null]}>
+                {got ? <Text style={{ fontSize: 15 }}>🏅</Text> : <MaterialIcons name="lock-outline" size={15} color={color.muted} />}
+              </View>
+              <View style={{ flex: 1, gap: 1 }}>
+                <Text style={[styles.titleName, !got && { color: color.muted }]}>
+                  {t.days}일 · {t.name} <Text style={styles.titleEnglish}>{t.english}</Text>
+                </Text>
+                <Text style={text.caption}>{t.description}</Text>
+              </View>
+            </View>
+          );
+        })}
       </View>
-      {next && <Text style={text.caption}>3개 완수를 {next.days - streak}일 더 이어가면 「{next.name}」 칭호를 얻어요</Text>}
+      <Pressable accessibilityRole="button" onPress={() => setAll((v) => !v)} style={styles.moreButton}>
+        <Text style={styles.moreText}>{all ? '접기' : `칭호 ${STREAK_TITLES.length}개 모두 보기`}</Text>
+        <MaterialIcons name={all ? 'expand-less' : 'expand-more'} size={18} color={color.primary} />
+      </Pressable>
     </View>
   );
 }
@@ -261,10 +281,15 @@ const styles = themedStyles(() =>
   countPill: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 2 },
   countText: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
   currentTitle: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: color.yellowSoft, borderColor: color.yellowLine, borderWidth: 1, borderRadius: radius.card, padding: 12 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  chipOn: { backgroundColor: color.primarySoft, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 },
-  chipOnText: { fontFamily: font.body, fontSize: 12, fontWeight: '700', color: color.primary },
-  chipOff: { flexDirection: 'row', alignItems: 'center', gap: 3, borderWidth: 1, borderStyle: 'dashed', borderColor: color.line, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 3 },
-  chipOffText: { fontFamily: font.body, fontSize: 12, color: color.muted },
+  track: { height: 6, borderRadius: 6, backgroundColor: color.primarySoft, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 6, backgroundColor: color.primary },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 6, borderRadius: 12 },
+  titleRowNext: { backgroundColor: color.primarySoft },
+  titleBadge: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderStyle: 'dashed', borderColor: color.line },
+  titleBadgeOn: { borderStyle: 'solid', borderColor: color.yellowLine, backgroundColor: color.yellowSoft },
+  titleName: { fontFamily: font.body, fontSize: 14, fontWeight: '700', color: color.ink },
+  titleEnglish: { fontFamily: font.body, fontSize: 11, fontWeight: '400', color: color.muted },
+  moreButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 2, paddingVertical: 8, borderTopWidth: 1, borderTopColor: color.line },
+  moreText: { fontFamily: font.body, fontSize: 13, fontWeight: '700', color: color.primary },
 }),
 );
