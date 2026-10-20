@@ -79,7 +79,9 @@ export default function SettingsScreen() {
   const rows: { icon: keyof typeof MaterialIcons.glyphMap; title: string; sub: string; onPress: () => unknown }[] = [
     ...(installRow ? [installRow] : []),
     ...(devOpen ? [{ icon: 'build' as const, title: '개발 도구', sub: '측정표, 최근 AI 오류, 이 기기 상태', onPress: () => router.push('/dev') }] : []),
-    { icon: 'logout', title: '로그아웃', sub: email ? `로그인 계정: ${email} · 다른 계정으로 바꾸기` : '다른 계정으로 로그인', onPress: signOut },
+    email
+      ? { icon: 'logout' as const, title: '로그아웃', sub: `로그인 계정: ${email} · 다른 계정으로 바꾸기`, onPress: signOut }
+      : { icon: 'logout' as const, title: '체험 끝내기', sub: '체험을 마치고 처음 화면으로 돌아가요', onPress: signOut },
   ];
 
   async function onSave() {

@@ -1,7 +1,7 @@
-import { Slot } from 'expo-router';
+import { Slot, usePathname } from 'expo-router';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import { ensureSignedIn, supabase } from '@/shared/supabase';
+import { ensureSignedIn, signInAsGuest, supabase } from '@/shared/supabase';
 import { TabBar, WebFrame } from '@/ui/chrome';
 import '@/ui/install'; // 웹 설치 이벤트를 앱 시작 때 미리 받아 둔다
 import { GuestHome, MSG_NETWORK, isNetworkError } from '@/ui/GuestHome';
@@ -27,12 +27,20 @@ function ConnectError({ message, onRetry, onLogin }: { message: string; onRetry:
 }
 
 function RootContent({ themeVersion }: { themeVersion: number }) {
+  const path = usePathname();
   const [phase, setPhase] = useState<Phase>('loading');
   const [error, setError] = useState('');
 
   // 저장된 세션 또는 .env 계정으로 로그인 시도(첫 화면은 이미 loading 이라 상태를 미리 바꾸지 않는다)
   const attempt = useCallback(() => {
+    // QR(관객 체험)로 들어오면 ?guest=1 → 로그인 화면 없이 바로 체험 계정으로 시작
+    const wantsGuest = typeof location !== 'undefined' && new URLSearchParams(location.search).get('guest') === '1';
     ensureSignedIn()
+      .then(async (ok) => {
+        if (ok || !wantsGuest) return ok;
+        await signInAsGuest();
+        return true;
+      })
       .then((ok) => setPhase(ok ? 'ready' : 'login'))
       .catch((e: unknown) => {
         setError(isNetworkError(e) ? MSG_NETWORK : '저장된 계정으로 로그인하지 못했어요. 다른 계정으로 로그인해 주세요.');
@@ -52,6 +60,8 @@ function RootContent({ themeVersion }: { themeVersion: number }) {
     attempt();
   };
 
+  // 발표 화면: 로그인 없이 집계와 QR만 보여 준다
+  if (path === '/live') return <Slot />;
   if (phase === 'error') return <ConnectError message={error} onRetry={retry} onLogin={() => setPhase('login')} />;
   if (phase === 'loading') {
     return (

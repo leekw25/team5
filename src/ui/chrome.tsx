@@ -94,7 +94,8 @@ export function TabBar() {
 // PC 브라우저에서도 휴대폰 크기로 보이게: 웹에서는 가운데 폭 430px 틀 안에 앱을 그린다.
 export const FRAME_WIDTH = 430;
 export function WebFrame({ children }: { children: ReactNode }) {
-  if (Platform.OS !== 'web') return <>{children}</>;
+  const path = usePathname();
+  if (Platform.OS !== 'web' || path === '/live') return <>{children}</>; // 발표 화면은 프로젝터 크기 그대로
   return (
     <View style={{ flex: 1, backgroundColor: color.backdrop, alignItems: 'center' }}>
       <View style={{ flex: 1, width: '100%', maxWidth: FRAME_WIDTH, overflow: 'hidden', backgroundColor: color.page, boxShadow: '0 0 40px rgba(27,31,42,0.12)' } as ViewStyle}>

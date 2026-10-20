@@ -6,6 +6,7 @@ import { Animated, ScrollView, Text, View } from 'react-native';
 import { DailyTotals, InputPanel, Timeline } from '@/features/input';
 import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
+import { isGuest } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
 import { MissionCards } from '@/features/mission';
 import { ClimaxOverlay } from '@/ui/Climax';
@@ -23,12 +24,14 @@ export default function TodayScreen() {
   const coach = useCoach(dayKey);
   const name = useDisplayName();
   const [hasKey, setHasKey] = useState(true);
+  const [guest, setGuest] = useState(false);
   const { y, onScroll } = useScrollY();
   const scroll = useRef<ScrollView>(null);
 
   useFocusEffect(
     useCallback(() => {
       getApiKey().then((key) => setHasKey(!!key));
+      isGuest().then(setGuest);
     }, []),
   );
 
@@ -37,10 +40,15 @@ export default function TodayScreen() {
       <AppHeader dayKey={dayKey} scrollY={y} />
       {/* 스크롤 모션: 히어로 패럴랙스, 섹션이 보일 때 올라오는 리빌, 헤더 그림자, 맨 위로 버튼 */}
       <Animated.ScrollView ref={scroll} onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ padding: 20, gap: 24, paddingBottom: 80 }}>
-        {!hasKey && (
-          <Link href="/settings" style={{ backgroundColor: color.successBg, borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
+        {guest ? (
+          <View style={{ backgroundColor: color.primarySoft, borderRadius: radius.card, padding: 14 }}>
+            <Text style={{ ...text.body, fontSize: 14, color: color.primary, fontWeight: '700' }}>체험 모드예요 👋 빠른 기록, 지유의 메뉴 추천, 미션 완료 체크로 핏로그를 바로 써 보세요!</Text>
+          </View>
+        ) : (
+          !hasKey && (<Link href="/settings" style={{ backgroundColor: color.successBg, borderColor: color.yellowLine, borderWidth: 1.5, borderRadius: radius.card, padding: 14 }}>
             <Text style={{ ...text.body, fontSize: 14 }}>Gemini API 키가 없어요. 눌러서 설정에서 입력해 주세요 →</Text>
           </Link>
+        )
         )}
         <Parallax y={y}>
           <HeroCard done={done} streak={streak} name={name} line={coach.line} onReplay={voiceSupported() ? coach.replay : undefined} />

@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Animated, Easing, Image, Platform, Pressable, ScrollView, Text, TextInput, View, type ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { signIn } from '@/shared/supabase';
+import { signIn, signInAsGuest } from '@/shared/supabase';
 import { Loop, Pop, Reveal, Underline } from './motion';
 import { card, color, font, radius, text } from './theme';
 
@@ -149,6 +149,20 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
   const scroll = useRef<ScrollView>(null);
   const [stepY, setStepY] = useState(0);
   const login = () => setOpen(true);
+  const [guestBusy, setGuestBusy] = useState(false);
+  const [guestError, setGuestError] = useState<string | null>(null);
+  // 체험 계정(익명 로그인)으로 바로 시작. 발표 화면 QR 은 ?guest=1 로 같은 일을 자동으로 한다.
+  const tryAsGuest = async () => {
+    setGuestBusy(true);
+    setGuestError(null);
+    try {
+      await signInAsGuest();
+      onSignedIn();
+    } catch {
+      setGuestError('지금은 체험 모드를 쓸 수 없어요. 잠시 뒤 다시 시도해 주세요.');
+      setGuestBusy(false);
+    }
+  };
   const toStep = () => scroll.current?.scrollTo({ y: stepY });
 
   return (
@@ -278,9 +292,10 @@ export function GuestHome({ onSignedIn }: { onSignedIn: () => void }) {
               <Text style={{ fontFamily: font.body, fontSize: 16, fontWeight: '700', color: color.primary }}>오늘 미션 보기</Text>
               <MaterialIcons name="arrow-forward" size={20} color={color.primary} />
             </Pressable>
-            <Pressable accessibilityRole="button" onPress={toStep} style={{ height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: '#fff', ...center }}>
-              <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '600', color: '#fff' }}>둘러보기</Text>
+            <Pressable accessibilityRole="button" onPress={tryAsGuest} disabled={guestBusy} style={{ height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: '#fff', ...center }}>
+              <Text style={{ fontFamily: font.body, fontSize: 14, fontWeight: '600', color: '#fff' }}>{guestBusy ? '체험 준비 중…' : '로그인 없이 체험하기'}</Text>
             </Pressable>
+            {guestError && <Text style={{ fontFamily: font.body, fontSize: 13, color: '#fff', textAlign: 'center' }}>{guestError}</Text>}
           </Reveal>
         </View>
 

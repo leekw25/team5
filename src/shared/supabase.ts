@@ -13,6 +13,14 @@ export const supabase = createClient(url, anonKey, {
   auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
 });
 
+// 로그인 없이 체험(발표 관객용). Supabase 대시보드에서 익명 로그인을 켜 두어야 한다. 체험 계정도 RLS로 자기 기록만 본다.
+export async function signInAsGuest(): Promise<void> {
+  const { error } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+}
+
+export const isGuest = async () => (await supabase.auth.getSession()).data.session?.user.is_anonymous === true;
+
 export async function signIn(email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
   if (error) throw error;
