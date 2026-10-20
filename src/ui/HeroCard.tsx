@@ -45,7 +45,7 @@ export function HeroCard({ done, streak, name }: { done: number; streak: number;
       <View style={{ flex: 1, gap: 6 }}>
         <Text style={text.script}>Good job today! ✨</Text>
         {!!name && <Text style={{ ...text.section, color: color.primary }}>{name}님,</Text>}
-        <Text style={text.headline}>
+        <Text style={{ ...text.headline, fontSize: 22, lineHeight: 30 }}>
           오늘 미션 {total}개 중{'\n'}
           <Text style={{ color: color.primary, textDecorationLine: 'underline' }}>{done}개</Text> 완료했어요!
         </Text>
