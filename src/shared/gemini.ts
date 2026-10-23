@@ -2,6 +2,7 @@
 // 휴대폰 보안 저장소(SecureStore)에 보관해 쓴다.
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { findAudio, pcmToWavBase64 } from './tts-core.ts';
 
 const KEY_NAME = 'gemini_api_key';
 const BASE = 'https://generativelanguage.googleapis.com/v1beta';
@@ -42,4 +43,27 @@ export async function generateJson<T>(parts: GeminiPart[], responseSchema: objec
   const text: string | undefined = body.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Gemini 응답이 비어 있습니다');
   return JSON.parse(text) as T;
+}
+
+// ── 음성 생성(TTS) ──  지유 목소리. Gemini 음성 모델이 사람에 가까운(뉴럴) 목소리로 읽는다.
+// 응답은 24kHz·모노·16비트 WAV(base64). 헤더 없는 PCM(audio/l16)이 오면 WAV 헤더를 붙여 돌려준다.
+export const GEMINI_TTS_MODEL = 'gemini-3.8-flash-tts';
+
+export async function generateSpeech(text: string, voice: string, style: string): Promise<{ base64: string; mimeType: string }> {
+  const key = await getApiKey();
+  if (!key) throw new Error('Gemini API 키가 없습니다.');
+  const res = await fetch(`${BASE}/interactions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({
+      model: GEMINI_TTS_MODEL,
+      input: [{ type: 'user_input', content: [{ type: 'text', text, annotations: [{ type: 'speech_metadata', style }] }] }],
+      response_format: { type: 'audio' },
+      generation_config: { speech_config: [{ voice }] },
+    }),
+  });
+  if (!res.ok) throw new Error(`Gemini TTS 오류 ${res.status}: ${await res.text()}`);
+  const audio = findAudio(await res.json());
+  if (!audio) throw new Error('Gemini TTS 응답에 음성이 없습니다');
+  return /l16|pcm/i.test(audio.mimeType) ? { base64: pcmToWavBase64(audio.base64), mimeType: 'audio/wav' } : audio;
 }

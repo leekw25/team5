@@ -3,19 +3,28 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.117.2",
     "expo": "~57.0.26",
+    "expo-asset": "~57.0.20",
+    "expo-audio": "~57.0.5",
     "expo-constants": "~57.0.20",
+    "expo-crypto": "~57.0.4",
+    "expo-file-system": "~57.0.7",
+    "expo-image-picker": "~57.0.20",
     "expo-linking": "~57.0.11",
     "expo-router": "~57.0.24",
     "expo-secure-store": "~57.0.4",
+    "expo-sensors": "~57.0.3",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-qrcode-svg": "^6.3.26",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
@@ -29,7 +38,11 @@
     "start": "expo start",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test": "node --test"
+    "test": "node --test \"src/**/*.test.ts\"",
+    "build:web": "expo export -p web --clear && node --env-file=.env scripts/prepare-web-deploy.mjs",
+    "deploy:web": "npm run build:web && node scripts/deploy-web.mjs",
+    "create:attendees": "node --env-file=.env scripts/create-attendees.mjs",
+    "make:voice": "node --no-warnings scripts/make-voice-clips.mjs"
   },
   "private": true
 }

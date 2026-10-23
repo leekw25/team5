@@ -1,6 +1,6 @@
 // A(입력)와 B(미션·리워드)가 주고받는 데이터 약속. 멘토만 수정한다(contract/* 브랜치).
 
-export type RecordKind = 'meal' | 'exercise' | 'water';
+export type RecordKind = 'meal' | 'exercise' | 'water' | 'sleep' | 'body'; // sleep·body: 미션 200개용(2026-10-20)
 export type InputSource = 'voice' | 'text' | 'photo' | 'quick' | 'health'; // quick: 빠른 기록 버튼, health: 휴대폰 걸음 수
 
 // 미션 판정에 쓰는 닫힌 목록. 추가·변경은 계약 변경 절차를 따른다.
@@ -12,7 +12,29 @@ export type FoodTag =
   | 'alcohol'
   | 'snack';
 
-export type ExerciseCode = 'squat' | 'pushup' | 'walking' | 'running' | 'cycling' | 'other';
+export type ExerciseCode =
+  | 'squat'
+  | 'pushup'
+  | 'walking'
+  | 'running'
+  | 'cycling'
+  | 'lunge'
+  | 'plank' // 버틴 시간은 duration_min(0.5 = 30초)
+  | 'crunch'
+  | 'jumping_jack'
+  | 'burpee'
+  | 'stairs' // 오른 층수는 reps
+  | 'other';
+
+// kind = 'sleep' | 'body' 기록의 세부값(DB records.details, 없으면 {})
+export interface RecordDetails {
+  sleep_min?: number; // 잠잔 시간(분)
+  bed_time?: string; // 잠든 시각 'HH:MM'
+  wake_time?: string; // 일어난 시각 'HH:MM'
+  weight_kg?: number;
+  waist_cm?: number;
+  condition?: number; // 컨디션 1~5
+}
 
 export interface FoodItem {
   name: string; // 화면 표시용, 예: "싸이버거"
@@ -47,6 +69,7 @@ export interface HealthRecord {
   foods: FoodItem[]; // kind = 'meal'
   exercises: ExerciseItem[]; // kind = 'exercise'
   water_ml: number | null; // kind = 'water'
+  details?: RecordDetails; // kind = 'sleep' | 'body'
   confidence: number; // 0~1, 파싱 확신도
   created_at: string;
 }
@@ -85,6 +108,18 @@ export interface DailyMission {
   params: Record<string, number>; // 예: { target_g: 40 }
   status: MissionStatus;
   achieved_at: string | null;
+  checked_at: string | null; // 직접 체크형 미션을 사용자가 완료로 누른 시각
+  reroll_count: number; // 이 슬롯을 다시 뽑은 횟수(하루 합계 5회까지)
+  title: string | null; // 사용자 미션이면 제목 사본(카탈로그 미션은 null)
+}
+
+// 사용자가 직접 만든 미션(직접 체크형)
+export interface UserMission {
+  id: string;
+  user_id: string;
+  slot: MissionSlot;
+  title: string;
+  created_at: string;
 }
 
 // v_day_status 뷰 한 행
@@ -105,7 +140,7 @@ export interface RecordsRepo {
   remove(id: string): Promise<void>;
 }
 
-export type NewDailyMission = Pick<DailyMission, 'slot' | 'mission_code' | 'params'>;
+export type NewDailyMission = Pick<DailyMission, 'slot' | 'mission_code' | 'params'> & { title?: string | null };
 
 export interface MissionsRepo {
   listByDay(dayKey: string): Promise<DailyMission[]>;
@@ -113,6 +148,16 @@ export interface MissionsRepo {
   assignIfEmpty(dayKey: string, missions: NewDailyMission[]): Promise<DailyMission[]>;
   update(id: string, patch: Pick<DailyMission, 'status' | 'achieved_at'>): Promise<DailyMission>;
   listDayStatus(fromDayKey: string, toDayKey: string): Promise<DayStatus[]>; // 양 끝 날짜 포함
+  // 다시 뽑기: 같은 행을 새 미션으로 바꾸고 판정·체크를 초기화, reroll_count + 1
+  reroll(id: string, next: NewDailyMission): Promise<DailyMission>;
+  // 직접 체크형 미션 완료/취소(null)
+  setChecked(id: string, checkedAt: string | null): Promise<DailyMission>;
+}
+
+export interface UserMissionsRepo {
+  list(): Promise<UserMission[]>;
+  add(slot: MissionSlot, title: string): Promise<UserMission>;
+  remove(id: string): Promise<void>;
 }
 
 // 로컬 저장 규칙. 값은 JSON 배열이고, 필드 이름은 DB 열 이름과 똑같이 둔다(통합 때 그대로 옮기기 위해).

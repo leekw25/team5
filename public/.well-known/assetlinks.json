@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.markany.fitlog",
+      "sha256_cert_fingerprints": ["B2:FE:8E:82:A8:CB:4D:56:29:F3:12:1E:D0:19:F0:10:13:03:4B:0D:37:63:46:42:48:5C:45:5C:E0:E3:19:4A"]
+    }
+  }
+]

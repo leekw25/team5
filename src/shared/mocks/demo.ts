@@ -51,7 +51,7 @@ export const lunchRecord: HealthRecord = {
 
 // 시드 상태의 오늘 미션: 물·스쿼트는 이미 성공, 단백질만 진행 중
 export const demoMissions: DailyMission[] = [
-  { id: 'mock-m1', user_id: USER, day_key: DAY, slot: 'diet', mission_code: 'protein_min', params: { target_g: 30 }, status: 'in_progress', achieved_at: null },
-  { id: 'mock-m2', user_id: USER, day_key: DAY, slot: 'life', mission_code: 'water_min', params: { target_ml: 1500 }, status: 'success', achieved_at: '2026-10-06T01:00:00.000Z' },
-  { id: 'mock-m3', user_id: USER, day_key: DAY, slot: 'exercise', mission_code: 'squat_min', params: { target: 30 }, status: 'success', achieved_at: '2026-10-06T00:00:00.000Z' },
+  { id: 'mock-m1', user_id: USER, day_key: DAY, slot: 'diet', mission_code: 'protein_min', params: { target_g: 30 }, status: 'in_progress', achieved_at: null, checked_at: null, reroll_count: 0, title: null },
+  { id: 'mock-m2', user_id: USER, day_key: DAY, slot: 'life', mission_code: 'water_min', params: { target_ml: 1500 }, status: 'success', achieved_at: '2026-10-06T01:00:00.000Z', checked_at: null, reroll_count: 0, title: null },
+  { id: 'mock-m3', user_id: USER, day_key: DAY, slot: 'exercise', mission_code: 'squat_min', params: { target: 30 }, status: 'success', achieved_at: '2026-10-06T00:00:00.000Z', checked_at: null, reroll_count: 0, title: null },
 ];

@@ -1,12 +1,16 @@
-// 리워드 달력 화면. B의 <RewardCalendar />가 merge되면 Placeholder를 바꾼다.
-import { Text, View } from 'react-native';
+// 리워드 달력(이미경님 B-F08·B-F09, Stitch '리워드 달력' 디자인).
+import { ScrollView, View } from 'react-native';
+import { RewardCalendar } from '@/features/reward';
+import { AppHeader } from '@/ui/chrome';
+import { color } from '@/ui/theme';
 
 export default function CalendarScreen() {
   return (
-    <View style={{ padding: 16 }}>
-      <View style={{ borderWidth: 1, borderStyle: 'dashed', borderColor: '#999', borderRadius: 12, padding: 16 }}>
-        <Text style={{ color: '#666' }}>B: {'<RewardCalendar />'}</Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: color.page }}>
+      <AppHeader />
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+        <RewardCalendar />
+      </ScrollView>
     </View>
   );
 }

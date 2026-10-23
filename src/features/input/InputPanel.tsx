@@ -1,0 +1,96 @@
+// 입력 카드(Stitch 디자인 'Tell FitLog AI'). 음성·문장·사진 → Gemini 파싱 → 결과 확인 시트 → 저장 → 이벤트.
+// 빠른 기록 칩은 AI 없이 바로 저장한다. 앱을 열 때 오늘 걸음 수도 한 번 반영한다(iOS 만).
+// 로직은 홍현정님 코드 그대로(useRecordInput 으로 옮김)이고, 통합 때 화면을 디자인에 맞추고 '확인 후 저장' 단계를 더했다.
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRef } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import type { InputPanelProps } from '@/shared/types/contract';
+import { card, color, font, radius, text } from '@/ui/theme';
+import { QUICK_CHIPS } from './quick-core.ts';
+import { ResultSheet } from './ResultSheet';
+import { useRecordInput } from './useRecordInput';
+import { VoiceButton } from './VoiceButton';
+
+
+
+export function InputPanel(_props: InputPanelProps) {
+  const { text: text_, setText, busy, recording, setRecording, locked, notice, warnings, pending, onConfirm, cancelPending, onSubmit, onQuick, onPhoto, onRecorded, onMicProblem } = useRecordInput();
+  const inputRef = useRef<TextInput>(null);
+
+  const circle = { width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
+
+  return (
+    <View style={{ ...card, padding: 18, gap: 14, backgroundColor: color.surface }}>
+      <View style={{ gap: 2 }}>
+        <Text style={{ ...text.script, fontSize: 18 }}>Tell FitLog AI •</Text>
+        <Text style={{ ...text.section, fontSize: 19 }}>간편하게 말하거나 터치해서 기록해요</Text>
+      </View>
+
+      {/* 빠른 기록: 가로로 밀어서 고른다(카드 좌우 끝까지) */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -18 }} contentContainerStyle={{ gap: 6, paddingHorizontal: 18 }}>
+        {QUICK_CHIPS.map((chip) => (
+          <Pressable
+            key={chip.id}
+            accessibilityRole="button"
+            accessibilityLabel={chip.label + ' 바로 기록'}
+            disabled={locked}
+            onPress={() => onQuick(chip)}
+            style={{ paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, opacity: locked ? 0.4 : 1 }}
+          >
+            <Text style={{ fontFamily: font.body, fontSize: 12.5, color: color.ink }}>+ {chip.short}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 28, paddingVertical: 8 }}>
+        <Pressable accessibilityRole="button" accessibilityLabel="사진으로 기록" disabled={locked} onPress={onPhoto} style={circle}>
+          <MaterialIcons name="photo-camera" size={22} color={color.muted} />
+        </Pressable>
+        <VoiceButton disabled={busy} onRecordingChange={setRecording} onRecorded={onRecorded} onProblem={onMicProblem} />
+        <Pressable accessibilityRole="button" accessibilityLabel="글로 입력" disabled={locked} onPress={() => inputRef.current?.focus()} style={circle}>
+          <MaterialIcons name="edit-note" size={24} color={color.muted} />
+        </Pressable>
+      </View>
+
+      <Text style={{ ...text.caption, textAlign: 'center' }}>
+        {recording ? '듣고 있어요… 다 말했으면 버튼을 한 번 더 누르세요' : busy ? 'AI가 분석하고 있어요…' : (
+          <>
+            버튼을 누르고 <Text style={{ color: color.primary, fontWeight: '700' }}>“점심으로 닭가슴살 샐러드 먹었어”</Text>라고 말해 보세요
+          </>
+        )}
+      </Text>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: radius.pill, backgroundColor: color.inputBg, paddingLeft: 18, paddingRight: 6, minHeight: 50 }}>
+        <TextInput
+          ref={inputRef}
+          value={text_}
+          onChangeText={setText}
+          onSubmitEditing={onSubmit}
+          placeholder="말하거나 적어서 기록해요"
+          placeholderTextColor={color.muted}
+          editable={!locked}
+          returnKeyType="send"
+          style={{ flex: 1, fontFamily: font.body, fontSize: 15, color: color.ink, paddingVertical: 12 }}
+        />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="기록하기"
+          onPress={onSubmit}
+          disabled={locked || !text_.trim()}
+          style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: color.primary, alignItems: 'center', justifyContent: 'center', opacity: locked || !text_.trim() ? 0.5 : 1 }}
+        >
+          {busy ? <ActivityIndicator color="#fff" size="small" /> : <MaterialIcons name="arrow-upward" size={20} color="#fff" />}
+        </Pressable>
+      </View>
+
+      {notice && <Text style={{ ...text.caption, color: color.primary, textAlign: 'center', fontWeight: '700' }}>{notice}</Text>}
+      {warnings.map((w) => (
+        <View key={w} style={{ borderWidth: 1.5, borderColor: color.yellowLine, backgroundColor: color.successBg, borderRadius: radius.card, paddingHorizontal: 14, paddingVertical: 10 }}>
+          <Text style={{ ...text.caption, color: color.ink }}>{w}</Text>
+        </View>
+      ))}
+
+      <ResultSheet result={pending?.result ?? null} seconds={pending?.seconds ?? null} busy={busy} onSave={onConfirm} onRetry={cancelPending} />
+    </View>
+  );
+}
