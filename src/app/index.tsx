@@ -3,7 +3,7 @@ import { Link, useFocusEffect } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useRef, useState } from 'react';
 import { Animated, ScrollView, Text, View } from 'react-native';
-import { DailyTotals, InputPanel, Timeline } from '@/features/input';
+import { DailyTotals, Timeline } from '@/features/input';
 import { toDayKey } from '@/shared/date';
 import { getApiKey } from '@/shared/gemini';
 import { isAttendee } from '@/shared/supabase';
@@ -50,9 +50,6 @@ export default function TodayScreen() {
         )}
         <HeroCard done={done} streak={streak} name={name} line={coach.line} />
         <MissionCards dayKey={dayKey} />
-        <Reveal>
-          <InputPanel />
-        </Reveal>
         <Reveal>
           <DailyTotals dayKey={dayKey} />
         </Reveal>

@@ -5,6 +5,7 @@ import { Animated, Platform, Pressable, Text, View, type ViewStyle } from 'react
 import type { ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertBell } from './AlertBell';
+import { RecordFab } from './RecordFab';
 import { HeaderShadow } from './motion';
 import { color, font, radius } from './theme';
 
@@ -51,6 +52,9 @@ export function AppHeader({ dayKey, title, right, scrollY }: { dayKey?: string; 
   );
 }
 
+// + 버튼이 탭바 위로 솟는 높이(RecordFab 메뉴의 + 버튼 위치와 맞춘다)
+export const FAB_RAISE = 30;
+
 const TABS = [
   { href: '/', label: '오늘', icon: 'today' },
   { href: '/calendar', label: '달력', icon: 'calendar-month' },
@@ -65,7 +69,7 @@ export function TabBar() {
     <View
       style={{
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        alignItems: 'flex-start',
         paddingTop: 8,
         paddingBottom: insets.bottom + 8,
         backgroundColor: color.surface,
@@ -73,20 +77,22 @@ export function TabBar() {
         borderTopColor: color.line,
       }}
     >
-      {TABS.map((t) => {
+      {TABS.map((t, i) => {
         const active = path === t.href;
-        return (
+        const tab = (
           <Pressable
             key={t.href}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
             onPress={() => !active && router.replace(t.href)}
-            style={{ alignItems: 'center', gap: 2, paddingHorizontal: 14 }}
+            style={{ flex: 1, alignItems: 'center', gap: 2 }}
           >
             <MaterialIcons name={t.icon} size={24} color={active ? color.primary : color.muted} />
             <Text style={{ fontFamily: font.body, fontSize: 11, fontWeight: active ? '700' : '400', color: active ? color.primary : color.muted }}>{t.label}</Text>
           </Pressable>
         );
+        // 달력과 리포트 사이 가운데: 탭바 위로 솟은 + 버튼(방사형 기록 메뉴)
+        return i === 2 ? [<View key="fab" style={{ width: 76, alignItems: 'center', marginTop: -FAB_RAISE }}><RecordFab /></View>, tab] : tab;
       })}
     </View>
   );

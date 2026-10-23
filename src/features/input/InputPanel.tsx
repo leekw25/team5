@@ -1,108 +1,21 @@
 // 입력 카드(Stitch 디자인 'Tell FitLog AI'). 음성·문장·사진 → Gemini 파싱 → 결과 확인 시트 → 저장 → 이벤트.
 // 빠른 기록 칩은 AI 없이 바로 저장한다. 앱을 열 때 오늘 걸음 수도 한 번 반영한다(iOS 만).
-// 로직은 홍현정님 코드 그대로이고, 통합 때 화면을 디자인에 맞추고 '확인 후 저장' 단계를 더했다.
+// 로직은 홍현정님 코드 그대로(useRecordInput 으로 옮김)이고, 통합 때 화면을 디자인에 맞추고 '확인 후 저장' 단계를 더했다.
 import { MaterialIcons } from '@expo/vector-icons';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { recordsRepo } from '@/data';
-import { emitRecordsChanged } from '@/shared/events';
-import type { InputPanelProps, ParseResult } from '@/shared/types/contract';
+import type { InputPanelProps } from '@/shared/types/contract';
 import { card, color, font, radius, text } from '@/ui/theme';
-import type { AudioInput } from './parse-core.ts';
-import { parseAudio, parseImage, parseText } from './parse-text';
-import { pickPhoto } from './photo-device';
 import { QUICK_CHIPS } from './quick-core.ts';
-import type { QuickChip } from './quick-core.ts';
 import { ResultSheet } from './ResultSheet';
-import { saveRecords } from './save-core.ts';
-import { runStepsSync } from './steps-sync';
-import { formatSeconds } from './voice-core.ts';
-import { recordVoiceRun } from './voice-timing-log.ts';
+import { useRecordInput } from './useRecordInput';
 import { VoiceButton } from './VoiceButton';
 
-const MSG_SAVE_FAILED = '저장 중 문제가 생겼어요. 다시 시도해 주세요.';
-const MSG_PHOTO_DENIED = '사진 접근 권한이 없어요. 휴대폰 설정에서 허용해 주세요.';
-const MSG_PHOTO_UNREADABLE = '사진을 읽지 못했어요. 다른 사진으로 다시 시도해 주세요.';
 
 
 export function InputPanel(_props: InputPanelProps) {
-  const [text_, setText] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [warnings, setWarnings] = useState<string[]>([]);
-  const [pending, setPending] = useState<{ result: ParseResult; seconds: string | null; fromText: boolean } | null>(null);
+  const { text: text_, setText, busy, recording, setRecording, locked, notice, warnings, pending, onConfirm, cancelPending, onSubmit, onQuick, onPhoto, onRecorded, onMicProblem } = useRecordInput();
   const inputRef = useRef<TextInput>(null);
-  const locked = busy || recording;
-
-  useEffect(() => {
-    runStepsSync();
-  }, []);
-
-  async function run(task: () => Promise<void>) {
-    if (busy) return;
-    setBusy(true);
-    setNotice(null);
-    setWarnings([]);
-    try {
-      await task();
-    } catch {
-      setWarnings([MSG_SAVE_FAILED]);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  // 분석 결과: 기록이 있으면 확인 시트를 띄우고, 없으면 안내만 보여 준다.
-  function review(result: ParseResult, seconds: string | null, fromText = false) {
-    if (result.records.length > 0) setPending({ result, seconds, fromText });
-    else setWarnings(result.warnings);
-  }
-
-  const onConfirm = () =>
-    pending &&
-    run(async () => {
-      await saveRecords(recordsRepo, emitRecordsChanged, pending.result.records);
-      setNotice(pending.result.records.length + '건을 저장했어요.');
-      if (pending.fromText) setText('');
-      setPending(null);
-    });
-
-  const onSubmit = () => {
-    if (!text_.trim()) return;
-    const t0 = Date.now();
-    run(async () => review(await parseText(text_), formatSeconds(Date.now() - t0), true));
-  };
-
-  const onQuick = (chip: QuickChip) =>
-    run(async () => {
-      await saveRecords(recordsRepo, emitRecordsChanged, [chip.build(new Date())]);
-      setNotice(chip.label + ' 저장했어요.');
-    });
-
-  const onPhoto = () =>
-    run(async () => {
-      const picked = await pickPhoto('library');
-      if (picked.kind === 'denied') return setWarnings([MSG_PHOTO_DENIED]);
-      if (picked.kind === 'unreadable') return setWarnings([MSG_PHOTO_UNREADABLE]);
-      if (picked.kind === 'canceled') return;
-      const t0 = Date.now();
-      review(await parseImage(picked.image), formatSeconds(Date.now() - t0));
-    });
-
-  // 녹음이 끝나면 AI 1번으로 받아 적기 + 기록 정리. 끝내기를 누른 순간부터 결과가 나올 때까지 잰다(개발 도구 측정표용).
-  const onRecorded = (audio: AudioInput, stoppedAt: number) =>
-    run(async () => {
-      const result = await parseAudio(audio);
-      const ms = Date.now() - stoppedAt;
-      recordVoiceRun({ at: new Date().toISOString(), ms, ok: result.records.length > 0, transcript: result.transcript ?? '' });
-      review(result, formatSeconds(ms));
-    });
-
-  const onMicProblem = (message: string) => {
-    setNotice(null);
-    setWarnings([message]);
-  };
 
   const circle = { width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, alignItems: 'center', justifyContent: 'center', opacity: locked ? 0.4 : 1 } as const;
 
@@ -177,7 +90,7 @@ export function InputPanel(_props: InputPanelProps) {
         </View>
       ))}
 
-      <ResultSheet result={pending?.result ?? null} seconds={pending?.seconds ?? null} busy={busy} onSave={onConfirm} onRetry={() => setPending(null)} />
+      <ResultSheet result={pending?.result ?? null} seconds={pending?.seconds ?? null} busy={busy} onSave={onConfirm} onRetry={cancelPending} />
     </View>
   );
 }
