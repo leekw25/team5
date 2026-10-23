@@ -1,14 +1,13 @@
-// 지유 한마디: 기록을 저장하거나 미션을 체크하면 1.5초 뒤 오늘 상황을 보고 한 문장을 만들고(Gemini, 키 없으면 기본 문장) 소리 내어 읽는다.
+// 지유 한마디: 기록을 저장하거나 미션을 체크하면 1.5초 뒤 오늘 상황을 보고 한 문장을 만든다(Gemini, 키 없으면 기본 문장). 말풍선 글만 바뀐다.
 import { useEffect, useState } from 'react';
 import { missionsRepo, recordsRepo } from '@/data';
-import { onCelebrate, onMissionsUpdated } from '@/features/mission/missionEvents.ts';
+import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
 import { describe } from '@/features/mission/pool.ts';
 import { calcStreak, STREAK_LOOKBACK_DAYS } from '@/features/reward/streak.ts';
 import { addDays } from '@/shared/date';
 import { onRecordsChanged } from '@/shared/events';
 import { generateJson, getApiKey } from '@/shared/gemini';
 import { buildFacts, coachPrompt, fallbackLine, type CoachFacts } from './coach-core.ts';
-import { speak } from './voice';
 
 const SCHEMA = { type: 'object', properties: { line: { type: 'string' } }, required: ['line'] };
 
@@ -27,7 +26,6 @@ export function useCoach(dayKey: string) {
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let alive = true;
-    let quiet = false; // 이번 묶음에 미션 성공이 있었으면 음성 파일이 이미 나왔다
     const run = () => {
       if (timer) clearTimeout(timer);
       // 미션 재판정이 저장될 시간을 주고, 연달아 오는 알림은 한 번으로 묶는다
@@ -39,24 +37,17 @@ export function useCoach(dayKey: string) {
         ]).catch(() => [[], [], []] as const);
         const next = await makeLine(buildFacts([...records], [...missions], (m) => describe(m).title, calcStreak([...statuses], dayKey)));
         if (!alive) return;
-        setLine(next);
-        const done = missions.filter((m) => m.status === 'success').length;
-        if (!quiet && (missions.length === 0 || done < missions.length)) speak(next); // 미션 완료 뒤에는 행동할 때마다 말하지 않는다
-        quiet = false;
+        setLine(next); // 소리는 내지 않는다(음성은 미션 완료 순간 미리 만든 파일로 한 번만)
       }, 1500);
     };
     const offRecords = onRecordsChanged((e) => e.day_key === dayKey && e.reason === 'created' && run());
     const offMissions = onMissionsUpdated((day) => day === dayKey && run());
-    const offCelebrate = onCelebrate((day) => {
-      if (day === dayKey) quiet = true;
-    });
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
       offRecords();
       offMissions();
-      offCelebrate();
     };
   }, [dayKey]);
-  return { line, replay: () => line && speak(line, true) };
+  return { line };
 }

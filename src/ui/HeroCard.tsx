@@ -1,8 +1,7 @@
 // 오늘 홈 맨 위 카드(Stitch '오늘 홈'). 오늘 미션 달성 수와 연속 달성은 이미경님 미션 저장소(daily_missions)에서 읽는다.
 // 달성 수(0~3)에 따라 지유 일러스트가 바뀐다.
 import { useEffect, useRef, useState } from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { missionsRepo } from '@/data';
 import { onMissionsUpdated } from '@/features/mission/missionEvents.ts';
 import { calcStreak, MISSIONS_PER_DAY, STREAK_LOOKBACK_DAYS } from '@/features/reward/streak.ts';
@@ -45,7 +44,7 @@ const JIYU = [
   { src: require('../../assets/illustrations/jiyu-stage3.jpg'), label: '팔에 힘을 주며 자신감 있게 웃는 지유' },
 ];
 
-export function HeroCard({ done, streak, name, line, onReplay }: { done: number; streak: number; name?: string; line?: string | null; onReplay?: () => void }) {
+export function HeroCard({ done, streak, name, line }: { done: number; streak: number; name?: string; line?: string | null }) {
   const total = MISSIONS_PER_DAY;
   const rate = Math.round((done / total) * 100);
   const jiyu = JIYU[Math.min(done, JIYU.length - 1)];
@@ -85,18 +84,13 @@ export function HeroCard({ done, streak, name, line, onReplay }: { done: number;
       </View>
       </View>
       {!!line && (
-        // 지유 말풍선: 새 한마디가 올 때마다 튀어나오고, 🔊 를 누르면 다시 읽어 준다
+        // 지유 말풍선: 새 한마디가 올 때마다 튀어나온다(소리 없음)
         <Pop key={line} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: color.surface, borderColor: color.primaryLine, borderWidth: 1.5, borderRadius: 16, paddingVertical: 10, paddingHorizontal: 14 }}>
           <View style={{ position: 'absolute', top: -7, right: 48, width: 12, height: 12, backgroundColor: color.surface, borderLeftWidth: 1.5, borderTopWidth: 1.5, borderColor: color.primaryLine, transform: [{ rotate: '45deg' }] }} />
           <Text style={{ ...text.body, fontSize: 14, flex: 1, fontWeight: '600' }}>
             <Text style={{ color: color.primary, fontWeight: '800' }}>지유 </Text>
             {line}
           </Text>
-          {onReplay && (
-            <Pressable accessibilityRole="button" accessibilityLabel="지유 목소리 다시 듣기" onPress={onReplay} hitSlop={8}>
-              <MaterialIcons name="volume-up" size={20} color={color.primary} />
-            </Pressable>
-          )}
         </Pop>
       )}
     </Reveal>

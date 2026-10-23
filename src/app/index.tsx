@@ -10,9 +10,7 @@ import { isAttendee } from '@/shared/supabase';
 import { AppHeader } from '@/ui/chrome';
 import { MissionCards } from '@/features/mission';
 import { ClimaxOverlay } from '@/ui/Climax';
-import { MealSuggest } from '@/ui/MealSuggest';
 import { useCoach } from '@/ui/coach';
-import { voiceSupported } from '@/ui/voice';
 import { HeroCard, useMissionSummary } from '@/ui/HeroCard';
 import { Reveal, ScrollTopButton, useScrollY } from '@/ui/motion';
 import { useDisplayName } from '@/ui/profile';
@@ -50,9 +48,8 @@ export default function TodayScreen() {
           </Link>
         )
         )}
-        <HeroCard done={done} streak={streak} name={name} line={coach.line} onReplay={voiceSupported() ? coach.replay : undefined} />
+        <HeroCard done={done} streak={streak} name={name} line={coach.line} />
         <MissionCards dayKey={dayKey} />
-        <MealSuggest dayKey={dayKey} />
         <Reveal>
           <InputPanel />
         </Reveal>

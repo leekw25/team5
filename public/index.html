@@ -32,6 +32,19 @@
         overflow-wrap: break-word;
         text-wrap: pretty;
       }
+      /* 터치 효과: 버튼을 누르는 동안 살짝 눌리는 느낌 */
+      #root [role='button'], #root [role='tab'], #root [role='radio'], #root [role='switch'] {
+        transition: transform 0.12s ease, opacity 0.12s ease;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+      }
+      #root [role='button']:active, #root [role='tab']:active, #root [role='radio']:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #root [role='button']:active, #root [role='tab']:active, #root [role='radio']:active { transform: none; }
+      }
       #root {
         display: flex;
         height: 100%;

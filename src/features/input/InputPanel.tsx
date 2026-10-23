@@ -3,7 +3,7 @@
 // 로직은 홍현정님 코드 그대로이고, 통합 때 화면을 디자인에 맞추고 '확인 후 저장' 단계를 더했다.
 import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { recordsRepo } from '@/data';
 import { emitRecordsChanged } from '@/shared/events';
 import type { InputPanelProps, ParseResult } from '@/shared/types/contract';
@@ -24,7 +24,6 @@ const MSG_SAVE_FAILED = '저장 중 문제가 생겼어요. 다시 시도해 주
 const MSG_PHOTO_DENIED = '사진 접근 권한이 없어요. 휴대폰 설정에서 허용해 주세요.';
 const MSG_PHOTO_UNREADABLE = '사진을 읽지 못했어요. 다른 사진으로 다시 시도해 주세요.';
 
-const QUICK_SHORT: Record<string, string> = { squat: '스쿼트 15×2', pushup: '푸시업 10×2', walking: '걷기 30분' };
 
 export function InputPanel(_props: InputPanelProps) {
   const [text_, setText] = useState('');
@@ -114,7 +113,8 @@ export function InputPanel(_props: InputPanelProps) {
         <Text style={{ ...text.section, fontSize: 19 }}>간편하게 말하거나 터치해서 기록해요</Text>
       </View>
 
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+      {/* 빠른 기록: 가로로 밀어서 고른다(카드 좌우 끝까지) */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -18 }} contentContainerStyle={{ gap: 6, paddingHorizontal: 18 }}>
         {QUICK_CHIPS.map((chip) => (
           <Pressable
             key={chip.id}
@@ -124,10 +124,10 @@ export function InputPanel(_props: InputPanelProps) {
             onPress={() => onQuick(chip)}
             style={{ paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.pill, borderWidth: 1, borderColor: color.line, backgroundColor: color.chipBg, opacity: locked ? 0.4 : 1 }}
           >
-            <Text style={{ fontFamily: font.body, fontSize: 12.5, color: color.ink }}>+ {QUICK_SHORT[chip.id] ?? chip.label}</Text>
+            <Text style={{ fontFamily: font.body, fontSize: 12.5, color: color.ink }}>+ {chip.short}</Text>
           </Pressable>
         ))}
-      </View>
+      </ScrollView>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 28, paddingVertical: 8 }}>
         <Pressable accessibilityRole="button" accessibilityLabel="사진으로 기록" disabled={locked} onPress={onPhoto} style={circle}>

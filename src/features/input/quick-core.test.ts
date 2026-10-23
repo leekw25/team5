@@ -10,12 +10,20 @@ import { toCardView } from './timeline-core.ts';
 
 const NOW = new Date('2026-10-06T03:40:00.000Z'); // KST 12:40
 
-test('기본 칩 3개: 스쿼트, 푸시업, 걷기', () => {
-  assert.deepEqual(QUICK_CHIPS.map((c) => c.label), ['스쿼트 15개×2세트', '푸시업 10개×2세트', '걷기 30분']);
+test('기본 칩 3개가 맨 앞(스쿼트, 푸시업, 걷기)이고 id 는 겹치지 않는다', () => {
+  assert.deepEqual(QUICK_CHIPS.slice(0, 3).map((c) => c.label), ['스쿼트 15개×2세트', '푸시업 10개×2세트', '걷기 30분']);
+  assert.equal(new Set(QUICK_CHIPS.map((c) => c.id)).size, QUICK_CHIPS.length);
+});
+
+test('추가 칩: 물은 water_ml, 음식은 단백질이 담긴 meal 기록', () => {
+  const byId = Object.fromEntries(QUICK_CHIPS.map((c) => [c.id, c.build(NOW)]));
+  assert.deepEqual([byId.water500.kind, byId.water500.water_ml], ['water', 500]);
+  assert.deepEqual([byId.protein_shake.kind, byId.protein_shake.foods[0].protein_g], ['meal', 25]);
+  assert.equal(byId.stairs.exercises[0].code, 'stairs');
 });
 
 test('칩이 만드는 기록: source quick, 운동 코드·세트·횟수, 지금 시각', () => {
-  const [squat, pushup, walking] = QUICK_CHIPS.map((c) => c.build(NOW));
+  const [squat, pushup, walking] = QUICK_CHIPS.slice(0, 3).map((c) => c.build(NOW));
   for (const record of [squat, pushup, walking]) {
     assert.equal(record.source, 'quick');
     assert.equal(record.kind, 'exercise');
